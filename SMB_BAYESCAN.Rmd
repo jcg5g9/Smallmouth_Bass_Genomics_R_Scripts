@@ -1,0 +1,751 @@
+---
+title: "SMB_BAYESCAN"
+author: "Joe Gunn"
+date: "11/8/2019"
+output: html_document
+---
+
+## Libraries needed for analysis
+```{r setup, echo = FALSE, include=FALSE}
+library(radiator)
+library(readxl)
+library(tidyverse)
+library(cowplot)
+library(devtools)
+library(SNPRelate)
+library(vcfR)
+library(pophelper)
+library(PopGenome)
+library(pcadapt)
+```
+
+#Bayescan Analysis 
+
+## Read in Data 
+###NOTE: The Read in Data section takes the output files from the program Bayescan and reads them into R as Excel files. These files include 6 columns, including the name of individual snps (snp_id), probablility of being under selection (prob), the log base 10 of the posterior odds (logPO), the q-value associated with individual snps, which is akin to the p value but corrected for false discovery rate (qval), the alpha value for indiviual snps (which indicates whether the snp is likely under diversifying or balancing selection), and the fst value for each indiviual snp (which indicates genomic differentiation).
+
+## Read in three datafiles, each representing a unique subset of populations within the data.
+```{r}
+#Each dataset contains 50,828 rows, one for each individual snp along with the corresponding information
+
+#Read in tables of Fst values from BayeScan
+bayes_all_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/smb_all_bayes_noBFC10_results_taxon_fst.xlsx")
+bayes_smb_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/smb_smb_bayes_noBFC10_results_pop_fst.xlsx") #just smallmouth bass samples
+bayes_neosho_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/neo_bayes_noBFC10_results_fst.xlsx") #just neosho samples
+bayes_northern_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/nor_bayes_results_fst.xlsx") #just northern samples
+```
+
+## Data Filtering
+
+###The data filtering section identifies which individual SNPs from the Bayescan program output are considered significant outliers. According to the Bayescan user manual, SNPs with a log of posterior odds value of 1.5 or greater are considered substantially likely to be under selection. This section therefore identifies individual SNPs in the dataset that have a logPO value greater than or equal to 1.5 and labels them as "signficant". Alternatively, all SNPs with a logPO value less than 1.5 are identified as "not significant". A new data file with additional metadata identifying significant SNPs is then created for plotting
+
+## Get Significant and Insignificant SNPs for ALL data Only
+```{r}
+#Rearrange data files so that significant SNPs (or log10PO is 1.5 or greater) are labeled
+ 
+bayescan_all_fst_significant <- bayes_all_fst %>% 
+      filter(logPO >= 1.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
+
+bayescan_all_fst_not_significant <- bayes_all_fst %>% 
+      filter(logPO < 1.5) #extract only SNPs with logPO less than 1.5 (not significant)
+
+dim(bayescan_all_fst_significant) #1 total significant SNP
+dim(bayescan_all_fst_not_significant) #50,827 insignificant SNPs
+
+#create separate columns of metadata for both datasets created in the above step (significant and not significant), which will be later appended to each dataset
+sig_label_all = as.data.frame(c(rep("significant", times = 1))) #no significant snps
+      colnames(sig_label_all) <- c("selection")
+      
+non_sig_label_all <- as.data.frame(c(rep("insignificant", times = 50827))) #all non-significant snps
+      colnames(non_sig_label_all) <- c("selection")
+
+#append metadata to each respective dataset
+bayescan_all_fst_significant <- cbind(bayescan_all_fst_significant, sig_label_all)
+bayescan_all_fst_not_significant <- cbind(bayescan_all_fst_not_significant, non_sig_label_all)
+
+#combine both significant and non-significant datasets into one dataset with all data, now appropriately labeled
+bayescan_all_fst_ready <- rbind(bayescan_all_fst_significant, bayescan_all_fst_not_significant)
+```
+
+## Get Significant and Insignificant SNPs for SMB data Only
+```{r}
+#Rearrange data files so that significant SNPs (or log10PO is 1.5 or greater) are labeled
+ 
+bayescan_smb_fst_significant <- bayes_smb_fst %>% 
+      filter(logPO >= 1.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
+
+bayescan_smb_fst_not_significant <- bayes_smb_fst %>% 
+      filter(logPO < 1.5) #extract only SNPs with logPO less than 1.5 (not significant)
+
+dim(bayescan_smb_fst_significant) #766 total significant SNPs
+dim(bayescan_smb_fst_not_significant) #50,062 insignificant SNPs
+
+#create separate columns of metadata for both datasets created in the above step (significant and not significant), which will be later appended to each dataset
+sig_label_smb = as.data.frame(c(rep("significant", times = 766))) #no significant snps
+      colnames(sig_label_smb) <- c("selection")
+      
+non_sig_label_smb <- as.data.frame(c(rep("insignificant", times = 50062))) #all non-significant snps
+      colnames(non_sig_label_smb) <- c("selection")
+
+#append metadata to each respective dataset
+bayescan_smb_fst_significant <- cbind(bayescan_smb_fst_significant, sig_label_smb)
+bayescan_smb_fst_not_significant <- cbind(bayescan_smb_fst_not_significant, non_sig_label_smb)
+
+#combine both significant and non-significant datasets into one dataset with all data, now appropriately labeled
+bayescan_smb_fst_ready <- rbind(bayescan_smb_fst_significant, bayescan_smb_fst_not_significant)
+```
+
+## Get Significant and Insignificant SNPs for Neosho data only
+```{r}
+
+bayescan_neosho_fst_significant <- bayes_neosho_fst %>% 
+      filter(logPO >= 1.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
+
+bayescan_neosho_fst_not_significant <- bayes_neosho_fst %>% 
+      filter(logPO < 1.5) #extract only SNPs with logPO less than 1.5 (not significant)
+
+dim(bayescan_neosho_fst_significant) #45 total significant SNPs
+dim(bayescan_neosho_fst_not_significant) #50,783 insignificant SNPs
+
+#create separate columns of metadata for both datasets created in the above step (significant and not significant), which will be later appended to each dataset
+sig_label_neosho = as.data.frame(c(rep("significant", times = 45))) #there are 45 total significant SNPs within Neosho Smallmouth Bass
+      colnames(sig_label_neosho) <- c("selection")
+non_sig_label_neosho <- as.data.frame(c(rep("insignificant", times = 50783)))
+      colnames(non_sig_label_neosho) <- c("selection")
+
+#append metadata to each respective dataset
+bayescan_neosho_fst_significant <- cbind(bayescan_neosho_fst_significant, sig_label_neosho)
+bayescan_neosho_fst_not_significant <- cbind(bayescan_neosho_fst_not_significant, non_sig_label_neosho)
+
+#combine both significant and non-significant datasets into one dataset with all data, now appropriately labeled
+bayescan_neosho_fst_ready <- rbind(bayescan_neosho_fst_significant, bayescan_neosho_fst_not_significant)
+```
+
+## Get Significant and Insignificant SNPs for Northern data only
+```{r}
+bayescan_northern_fst_significant <- bayes_northern_fst %>% 
+      filter(logPO >= 1.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
+
+bayescan_northern_fst_not_significant <- bayes_northern_fst %>% 
+      filter(logPO < 1.5) #extract only SNPs with logPO less than 1.5 (not significant)
+
+
+dim(bayescan_northern_fst_significant) # zero significant snps
+dim(bayescan_northern_fst_not_significant) #50,828 neutral snps
+
+
+#create separate columns of metadata for both datasets created in the above step (significant and not significant), which will be later appended to each dataset
+sig_label_northern = as.data.frame(c(rep("significant", times = 0))) #no significant snps
+      colnames(sig_label_northern) <- c("selection")
+non_sig_label_northern <- as.data.frame(c(rep("insignificant", times = 50828))) #all non-significant snps
+      colnames(non_sig_label_northern) <- c("selection")
+
+#append metadata to each respective dataset
+bayescan_northern_fst_significant <- cbind(bayescan_northern_fst_significant, sig_label_northern)
+bayescan_northern_fst_not_significant <- cbind(bayescan_northern_fst_not_significant, non_sig_label_northern)
+
+#combine both significant and non-significant datasets into one dataset with all data, now appropriately labeled
+bayescan_northern_fst_ready <- rbind(bayescan_northern_fst_significant, bayescan_northern_fst_not_significant)
+```
+
+## Filter datasets to omit SNPs with PO values of 1000 (because they distort the figure. Add the number of SNPs at 1000 to the final count of loci under selection)
+```{r}
+
+###smallmouth bass samples
+bayescan_all_fst_1000s <- bayescan_all_fst_ready %>% 
+      filter(logPO >= 1000) #extract only snps with logPO greater than or equal to 1000
+bayescan_all_fst_not1000 <- bayescan_all_fst_ready %>% 
+      filter(logPO < 1000) #extract only snps with log10 less than 1000
+
+###smallmouth bass samples
+bayescan_smb_fst_1000s <- bayescan_smb_fst_ready %>% 
+      filter(logPO >= 1000) #extract only snps with logPO greater than or equal to 1000
+bayescan_smb_fst_not1000 <- bayescan_smb_fst_ready %>% 
+      filter(logPO < 1000) #extract only snps with log10 less than 1000
+
+###neosho samples
+bayescan_neosho_fst_1000s <- bayescan_neosho_fst_ready %>% 
+      filter(logPO >= 1000) #extract only snps with logPO greater than or equal to 1000, #only one is 1000, so 44 SNPs out of 45 will be in the figure
+bayescan_neosho_fst_not1000 <- bayescan_neosho_fst_ready %>% 
+      filter(logPO < 1000) #extract only snps with log10 less than 1000
+
+###northern samples
+bayescan_northern_fst_1000s <- bayescan_northern_fst_ready %>% 
+      filter(logPO >= 1000) #extract only snps with logPO greater than or equal to 1000
+bayescan_northern_fst_not1000 <- bayescan_northern_fst_ready %>% 
+      filter(logPO < 1000) #extract only snps with log10 less than 1000
+
+```
+
+## Plot Results
+
+The Plot Results section uses the full dataset produced in the Data Filtering section to plot Bayescan results for visualization
+
+```{r}
+#plot outliers separately - each plot will show logPO on the x axis and fst on the y axis, with significance (selection) shown in different colors
+
+#Plot All samples
+all_bayes_plot <- ggplot(bayescan_all_fst_not1000, aes(x = logPO, y = fst, color = selection)) + #make plot from non-1000 logPO for all SMB 
+      geom_point(show.legend = F) + #do not show legend on the plot itself
+      geom_vline(xintercept = 1.5, linetype = "longdash") + #add a vertical line at the x value 1.5, and make it a dashed line
+      theme_set(theme_cowplot(12)) + #set ggplot to cowplot style 12 (gets rid of grid lines)
+      scale_color_manual(values = c("red","black")) + #set the color of points to black
+      labs(x = "Log10(Posterior Odds)", y = "FST") + #re-name the labels for the x and y axis
+      theme(axis.title = element_text(size = 15, color = "black")) + #make the axis titles size 15
+      theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
+      theme(axis.line = element_line(color = "black")) +
+      theme(axis.ticks = element_line(color = "black")) +
+      theme(axis.title.x = element_blank())
+
+#Plot smallmouth bass outliers
+smb_bayes_plot <- ggplot(bayescan_smb_fst_not1000, aes(x = logPO, y = fst, color = selection)) + #make plot from non-1000 logPO for all SMB 
+      geom_point(show.legend = F) + #do not show legend on the plot itself
+      geom_vline(xintercept = 1.5, linetype = "longdash") + #add a vertical line at the x value 1.5, and make it a dashed line
+      theme_set(theme_cowplot(12)) + #set ggplot to cowplot style 12 (gets rid of grid lines)
+      scale_color_manual(values = c("red","black")) + #set the color of points to black
+      labs(x = "Log10(Posterior Odds)", y = "FST") + #re-name the labels for the x and y axis
+      theme(axis.title = element_text(size = 15, color = "black")) + #make the axis titles size 15
+      theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
+      theme(axis.line = element_line(color = "black")) +
+      theme(axis.ticks = element_line(color = "black")) +
+      theme(axis.title.x = element_blank()) +
+      theme(axis.title.y = element_blank())
+
+#Plot neosho outliers
+neosho_bayes_plot <- ggplot(bayescan_neosho_fst_not1000, aes(x = logPO, y = fst, color = selection)) + #make plot from non-1000 logPO for neosho only
+      geom_point(show.legend = F) + #do not show legend on the plot itself
+      geom_vline(xintercept = 1.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
+      theme_set(theme_cowplot(12)) + #set ggplot to cowplot style 12 (gets rid of grid lines)
+      scale_color_manual(values = c("red","black")) + #set the color of non-significant points to black and significant points to red
+      labs(x = "Log10(Posterior Odds)", y = "FST") + #re-name the labels for the x and y axis
+      theme(axis.title = element_text(size = 15, color = "black")) + #make the axis titles size 15
+      theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
+      theme(axis.line = element_line(color = "black")) +
+      theme(axis.ticks = element_line(color = "black")) 
+
+#Plot northern outliers
+northern_bayes_plot <- ggplot(bayescan_northern_fst_not1000, aes(x = logPO, y = fst, color = selection)) + 
+      geom_point(show.legend = F) + #do not show legend on the plot itself
+      geom_vline(xintercept = 1.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
+      theme_set(theme_cowplot(12)) + #set ggplot to cowplot style 12 (gets rid of grid lines)
+      scale_color_manual(values = c("black")) + #set the color of points to black
+      labs(x = "Log10(Posterior Odds)", y = "FST") + #re-name the labels for the x and y axis
+      theme(axis.title = element_text(size = 15, color = "black")) + #make the axis titles size 15
+      theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
+      theme(axis.title.y = element_blank()) + #get rid of the y axis label
+      theme(axis.line = element_line(color = "black")) +
+      theme(axis.ticks = element_line(color = "black"))
+   
+#Put Bayescan plots together
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Bayescan/bayescan_plots.pdf", width=13, height=10)
+
+plot_grid(all_bayes_plot, smb_bayes_plot, neosho_bayes_plot, northern_bayes_plot, nrow = 2, labels = c("a","b","c","d"), label_size = 25, align = "hv")
+
+dev.off()
+```
+
+
+# PCADAPT ANALYSIS
+## Read in BED/BIM/FAM files for PCADAPT
+
+### The Read in BED/BIM/FAM for PCAdapt seciton takes as input the output from the Linux program PLINK. The PCAdapt R script has a built-in function to read-in BED, BIM, and FAM formatted files for PCA. 
+```{r, include=FALSE}
+#read_in vcf for pcadapt
+##the only file I need is the one for Neosho Smallmouth Bass only - this was the only dataset that produced any significant snps, and since we are looking for overlap in significant snps between pcadapt and bayescan, we only need to look at the Neosho samples.
+
+#In order to read in the .bed file, it is also necessary to have the .bim and .fam files in the same directory as the .bed file, because they provide necessary metadata for the read-in. Without these other two complementary files, this code will not work
+
+read_all_bed <- read.pcadapt("../../raw_data/outlier_fst_data/pcadapt_data/pass2_noBFC10.bed", type = "bed") #50,828 SNPs kept, 91 samples
+
+read_smb_bed <- read.pcadapt("../../raw_data/outlier_fst_data/pcadapt_data/pass2_noBFC10_smb.bed", type = "bed") #50,828 SNPs kept, 87 samples
+
+read_neo_bed <- read.pcadapt("../../raw_data/outlier_fst_data/pcadapt_data/pass2_noBFC10_neosho.bed", type = "bed", type.out = c("matrix")) #50,828 SNPs kept, 63 samples
+read_nor_bed <- read.pcadapt("../../raw_data/outlier_fst_data/pcadapt_data/pass2_noBFC10_northern.bed", type = "bed") #50,828 SNPs kept, 24 samples
+
+str(read_all_bed)
+```
+
+## Metadata for Plotting
+```{r}
+filtered_vcf_snp_ids <- read_excel("../../metadata/snp_ids.xlsx") #This is a file with individual, unique IDs for each SNP, which will be appended to the final dataset
+snp_ids_with_pos <- read_excel("../../metadata/snp_ids_with_pos.xlsx") #This is a file with individual SNP IDs and positions for each SNP in the total dataset (50,828 snps)
+
+##Population Metadata
+filtered_metadata_all <- read_excel("../../metadata/genomics_metadata_filtered_noBFC10.xlsx") %>%
+   as.data.frame() #This is the metadata for all individuals
+
+filtered_metadata_smb <- read_excel("../../metadata/genomics_metadata_filtered_smb_noBFC10.xlsx") %>%
+   as.data.frame() #This is the metadata for only SMB individuals
+
+filtered_metadata_neosho <- read_excel("../../metadata/genomics_metadata_filtered_smb_noBFC10.xlsx") %>%
+   as.data.frame() %>%
+   filter(species == "Neosho") #This is the metadata for only Neosho individuals
+
+filtered_metadata_northern <- read_excel("../../metadata/genomics_metadata_filtered_smb_noBFC10.xlsx") %>%
+   as.data.frame() %>%
+   filter(species == "Northern") #This is the metadata for only Neosho individuals
+
+#Population name vectors for PCA mapping
+all_pops <- as.vector(filtered_metadata_all[,-c(1:5)])
+smb_pops <- as.vector(filtered_metadata_smb[,-c(1:4,6)])
+neosho_pops <- as.vector(filtered_metadata_neosho[,-c(1:4,6)])
+northern_pops <- as.vector(filtered_metadata_northern[,-c(1:4,6)])
+```
+
+## Run PCA through PCAdapt to identify outlier SNPs
+```{r}
+#Run PCA for all SNPs to see how many pcs to use
+all_pca <- pcadapt(read_all_bed, K = 20, min.maf = 0.0001) #this runs a PCA for up to K = 20 PCs and keeps SNPs with a minor allele frequency down to 0.0001 
+smb_pca <- pcadapt(read_smb_bed, K = 20, min.maf = 0.0001)
+neosho_pca <- pcadapt(read_neo_bed, K = 20, min.maf = 0.0001)
+northern_pca <- pcadapt(read_nor_bed, K = 20, min.maf = 0.0001)
+
+#Check Scree Plots for all PCAs to see how many PCs to use
+all_scree_plot <- plot(all_pca, option = "screeplot") #2 PCs
+smb_scree_plot <- plot(smb_pca, option = "screeplot") #2 PCs
+neo_scree_plot <- plot(neosho_pca, option = "screeplot") #3 PCs
+nor_scree_plot <- plot(northern_pca, option = "screeplot") #2 PCs
+
+#Rerun PCAs with appropriate number of PCs for each data subset
+all_pca_K2 <- pcadapt(read_all_bed, K = 2, min.maf = 0.0001)
+smb_pca_K2 <- pcadapt(read_smb_bed, K = 2, min.maf = 0.0001)
+neosho_pca_K4 <- pcadapt(read_neo_bed, K = 4, min.maf = 0.0001)
+northern_pca_K3 <- pcadapt(read_nor_bed, K = 3, min.maf = 0.0001)
+
+#Check Score Plots for all PCAs to see what the population structure looks like
+all_pca_plot <- plot(all_pca_K2, option = "scores", pop = all_pops)
+smb_pca_plot <-  plot(smb_pca_K2, option = "scores", pop = smb_pops)
+neosho_pca_plot <- plot(neosho_pca_K4, option = "scores", pop = neosho_pops)
+northern_pca_plot <- plot(northern_pca_K3, option = "scores", pop = northern_pops)
+```
+
+## Make supplementary figures of Scree plots 
+```{r}
+###Datasets for Scree Plots###
+###All Samples - 20 PCs###
+all_pca_root_var <- as.data.frame(all_pca$singular.values)
+colnames(all_pca_root_var) <- c("root_variance")
+all_pca_var <- all_pca_root_var %>%
+   mutate(variance = (root_variance)^2)
+all_pca_var <- rownames_to_column(all_pca_var, "K")
+all_pca_var <- all_pca_var %>% 
+   mutate(K = as.numeric(K))
+
+###All Samples - 2 PCs###
+all_pca_root_var_K2 <- as.data.frame(all_pca_K2$singular.values)
+colnames(all_pca_root_var_K2) <- c("root_variance")
+all_pca_var_K2 <- all_pca_root_var_K2 %>%
+   mutate(variance = (root_variance)^2)
+all_pca_var_K2 <- rownames_to_column(all_pca_var_K2, "K")
+all_pca_var_K2 <- all_pca_var_K2 %>% 
+   mutate(K = as.numeric(K))
+
+###SMB Samples Only - 20 PCs###
+smb_pca_root_var <- as.data.frame(smb_pca$singular.values)
+colnames(smb_pca_root_var) <- c("root_variance")
+smb_pca_var <- smb_pca_root_var %>%
+   mutate(variance = (root_variance)^2)
+smb_pca_var <- rownames_to_column(smb_pca_var, "K")
+smb_pca_var <- smb_pca_var %>% 
+   mutate(K = as.numeric(K))
+
+###SMB Samples Only - 2 PCs###
+smb_pca_root_var_K2 <- as.data.frame(smb_pca_K2$singular.values)
+colnames(smb_pca_root_var_K2) <- c("root_variance")
+smb_pca_var_K2 <- smb_pca_root_var_K2 %>%
+   mutate(variance = (root_variance)^2)
+smb_pca_var_K2 <- rownames_to_column(smb_pca_var_K2, "K")
+smb_pca_var_K2 <- smb_pca_var_K2 %>% 
+   mutate(K = as.numeric(K))
+
+###Neosho Samples Only - 20 PCs###
+neosho_pca_root_var <- as.data.frame(neosho_pca$singular.values)
+colnames(neosho_pca_root_var) <- c("root_variance")
+neosho_pca_var <- neosho_pca_root_var %>%
+   mutate(variance = (root_variance)^2)
+neosho_pca_var <- rownames_to_column(neosho_pca_var, "K")
+neosho_pca_var <- neosho_pca_var %>% 
+   mutate(K = as.numeric(K))
+
+###Neosho Samples Only - 4 PCs###
+neosho_pca_root_var_K4 <- as.data.frame(neosho_pca_K4$singular.values)
+colnames(neosho_pca_root_var_K4) <- c("root_variance")
+neosho_pca_var_K4 <- neosho_pca_root_var_K4 %>%
+   mutate(variance = (root_variance)^2)
+neosho_pca_var_K4 <- rownames_to_column(neosho_pca_var_K4, "K")
+neosho_pca_var_K4 <- neosho_pca_var_K4 %>% 
+   mutate(K = as.numeric(K))
+
+###Northern Samples Only - 20 PCs###
+northern_pca_root_var <- as.data.frame(northern_pca$singular.values)
+colnames(northern_pca_root_var) <- c("root_variance")
+northern_pca_var <- northern_pca_root_var %>%
+   mutate(variance = (root_variance)^2)
+northern_pca_var <- rownames_to_column(northern_pca_var, "K")
+northern_pca_var <- northern_pca_var %>% 
+   mutate(K = as.numeric(K))
+
+###Northern Samples Only - 3 PCs###
+northern_pca_root_var_K3 <- as.data.frame(northern_pca_K3$singular.values)
+colnames(northern_pca_root_var_K3) <- c("root_variance")
+northern_pca_var_K3 <- northern_pca_root_var_K3 %>%
+   mutate(variance = (root_variance)^2)
+northern_pca_var_K3 <- rownames_to_column(northern_pca_var_K3, "K")
+northern_pca_var_K3 <- northern_pca_var_K3 %>% 
+   mutate(K = as.numeric(K))
+
+#Total variantion explained by 20 PCs
+sum(all_pca_var$variance) #96.19% 
+sum(neosho_pca_var$variance) #53.52% 
+sum(smb_pca_var$variance) #59.80% 
+sum(northern_pca_var$variance) #100.05% 
+
+#Total variantion explained by PCs used in analysis
+sum(all_pca_var_K2$variance) #68.68% 
+sum(smb_pca_var_K2$variance) #24.05% 
+sum(neosho_pca_var_K4$variance) #18.78% 
+sum(northern_pca_var_K3$variance) #33.62% 
+
+
+###Scree Plots###
+###All Samples###
+all_pca_scree_plot <- ggplot(all_pca_var, aes(x = K, y = variance)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   geom_vline(xintercept = 2, linetype = "longdash") +
+   scale_x_continuous("K", labels = as.character(all_pca_var$K), breaks = all_pca_var$K) +
+   labs(x = "K", y = "% Variance Explained") +
+   theme_set(theme_cowplot(12)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15)) +
+   theme(axis.title.x = element_text(face = "italic")) +
+   theme(axis.title.x = element_blank()) +
+   theme(axis.text.x = element_blank())
+
+###SMB Samples Only###
+smb_pca_scree_plot <- ggplot(smb_pca_var, aes(x = K, y = variance)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   geom_vline(xintercept = 2, linetype = "longdash") +
+   scale_x_continuous("K", labels = as.character(smb_pca_var$K), breaks = smb_pca_var$K) +
+   labs(x = "K", y = "% Variance Explained") +
+   theme_set(theme_cowplot(12)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15)) +
+   theme(axis.title.x = element_text(face = "italic")) +
+   theme(axis.title.x = element_blank()) +
+   theme(axis.text.x = element_blank())
+
+###Neosho Samples Only###
+neosho_pca_scree_plot <- ggplot(neosho_pca_var, aes(x = K, y = variance)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   geom_vline(xintercept = 4, linetype = "longdash") +
+   scale_x_continuous("K", labels = as.character(neosho_pca_var$K), breaks = neosho_pca_var$K) +
+   labs(x = "K", y = "% Variance Explained") +
+   theme_set(theme_cowplot(12)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15)) +
+   theme(axis.title.x = element_text(face = "italic")) +
+   theme(axis.title.x = element_blank()) +
+   theme(axis.text.x = element_blank())
+
+###Northern Samples Only###
+northern_pca_scree_plot <- ggplot(northern_pca_var, aes(x = K, y = variance)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   geom_vline(xintercept = 3, linetype = "longdash") +
+   scale_x_continuous("K", labels = as.character(northern_pca_var$K), breaks = northern_pca_var$K) +
+   labs(x = "K", y = "% Variance Explained") +
+   theme_set(theme_cowplot(12)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15)) +
+   theme(axis.title.x = element_text(face = "italic")) 
+
+###Combine all Scree Plots###
+all_scree_plots <- plot_grid(all_pca_scree_plot, smb_pca_scree_plot, neosho_pca_scree_plot, northern_pca_scree_plot, nrow = 4, labels = c("a","c","e","g"), label_size = 25)
+
+```
+
+## Make supplementary figures of Scree plots 
+```{r}
+###Datasets for PCA_plots###
+###All Samples###
+all_pca_scores <- as.data.frame(all_pca_K2$scores)
+all_pca_scores <- cbind(data.frame(all_pops), all_pca_scores)
+colnames(all_pca_scores) <- c("pop","PC1","PC2")
+
+###SMB Samples Only ###
+smb_pca_scores <- as.data.frame(smb_pca_K2$scores)
+smb_pca_scores <- cbind(data.frame(smb_pops), smb_pca_scores)
+colnames(smb_pca_scores) <- c("pop","PC1","PC2")
+
+###Neosho Samples Only ###
+neosho_pca_scores <- as.data.frame(neosho_pca_K4$scores)
+neosho_pca_scores <- cbind(data.frame(neosho_pops), neosho_pca_scores)
+colnames(neosho_pca_scores) <- c("pop","PC1","PC2","PC3","PC4")
+
+###Northern Samples Only ###
+northern_pca_scores <- as.data.frame(northern_pca_K3$scores)
+northern_pca_scores <- cbind(data.frame(northern_pops), northern_pca_scores)
+colnames(northern_pca_scores) <- c("pop","PC1","PC2","PC3")
+
+###Plots for PCA Scores###
+###All Samples###
+all_pca_ms_plot <- ggplot(all_pca_scores, aes(x = PC1, y = PC2)) + 
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = T) +
+   labs(x = "PC1 (53.94 %)", y = "PC2 (14.74 %)", fill = "Taxon") +
+   scale_fill_manual(values = c("deepskyblue", "deeppink2", "goldenrod3")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 15)) +
+   theme(legend.title = element_text(face = "bold")) +
+   theme(legend.text = element_text(size = 15)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15))
+
+###SMB Samples Only###
+smb_pca_ms_plot <- ggplot(smb_pca_scores, aes(x = PC1, y = PC2)) + 
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = T) +
+   labs(x = "PC1 (18.50 %)", y = "PC2 (5.55 %)", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","grey","deepskyblue","mediumpurple","forestgreen","navyblue","chocolate1","orchid1","deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 15)) +
+   theme(legend.title = element_text(face = "bold")) +
+   theme(legend.text = element_text(size = 15)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15))
+
+###Neosho Samples Only###
+neosho_pca_ms_plot <- ggplot(neosho_pca_scores, aes(x = PC1, y = PC2)) + 
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = T) +
+   labs(x = "PC1 (6.60 %)", y = "PC2 (5.22 %)", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","grey","deepskyblue","mediumpurple","forestgreen","orchid1")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 15)) +
+   theme(legend.title = element_text(face = "bold")) +
+   theme(legend.text = element_text(size = 15)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15))
+
+###Northern Samples Only###
+northern_pca_ms_plot <- ggplot(northern_pca_scores, aes(x = PC1, y = PC2)) + 
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = T) +
+   labs(x = "PC1 (15.76 %)", y = "PC2 (11.25 %)", fill = "Population") +
+   scale_fill_manual(values = c("navyblue","chocolate1","deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 15)) +
+   theme(legend.title = element_text(face = "bold")) +
+   theme(legend.text = element_text(size = 15)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15))
+
+#combine all PCA score plots 
+all_pca_ms_plots <- plot_grid(all_pca_ms_plot, smb_pca_ms_plot, neosho_pca_ms_plot, northern_pca_ms_plot, nrow = 4, labels = c("b","d","f","h"), label_size = 25)
+
+#Combine all PCAdapt Preliminary Analysis Plots
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Bayescan/pcadapt_plots.pdf", width=16, height=17) 
+
+plot_grid(all_scree_plots, all_pca_ms_plots, ncol = 2)
+
+dev.off()
+
+```
+
+## Outlier SNPs - All Samples
+## Get outlier SNPs using bonferroni p-value corrections
+```{r}
+all_p_vals_pca <- all_pca_K2$pvalues
+
+#IMPORTANT NOTE: 4 SNPs were dropped here, because after removal of BFC10, 4 SNPs appear to be fixed for one allele (homozygous for a single SNP). 
+
+#Adjust and clean p-values
+all_p_vals_bonf <- p.adjust(all_p_vals_pca, method = "bonferroni") #adjust p-values for multiple test with bonferroni correction
+all_p_vals_bonf <- as.data.frame(all_p_vals_bonf) #create dataframe from bonferroni corrected p-values
+all_p_vals_bonf <- cbind(filtered_vcf_snp_ids, all_p_vals_bonf) #append snp ids dataset to corrected p-values
+colnames(all_p_vals_bonf) <- c("snp_id","p_val") #clean dataframe to include appropriate column lables
+all_p_vals_bonf <- all_p_vals_bonf %>%
+   drop_na() #50,824 SNPs left after removing fixed alleles
+
+#Retrieve significant outlier snps
+all_pcadapt_snps_significant <- all_p_vals_bonf %>% 
+   filter(p_val < 0.05) #extract only snps with p-values less than 0.05
+
+all_pcadapt_snps_not_significant <- all_p_vals_bonf %>% 
+   filter(p_val >= 0.05) #extract only snps with p-values greater than or equal to 0.05
+
+#Get the number of significant and non-significant SNPs from PCADAPT
+dim(all_pcadapt_snps_significant) #16,358 SNPs
+dim(all_pcadapt_snps_not_significant) #34,466 SNPs
+
+all_bayescan_pcadapt_outlier_merged <- merge(all_pcadapt_snps_significant, bayescan_all_fst_significant, by = "snp_id")
+all_bayescan_pcadapt_neutral_merged <- merge(all_pcadapt_snps_not_significant, bayescan_all_fst_not_significant, by = "snp_id")
+
+#There are no shared outlier SNPs between datasets, so they will not be analyed further
+```
+
+## Outlier SNPs - SMB Samples Only
+## Get outlier SNPs using bonferroni p-value corrections
+```{r}
+#Get outlier SNPs using various p-value corrections
+smb_p_vals_pca <- smb_pca_K2$pvalues #extract p-values for each snp
+
+###IMPORTANT NOTE: At this point, 7,951 SNPs were dropped from the analysis (and do not have p-values; NAs), because they are not true SNPs. They are fixed SNPs for all Neosho Smallmouth Bass samples. In other words, all 87 Neosho individuals are homozygous for a single allele in this case.
+
+###I thought that, at this point, it may be necessary to re-run my original, hierarchical datasets for SMB only, Neosho SMB only, and Northern SMB only, because minor allele frequency will change when any number of samples are dropped from a dataset. This will affect the number of SNPs that are filtered when different filter thresholds are set (for missing data, heterozygosity, minor allele frequency, etc.). However, I argue that this is NOT necessary, because my original filters were applied to the whole dataset, which is the dataset that was used to call SNPs in the first place. Minor allele frequency thresholds are typically used to filter out samples that have low minor allele frequencies due to sequencing error. Sequencing error should be evaluated at the level of the entire dataset (i.e. including every single sample). If samples are then removed from the dataset post-hoc, that will affect allele frequencies because the total number alleles in the dataset will change. But it will not affect the minor allele frequency due to sequencing errors. After post-hoc sample filtering, we should expect that minor allele frequencies below the originally established threshold are due to differences between the samples and potentially representative of biological differences.
+
+#Adjust and clean p-values
+smb_p_vals_bonf <- p.adjust(smb_p_vals_pca, method = "bonferroni") #adjust p-values for multiple test with bonferroni correction
+smb_p_vals_bonf <- as.data.frame(smb_p_vals_bonf) #create dataframe from bonferroni corrected p-values
+smb_p_vals_bonf <- cbind(filtered_vcf_snp_ids, smb_p_vals_bonf) #append snp ids dataset to corrected p-values
+colnames(smb_p_vals_bonf) <- c("snp_id","p_val") #clean dataframe to include appropriate column lables
+smb_p_vals_bonf <- smb_p_vals_bonf %>%
+   drop_na() #42,877 SNPs left after removing fixed alleles
+
+#Retrieve significant outlier snps
+smb_pcadapt_snps_significant <- smb_p_vals_bonf %>% 
+   filter(p_val < 0.05) #extract only snps with p-values less than 0.05
+
+smb_pcadapt_snps_not_significant <- smb_p_vals_bonf %>% 
+   filter(p_val >= 0.05) #extract only snps with p-values greater than or equal to 0.05
+
+#Get the number of significant and non-significant SNPs from PCADAPT
+dim(smb_pcadapt_snps_significant) #1006 SNPs
+dim(smb_pcadapt_snps_not_significant) #41,871 SNPs
+```
+## MERGE DATASETS
+## Merge datasets for outlier SNPs and neutral SNPs for BAYESCAN and PCADAPT
+```{r}
+#Merge datasets for outlier SNPs and neutral SNPs for BAYESCAN and PCADAPT
+smb_bayescan_pcadapt_outlier_merged <- merge(smb_pcadapt_snps_significant, bayescan_smb_fst_significant, by = "snp_id")
+smb_bayescan_pcadapt_neutral_merged <- merge(smb_pcadapt_snps_not_significant, bayescan_smb_fst_not_significant, by = "snp_id")
+
+#########This is where PCAdapt and Bayescan overlap#############
+
+# 131 SNPs (signficant in both pcadapt analysis and bayescan)
+# 41,236 SNPs (non-significant in both pcadapt analysis and bayescan)
+```
+
+###The Merge Datasets section combines the tabular output of both Bayescan and PCAdapt to identify individual SNPs that are signicant outliers in both types of analyses. SNPs that are identified as outliers in both types of analysis are considered to have stronger support as actual outliers. There are no separate subsections for this section. 
+```{r}
+#Write out tables with merged datasets to be used for making new vcfs with only outliers and only neutral SNPs
+write.table(smb_bayescan_pcadapt_outlier_merged,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/outlier_fst_analysis/smb_bayescan_pcadapt_outlier_merged.txt", sep="\t") #this is the combined dataset with significant snps, written out as a .txt file
+write.table(smb_bayescan_pcadapt_neutral_merged,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/outlier_fst_analysis/smb_bayescan_pcadapt_neutral_merged.txt", sep="\t") #this is the combined dataset with non-significant snps, written out as a .txt file
+
+#Create table for significant snps (including snp id and position)
+smb_sig_snps <- as.data.frame(smb_bayescan_pcadapt_outlier_merged[,c(1)]) #This dataset includes appended the names of each individual SNP
+colnames(smb_sig_snps) <- c("snp_id")
+smb_sig_snps_pos <- merge(smb_sig_snps, snp_ids_with_pos, by = "snp_id")
+
+#Create table for neutral snps (including snp id and position)
+smb_insig_snps <- as.data.frame(smb_bayescan_pcadapt_neutral_merged[,c(1)])
+colnames(smb_insig_snps) <- c("snp_id")
+smb_insig_snps_pos <- merge(smb_insig_snps, snp_ids_with_pos, by = "snp_id")
+```
+
+## Write out separate tables with outlier and neutral snps, respectively, for later analysis
+```{r}
+#Write out separate tables with outlier and neutral snps, respectively, for later analysis
+write.table(smb_sig_snps_pos,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/outlier_fst_analysis/smb_sig_snps.txt", sep="\t") #this is the dataset with only significant snps, including unique SNP ids
+write.table(smb_insig_snps_pos,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/outlier_fst_analysis/smb_insig_snps.txt", sep="\t") #this is the dataset with only significant snps, including unique SNP ids
+
+#IMPORTANT NOTE: both of these tables need to be further edited in excel so that they are compatible with vcftools for later editing. The first column (column identifiers) needs to be omitted, and the RAD_kmer_ tag on each SNP needs to be removed. Also, column headers need to be removed. 
+```
+
+## Outlier SNPs - Neosho Smallmouth Bass
+## Get outlier SNPs using various p-value corrections
+```{r}
+#Get outlier SNPs using various p-value corrections
+neosho_p_vals_pca <- neosho_pca_K4$pvalues #extract p-values for each snp
+
+###IMPORTANT NOTE: At this point, 14,483 SNPs were dropped from the analysis (and do not have p-values; NAs), because they are not true SNPs. They are fixed SNPs for all Neosho Smallmouth Bass samples. In other words, all 63 Neosho individuals are homozygous for a single allele in this case.
+
+#Adjust and clean p-values
+neosho_p_vals_bonf <- p.adjust(neosho_p_vals_pca, method = "bonferroni") #adjust p-values for multiple test with bonferroni correction
+neosho_p_vals_bonf <- as.data.frame(neosho_p_vals_bonf) #create dataframe from bonferroni corrected p-values
+neosho_p_vals_bonf <- cbind(filtered_vcf_snp_ids, neosho_p_vals_bonf) #append snp ids dataset to corrected p-values
+colnames(neosho_p_vals_bonf) <- c("snp_id","p_val") #clean dataframe to include appropriate column lables
+neosho_p_vals_bonf <- neosho_p_vals_bonf %>%
+   drop_na() #36,345 SNPs left after removing fixed alleles
+
+#Retrieve significant outlier snps
+neosho_pcadapt_snps_significant <- neosho_p_vals_bonf %>% 
+   filter(p_val < 0.05) #extract only snps with p-values less than 0.05
+
+neosho_pcadapt_snps_not_significant <- neosho_p_vals_bonf %>% 
+   filter(p_val >= 0.05) #extract only snps with p-values greater than or equal to 0.05
+
+
+#Get the number of significant and non-significant SNPs from PCADAPT
+dim(neosho_pcadapt_snps_significant) #1304 SNPs
+dim(neosho_pcadapt_snps_not_significant) #35,041 SNPs
+```
+## MERGE DATASETS
+## Merge datasets for outlier SNPs and neutral SNPs for BAYESCAN and PCADAPT
+```{r}
+#Merge datasets for outlier SNPs and neutral SNPs for BAYESCAN and PCADAPT
+neosho_bayescan_pcadapt_outlier_merged <- merge(neosho_pcadapt_snps_significant, bayescan_neosho_fst_significant, by = "snp_id")
+neosho_bayescan_pcadapt_neutral_merged <- merge(neosho_pcadapt_snps_not_significant, bayescan_neosho_fst_not_significant, by = "snp_id")
+
+#########This is where PCAdapt and Bayescan overlap#############
+
+# 29 SNPs (signficant in both pcadapt analysis and bayescan)
+# 35,025 SNPs (non-significant in both pcadapt analysis and bayescan)
+```
+
+###The Merge Datasets section combines the tabular output of both Bayescan and PCAdapt to identify individual SNPs that are signicant outliers in both types of analyses. SNPs that are identified as outliers in both types of analysis are considered to have stronger support as actual outliers. There are no separate subsections for this section. 
+```{r}
+#Write out tables with merged datasets to be used for making new vcfs with only outliers and only neutral SNPs
+write.table(neosho_bayescan_pcadapt_outlier_merged,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/outlier_fst_analysis/neosho_bayescan_pcadapt_outlier_merged.txt", sep="\t") #this is the combined dataset with significant snps, written out as a .txt file
+write.table(neosho_bayescan_pcadapt_neutral_merged,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/outlier_fst_analysis/neosho_bayescan_pcadapt_neutral_merged.txt", sep="\t") #this is the combined dataset with non-significant snps, written out as a .txt file
+
+#Create table for significant snps (including snp id and position)
+neosho_sig_snps <- as.data.frame(neosho_bayescan_pcadapt_outlier_merged[,c(1)]) #This dataset includes appended the names of each individual SNP
+colnames(neosho_sig_snps) <- c("snp_id")
+neosho_sig_snps_pos <- merge(neosho_sig_snps, snp_ids_with_pos, by = "snp_id")
+
+#Create table for neutral snps (including snp id and position)
+neosho_insig_snps <- as.data.frame(neosho_bayescan_pcadapt_neutral_merged[,c(1)])
+colnames(neosho_insig_snps) <- c("snp_id")
+neosho_insig_snps_pos <- merge(neosho_insig_snps, snp_ids_with_pos, by = "snp_id")
+```
+
+## Write out separate tables with outlier and neutral snps, respectively, for later analysis
+```{r}
+#Write out separate tables with outlier and neutral snps, respectively, for later analysis
+write.table(neosho_sig_snps_pos,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/outlier_fst_analysis/neosho_sig_snps.txt", sep="\t") #this is the dataset with only significant snps, including unique SNP ids
+write.table(neosho_insig_snps_pos,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/outlier_fst_analysis/neosho_insig_snps.txt", sep="\t") #this is the dataset with only significant snps, including unique SNP ids
+
+#IMPORTANT NOTE: both of these tables need to be further edited in excel so that they are compatible with vcftools for later editing. The first column (column identifiers) needs to be omitted, and the RAD_kmer_ tag on each SNP needs to be removed. Also, column headers need to be removed. 
+```
+
+## Outlier SNPs - Northern Smallmouth Bass
+## Get outlier SNPs using various p-value corrections
+```{r}
+northern_p_vals_pca <- northern_pca_K3$pvalues
+
+#IMPORTANT NOTE: 23,648 SNPs were dropped here, because after removal of BFC10, 4 SNPs appear to be fixed for one allele (homozygous for a single SNP). 
+
+#Adjust and clean p-values
+northern_p_vals_bonf <- p.adjust(northern_p_vals_pca, method = "bonferroni") #adjust p-values for multiple test with bonferroni correction
+northern_p_vals_bonf <- as.data.frame(northern_p_vals_bonf) #create dataframe from bonferroni corrected p-values
+northern_p_vals_bonf <- cbind(filtered_vcf_snp_ids, northern_p_vals_bonf) #append snp ids dataset to corrected p-values
+colnames(northern_p_vals_bonf) <- c("snp_id","p_val") #clean dataframe to include appropriate column lables
+northern_p_vals_bonf <- northern_p_vals_bonf %>%
+   drop_na() #27,180 SNPs left after removing fixed alleles
+
+#Retrieve significant outlier snps
+northern_pcadapt_snps_significant <- northern_p_vals_bonf %>% 
+   filter(p_val < 0.05) #extract only snps with p-values less than 0.05
+
+northern_pcadapt_snps_not_significant <- northern_p_vals_bonf %>% 
+   filter(p_val >= 0.05) #extract only snps with p-values greater than or equal to 0.05
+
+#Get the number of significant and non-significant SNPs from PCADAPT
+dim(northern_pcadapt_snps_significant) #1518 SNPs
+dim(northern_pcadapt_snps_not_significant) #25,662 SNPs
+
+northern_bayescan_pcadapt_outlier_merged <- merge(northern_pcadapt_snps_significant, bayescan_northern_fst_significant, by = "snp_id")
+northern_bayescan_pcadapt_neutral_merged <- merge(northern_pcadapt_snps_not_significant, bayescan_northern_fst_not_significant, by = "snp_id")
+
+#There are no shared outlier SNPs between datasets, so they will not be analyed further
+```

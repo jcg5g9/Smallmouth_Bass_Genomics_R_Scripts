@@ -1,0 +1,482 @@
+---
+title: "SMB_GENOMICS_ADMIXTURE"
+author: "Joe Gunn"
+date: "10/30/2019"
+output: html_document
+---
+
+## Libraries needed for analysis
+```{r setup, echo = FALSE, include=FALSE}
+library(radiator)
+library(readxl)
+library(tidyverse)
+library(cowplot)
+library(devtools)
+library(SNPRelate)
+library(vcfR)
+library(pophelper)
+library(PopGenome)
+```
+
+## Genomics Metadata
+```{r METADATA}
+#Read in filtered SMB Genomics metadata. This file should include 92 individuals that passed filters for low genotype calls
+genomics_metadata <- read_excel("../../metadata/genomics_metadata_filtered.xlsx")
+
+#Clean metadata
+genomics_metadata <- as.data.frame(genomics_metadata)
+genomics_metadata <- column_to_rownames(genomics_metadata, "na")
+
+
+#Filter data file for only Smallmouth Bass and INCLUDING the SMB X SPB (Spotted Bass) hybrid (BFC10)
+genomics_metadata_hybrid_smb <- genomics_metadata %>%
+   filter(species != "Spotted Bass")
+
+genomics_metadata_hybrid_neosho <- genomics_metadata_hybrid_smb %>%
+   filter(species != "Northern")
+
+genomics_metadata_hybrid_northern <- genomics_metadata_hybrid_smb %>%
+   filter(species != "Neosho")
+
+
+#Filter data file for only Smallmouth Bass and EXCLUDING the SMB X SPB (Spotted Bass) hybrid (BFC10)
+genomics_metadata_nohybrid_all <- genomics_metadata %>%
+   filter(sample_id != "BFC10")
+
+genomics_metadata_nohybrid_smb <- genomics_metadata %>% 
+   filter(species != "Spotted Bass") %>% filter(sample_id != "BFC10") #EXCLUDE THE HYBRID BFC10
+
+#Filter data file for only Neosho Smallmouth Bass
+genomics_metadata_nohybrid_neosho <- genomics_metadata_nohybrid_smb %>% 
+   filter(species != "Northern")
+
+genomics_metadata_nohybrid_northern <- genomics_metadata_nohybrid_smb %>%
+   filter(species != "Neosho")
+
+```
+
+## Admixture Analyses
+### All visualization done using the library "pophelper"
+## Screen for Species-level hybridization between Smallmouth Bass and Spotted Bass
+```{r}
+#Read-in ADMIXTURE q-value results for all samples at best K value (best K = 4)
+admix_spb_screen <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_all/pass2_all.4.Q") # K=4 was the best supported value of K at CV = 0.253
+
+#Plot ADMIXTURE results for K = 4 for all samples (92) to screen for spotted bass and smallmouth bass hybrids. Any hybrids will be removed from downstream analysis
+
+plotQ(admix_spb_screen,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","ER35","ER20","SPRMO11","ER33","ER17","ER30","ER44","MI419","GLVR4","SPRMO19","NOIS18","BC01","BC07","BC14","MI425","SPVW12","SPVW07","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","SPVW02","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","BFC10","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
+      clustercol = c("forestgreen","goldenrod3","deepskyblue","deeppink2"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/SPB_X_SMB_screen",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+```
+
+## Create hierarchical structure plots for all samples, including the hybrid discovered above (BFC10)
+```{r}
+# #Here I am running hierarchical structure analyses for Smallmouth Bass only (SMB), Neosho Smallmouth Bass only (NEO), and Northern Smallmouth Bass only (NOR), INCLUDING the hybrid detected above (BCF10).I identified a single potential SMB X SPB (spotted bass) hybrid based on the structure results above. I would like to know if including the hybrid in analysis of population structure - using ADMIXTURE - will change results for the best supported number of clusters. So, I am building ADMIXTURE diagrams for each hierarchical level: all samples (completed above), Smallmouth bass only, Neosho Smallmouth Bass only, Northern Smallmouth Bass only.
+
+####Read in ADMIXTURE Q result files
+
+admix_with_hybrid_smb <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_smb/pass2_all_smb.5.Q") # K=5 was the best supported value of K with CV error = 0.288
+
+admix_with_hybrid_neosho <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_neosho/pass2_all_neosho.1.Q") # K=1 was the best supported value of K with CV error = 0.294
+
+admix_with_hybrid_northern <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_northern/pass2_all_northern.1.Q") # K=1 was the best supported value of K with CV error = 0.306
+
+###SMALLMOUTH BASS ONLY###
+plotQ(admix_with_hybrid_smb,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_hybrid_smb,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","ER35","ER20","SPRMO11","ER33","ER17","ER30","ER44","MI419","GLVR4","SPRMO19","NOIS18","BC01","BC07","BC14","MI425","SPVW12","SPVW07","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","SPVW02","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","BFC10","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
+      clustercol = c("deepskyblue", "deeppink2", "mediumpurple", "forestgreen","chocolate1"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.8, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/admixture_withhybrid_smb_k5",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+###NEOSHO ONLY###
+plotQ(admix_with_hybrid_neosho,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_hybrid_neosho,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("ER35","ER20","SPRMO11","ER33","ER17","ER30","ER44","MI419","GLVR4","SPRMO19","NOIS18","BC01","BC07","BC14","MI425","SPVW12","SPVW07","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","SPVW02","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","BFC10","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
+      clustercol = c("deepskyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/admixture_withhybrid_neosho_k1",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+###NORTHERN ONLY###
+plotQ(admix_with_hybrid_northern,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_hybrid_northern,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03"),
+      clustercol = c("deeppink2"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 2, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/admix_withhybrid_northern_k1",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+```
+
+## Create hierarchical structure plots for all non-hybrid samples, excluding the hybrid discovered above (BFC10)
+```{r}
+#Here I am running hierarchical structure analyses for all samples (ALL), Smallmouth Bass only (SMB), Neosho Smallmouth Bass only (NEO), and Northern Smallmouth Bass only (NOR), EXCLUDING the hybrid detected above (BCF10). These results will be used to show if there is a difference in structure inferred when hybrids between species are included or not included in the analysis.
+
+####Read in ADMIXTURE Q result files
+
+admix_nohybrid_all <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_all/pass2_noBFC10.5.Q") # K=5 was the best supported value of K with CV error = 0.25002 (vs. K = 4, which had a best K value of 0.2501)
+
+admix_nohybrid_smb <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.3.Q") # K=3 was the best supported value of K with CV error = 0.254
+
+admix_nohybrid_neosho <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_neosho/pass2_noBFC10_neosho.3.Q") # K=3 was the best supported value of K with CV error = 0.256
+
+admix_nohybrid_northern <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_northern/pass2_noBFC10_northern.1.Q") # K=1 was the best supported value of K with CV error = 0.306
+
+
+###ALL SAMPLES###
+plotQ(admix_nohybrid_all,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_nohybrid_all,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","ER35","ER20","SPRMO11","ER33","ER30","ER17","ER44","GLVR4","MI419","BC07","BC14","MI425","SPVW12","SPVW07","SPVW02","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","BC01","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","NOIS18","SPRMO19","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR19","AR18","AR21","AR16"),
+      clustercol = c("forestgreen", "goldenrod3", "navyblue", "deepskyblue", "deeppink2"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/admix_NOhybrid_all_k5",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+###SMALLMOUTH BASS ONLY###
+plotQ(admix_nohybrid_smb,
+      showindlab = T, 
+      useindlab=F,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_nohybrid_smb,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","ER35","ER20","SPRMO11","ER33","ER30","ER17","ER44","GLVR4","MI419","BC07","BC14","MI425","SPVW12","SPVW07","SPVW02","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","BC01","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","NOIS18","SPRMO19","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR19","AR18","AR21","AR16"),
+      clustercol = c("deeppink2", "forestgreen", "deepskyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = F, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k3",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+###NEOSHO SMALLMOUTH BASS ONLY###
+plotQ(admix_nohybrid_neosho,
+      showindlab = T, 
+      useindlab=F,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_nohybrid_neosho,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("ER35","ER20","SPRMO11","ER33","ER30","ER17","ER44","GLVR4","MI419","BC07","BC14","MI425","SPVW12","SPVW07","SPVW02","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","BC01","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","NOIS18","SPRMO19","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR19","AR18","AR21","AR16"),
+      clustercol = c("deeppink2", "forestgreen", "deepskyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = F, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/admix_NOhybrid_neosho_k3",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+###NORTHERN SMALLMOUTH BASS ONLY###
+plotQ(admix_nohybrid_northern,
+      showindlab = T, 
+      useindlab=F,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_nohybrid_northern,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03"),
+      clustercol = c("deeppink2"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = F, 
+      divsize = 2, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/admix_NOhybrid_northern_k1",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+```
+
+# CV Error
+###All analyses were conducted in base R
+## Cross-validation (10-fold) error results for ADMIXTURE analyses
+```{r}
+#For each admixture analysis that I ran, I conducted a 10-fold cross validation to obtain error values for each value of K. The K value with the lowest cross-validation error is the K that is most likely given the data. Here I am graphing the cross-validation error values across all K for each analysis (hierarchical analysis for all samples, INCLUDING the hybrid, and hierarchial analysis for all samples, EXCLUDING the hybrid)
+
+#Read in data for all samples INCLUDING the Hybrid (BFC10)
+cv_all_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_all_samples_all_filters_withhybrids.xlsx")
+cv_smb_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_smb_all_filters_withhybrids.xlsx")
+cv_neosho_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_neosho_all_filters_withhybrids.xlsx")
+cv_northern_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_northern_all_filters_withhybrids.xlsx")
+
+#Clean data for all samples, including the hybrid
+cv_all_withhybrids <- as.data.frame(cv_all_withhybrids)
+cv_smb_withhybrids <- as.data.frame(cv_smb_withhybrids)
+cv_neosho_withhybrids <- as.data.frame(cv_neosho_withhybrids)
+cv_northern_withhybrids <- as.data.frame(cv_northern_withhybrids)
+
+
+#Read in data for all samples EXCLUDING the Hybrid (BFC10)
+cv_all_nohybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples_noBFC10/cv_all_samples_all_filters_NOhybrids.xlsx")
+cv_smb_nohybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples_noBFC10/cv_smb_all_filters_NOhybrids.xlsx")
+cv_neosho_nohybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples_noBFC10/cv_neosho_all_filters_NOhybrids.xlsx")
+cv_northern_nohybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples_noBFC10/cv_northern_all_filters_NOhybrids.xlsx")
+
+#Clean data for all samples, excluding the hybrid
+cv_all_nohybrids <- as.data.frame(cv_all_nohybrids)
+cv_smb_nohybrids <- as.data.frame(cv_smb_nohybrids)
+cv_neosho_nohybrids <- as.data.frame(cv_neosho_nohybrids)
+cv_northern_nohybrids <- as.data.frame(cv_northern_nohybrids)
+
+###CV ERROR PLOTS####
+
+###CV ERROR PLOTS FOR ALL SAMPLES, INCLUDING HYBRIDS####
+
+#cv error plot for all samples
+cv_all_withhybrids_plot <- ggplot(cv_all_withhybrids, aes(x = k, y = cv)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_all_withhybrids$k), breaks = cv_all_withhybrids$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) + 
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.title.x = element_blank())
+
+#cv error for SMB samples only
+cv_smb_withhybrids_plot <- ggplot(cv_smb_withhybrids, aes(x = k, y = cv)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_smb_withhybrids$k), breaks = cv_smb_withhybrids$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.title.x = element_blank())
+
+#cv error for NEOSHO (NEO) samples only
+cv_neosho_withhybrids_plot <- ggplot(cv_neosho_withhybrids, aes(x = k, y = cv)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_neosho_withhybrids$k), breaks = cv_neosho_withhybrids$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) + 
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.title.x = element_blank())
+
+#cv error for NORTHERN (NOR) samples only
+cv_northern_withhybrids_plot <- ggplot(cv_northern_withhybrids, aes(x = k, y = cv)) +
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_northern_withhybrids$k), breaks = cv_northern_withhybrids$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) +
+   theme(axis.title = element_text(size = 20))
+
+
+###CV ERROR PLOTS FOR ALL SAMPLES, EXCLUDING HYBRIDS####
+
+#cv error plot for all samples, NO HYBRIDS
+cv_all_nohybrids_plot <- ggplot(cv_all_nohybrids, aes(x = k, y = cv)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_all_nohybrids$k), breaks = cv_all_nohybrids$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.title = element_blank())
+
+#cv error for SMB samples only, NO HYBRIDS
+cv_smb_nohybrids_plot <- ggplot(cv_smb_nohybrids, aes(x = k, y = cv)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_smb_nohybrids$k), breaks = cv_smb_nohybrids$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.title = element_blank())
+
+#cv error for NEOSHO (NEO) samples only, NO HYBRIDS
+cv_neosho_nohybrids_plot <- ggplot(cv_neosho_nohybrids, aes(x = k, y = cv)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_neosho_nohybrids$k), breaks = cv_neosho_nohybrids$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) + 
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.title = element_blank())
+
+#cv error for NORTHERN (NOR) samples only, NO HYBRIDS
+cv_northern_nohybrids_plot <- ggplot(cv_northern_nohybrids, aes(x = k, y = cv)) +
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_northern_nohybrids$k), breaks = cv_northern_nohybrids$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.title.y = element_blank())
+
+
+###Combine CV Error Plots into two columns, column 1 with hybrids, column 2 without hybrids
+cv_withhybrids_combined <- plot_grid(cv_all_withhybrids_plot, cv_smb_withhybrids_plot, cv_neosho_withhybrids_plot, cv_northern_withhybrids_plot, nrow = 4, ncol =1, labels = c("a","b","c","d"), label_size = 25, label_y = 1.04)
+
+cv_nohybrids_combined <- plot_grid(cv_all_nohybrids_plot, cv_smb_nohybrids_plot, cv_neosho_nohybrids_plot, cv_northern_nohybrids_plot, nrow = 4, ncol =1, labels = c("e","f","g","h"), label_size = 25, label_y = 1.04)
+
+
+###Combine CV plots for all samples, both with and without hybrids, into a single figure
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Admixture/cv_error_plot.pdf", width=16, height=20) 
+
+plot_grid(cv_withhybrids_combined, cv_nohybrids_combined, ncol = 2)
+
+dev.off()
+```
