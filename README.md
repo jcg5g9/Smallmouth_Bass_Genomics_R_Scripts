@@ -64,3 +64,7 @@ Purpose: Here I am generating a map for easily displaying my sample distribution
 ### Genomic Date used:
 
 #### Shape files downloaded online through ARCgis for North America, USA, States in the USA, Canada, Smallmouth Bass native species distributions, and rivers in teh Central Interior Highlands
+
+# Unused Code
+
+All code in this file is miscellaneous, unused code from the SMB Genomics R project

@@ -1,0 +1,146 @@
+---
+title: "SMB_UNUSED_STUFF"
+author: "Joe Gunn"
+date: "3/26/2020"
+output: html_document
+---
+
+
+
+```{r}
+#Run first pass analysis with 30 replicates
+cv_dapc <- xvalDapc(smb_noBFC10_genind, smb_phylo_pops_noBFC10, n.pca.max = 100, training.set = 0.9, result = "groupMean", xval.plot = TRUE)
+#n.rep = 30 (default)
+
+cv_dapc[2:6]
+
+
+#10 PCs results in highest mean success of placing individuals in original populations
+#10 PCs results in the lowest mean squared error (MSE)
+
+
+cv_dapc_results <- as.data.frame(cv_dapc$`Cross-Validation Results`)
+cv_dapc_results_summary <- cv_dapc_results %>% group_by(n.pca) %>% summarize(mean = mean(success), sd = sd(success))
+
+
+
+dapc_pass1 <- ggplot(cv_dapc_results_summary, aes(x = n.pca, y = mean)) + geom_point() + geom_errorbar(aes(ymax = mean + sd, ymin = mean - sd, width = 1)) + scale_x_continuous("Number of Principal Components", labels = as.character(cv_dapc_results_summary$n.pca), breaks = cv_dapc_results_summary$n.pca) + theme_set(theme_cowplot(12)) + labs(y = "Proportion Classified Successfully") + theme(axis.title = element_text(size = 15)) + theme(axis.text = element_text(size = 15)) + theme(axis.title.x = element_blank())
+
+
+
+###############
+
+#Run second pass analysis between pcs 2 and 30 (the straight linein the abvoe plot, with 1000 reps per number of PCs)
+cv_dapc_narrow <- xvalDapc(smb_noBFC10_genind, smb_phylo_pops_noBFC10, n.pca = 2:30, n.rep = 1000, result = "groupMean", xval.plot = TRUE)
+
+cv_dapc_narrow[2:6]
+
+cv_narrow_results <- as.data.frame(cv_dapc_narrow$`Cross-Validation Results`)
+
+#Best number of pcs = 9 pcs, 82.27 % success
+#Root mean squared error lowest = 6 pcs, 0.1951
+
+cv_narrow_results_other <- cv_narrow_results %>% group_by(n.pca) %>% summarize(mean = mean(success), sd = sd(success))
+
+dapc_pass2 <- ggplot(cv_narrow_results_other, aes(x = n.pca, y = mean)) + geom_point() + geom_errorbar(aes(ymax = mean + sd, ymin = mean - sd, width = 1)) + scale_x_continuous("Number of Principal Components", labels = as.character(cv_narrow_results_other$n.pca), breaks = cv_narrow_results_other$n.pca) + theme_set(theme_cowplot(12)) + theme(axis.title = element_text(size = 15)) + theme(axis.text = element_text(size = 15)) + labs(y = "Proportion Classified Successfully")
+
+
+#Both Plots together
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Projects/Smallmouth_Bass_Genomics/SMB_GENOMICS_REVAMPED/dapc_cv_plots.pdf", width=10, height=12)
+
+plot_grid(dapc_pass1, dapc_pass2, nrow = 2, labels = c("a", "b"), label_size = 20, label_x = 0, label_y = 1.02)
+
+dev.off()
+
+
+```
+
+
+```{r}
+
+#Run DAPC
+all_clusters <- find.clusters(all_noBCF10_genind, max.n.clust = 40)
+all_dapc1 <- dapc(all_noBCF10_genind, all_clusters$grp)
+
+#8 clusters
+               
+all_dapc1$posterior
+contrib <- loadingplot(all_dapc1$var.contr, axis = 1, thres = 0.0003, lab.jitter = 1)
+all_dapc1$var.contr
+## INFO #########################
+#Number of PCs retained: 6
+#Number of discriminant functions used: 3
+#################################
+
+all_clusters$grp
+
+
+#Plot DAPC
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Projects/Smallmouth_Bass_Genomics/SMB_GENOMICS_REVAMPED/DAPC_all_plot.pdf", width=8, height=5) 
+
+scatter(dapc_all_noBFC10_bypop, posi.da = "bottomleft", scree.pca = T, posi.pca = "topleft", bg = "white", ratio.pca = 0.3, cex = 3, cell = 0, col = c("navyblue","forestgreen","chocolate1","deeppink2","darkviolet","goldenrod3", "cyan", "seagreen2"))
+
+dev.off()
+
+```
+
+#Run DAPC for just smallmouth bass samples
+
+```{r}
+smb_clusters <- find.clusters(smb_genind, max.n.clust = 40)
+
+smb_dapc1 <- dapc(smb_genind, smb_clusters$grp)
+
+
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Projects/Smallmouth_Bass_Genomics/SMB_GENOMICS_REVAMPED/DAPC_all_plot.pdf", width=8, height=5) 
+
+scatter(smb_dapc1, posi.da = "topleft", scree.pca = T, posi.pca = "bottomleft", bg = "white", ratio.pca = 0.3, cex = 3, cell = 0, col = c("forestgreen","navyblue","darkviolet","cyan","deeppink2","goldenrod3"))
+
+dev.off()
+
+#get data for K=7
+smb_group_members_k6 <- as.data.frame(smb_clusters$grp)
+smb_clusters$grp
+
+bic_stats_k7 <- as.data.frame(smb_clusters$Kstat)
+
+#Write out group membershp data to useable table
+write.table(group_members_k7,"~/Desktop/Grad_School_Stuff/Projects/Smallmouth_Bass_Genomics/SMB_GENOMICS_REVAMPED/DAPC_group_membership_K7.txt", sep="\t")
+
+
+```
+
+``{r setup, include=FALSE}
+library(radiator)
+library(readxl)
+library(tidyverse)
+library(cowplot)
+library(devtools)
+library(SNPRelate)
+library(vcfR)
+library(pophelper)
+library(PopGenome)
+library(pcadapt)
+source("./vcf2sfs.r")
+```
+
+```{r}
+
+
+# Site Frequency Spectra 
+
+##The site frequency spectrum (SFS) is calculated for each population separately. The SFS is a vector of integer values, with each integer having a corresponding x and y coordinate. the x coordinate is the derived allele frequency - first number in the list corresponds to an allele frequency of 0%, and the last number in the list corresponds to an allele frequency of 1%. The y coordinate, or the number value itself, is the number of SNP loci that have the corresponding allele frequency. 
+
+```{r}
+#All samples
+
+#SFS pop 1
+
+vcf2dadi("./vcf_files/vcf_filtered.vcf","bayescan_all_species.txt","pop1.fs", 1)
+
+vcf2dadi("./vcf_files/vcf_filtered_neosho.vcf", "smb_neosho_pops.txt","pop1.fs", 1, n.digit = 4)
+vcf2dadi("./vcf_files/vcf_filtered_neosho.vcf", "smb_neosho_pops.txt","pop2.fs", 2, n.digit = 4)
+vcf2dadi("./vcf_files/vcf_filtered_neosho.vcf", "smb_neosho_pops.txt","pop3.fs", 3, n.digit = 4)
+vcf2dadi("./vcf_files/vcf_filtered_neosho.vcf", "smb_neosho_pops.txt","pop4.fs", 4, n.digit = 4)
+
+```
