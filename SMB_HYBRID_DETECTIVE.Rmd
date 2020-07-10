@@ -1,0 +1,31 @@
+---
+title: "SMB_HYBRID_DETECTIVE"
+author: "Joe Gunn"
+date: "7/10/2020"
+output: html_document
+---
+
+## Libraries needed for analysis
+```{r}
+library(genepopedit)
+library(parallelnewhybrid)
+library(hybriddetective)
+```
+
+## Get top 200 diagnostic loci
+```{r}
+#Expore genepop data using genepopedit package
+genepop_detective("../../raw_data/genepop_data/hsyc_white_pure_genepop.txt", variable = "PopNum")
+genepop_detective("../../raw_data/genepop_data/hsyc_white_pure_genepop_2pop.txt", variable = "PopNum")
+genepop_flatten("../../raw_data/genepop_data/hsyc_white_pure_genepop_2pop.txt")
+
+#create a dataframe to designate two different populations (Pure Neosho, Pure Northern)
+pop_rename <- data.frame(Opop = c("","","","","","","","","","","","","","","","","",""), Rename = c("HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+
+#Designate the two different populations (Pure Neosho, Pure Northern)
+subset_genepop_rename("../../raw_data/genepop_data/hsyc_white_pure_genepop.txt", pop_rename, path = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/hsyc_white_pure_genepop_2pop.txt")
+
+#Run command to extract the top 200 diagnositic SNPs (with highest Fst values) across pure Neosho and Northern populations. Both PGDSpider and PLINK needed to be installed on my local computer, and the respective paths to both exectuables are given in this function. 
+getTopLoc(GPD = "../../raw_data/genepop_data/hsyc_white_pure_genepop_2pop.txt", panel.size = 200,
+where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5", where.PLINK = "/Users/joegunn/Downloads")
+```
