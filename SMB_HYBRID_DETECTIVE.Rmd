@@ -35,5 +35,5 @@ pop_rename_skia <- data.frame(Opop = c("","","","","","","","","","","","",""), 
 
 #Run command to extract the top 200 diagnositic SNPs (with highest Fst values) across pure Neosho and Northern populations. Both PGDSpider and PLINK needed to be installed on my local computer, and the respective paths to both exectuables are given in this function. 
 getTopLoc(GPD = "../../raw_data/genepop_data/hsyc_white_pure_genepop_2pop.txt", panel.size = 200,
-where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616")
+where.PGDspider = "./PGDSpider_2.1.1.5", where.PLINK = "./plink_ng_master/1.9")
 ```
