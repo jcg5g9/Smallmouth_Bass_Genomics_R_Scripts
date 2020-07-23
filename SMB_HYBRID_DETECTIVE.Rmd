@@ -24,6 +24,9 @@ genepop_detective("../../raw_data/genepop_data/hsyc_skia_pure_genepop_2pop.txt",
 genepop_flatten("../../raw_data/genepop_data/hsyc_white_pure_genepop_biall_2pop.txt")
 genepop_flatten("../../raw_data/genepop_data/hsyc_skia_pure_genepop.txt")
 genepop_flatten("../../raw_data/genepop_data/hsyc_skia_pure_genepop_biall_2pop.txt")
+genepop_flatten("../../../../../../hsyc_skia_200_panel_genepop_2pop_full.txt")
+genepop_flatten("../../../../../../hsyc_white_200_panel_genepop_2pop_full.txt")
+
 
 #create a dataframe to designate two different populations (Pure Neosho, Pure Northern)
 pop_rename_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","",""), Rename = c("HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
@@ -31,9 +34,9 @@ pop_rename_white <- data.frame(Opop = c("","","","","","","","","","","","","","
 pop_rename_skia <- data.frame(Opop = c("","","","","","","","","","","","",""), Rename = c("HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","SKIA","SKIA","SKIA","SKIA","SKIA"))
 
 #Designate the two different populations (Pure Neosho, Pure Northern)
-subset_genepop_rename("../../raw_data/genepop_data/hsyc_white_pure_genepop_biall.txt", pop_rename_white, path = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/hsyc_white_pure_genepop_biall_2pop.txt")
+subset_genepop_rename("../../raw_data/genepop_data/hsyc_white_200_panel_genepop_full.txt", pop_rename_white, path = "/Users/joegunn/Desktop/hsyc_white_200_panel_genepop_2pop_full.txt")
 
-subset_genepop_rename("../../raw_data/genepop_data/hsyc_skia_pure_genepop_biall.txt", pop_rename_skia, path = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/hsyc_skia_pure_genepop_biall_2pop.txt")
+subset_genepop_rename("../../raw_data/genepop_data/hsyc_skia_200_panel_genepop_full.txt", pop_rename_skia, path = "/Users/joegunn/Desktop/hsyc_skia_200_panel_genepop_2pop_full.txt")
 
 #Run command to extract the top 200 diagnositic SNPs (with highest Fst values) across pure Neosho and Northern populations. Both PGDSpider and PLINK needed to be installed on my local computer, and the respective paths to both executables are given in this function. 
 
