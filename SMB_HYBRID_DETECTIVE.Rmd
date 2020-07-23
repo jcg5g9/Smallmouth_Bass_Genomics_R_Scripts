@@ -10,6 +10,8 @@ output: html_document
 library(genepopedit)
 library(parallelnewhybrid)
 library(hybriddetective)
+library(readxl)
+library(tidyverse)
 ```
 
 ## Get top 200 diagnostic loci
@@ -42,4 +44,26 @@ where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "
 #Get panel SNP panel for White and Honey Syc populations
 getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/hsyc_white_pure_genepop_biall_2pop.txt", panel.size = 200,
 where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
+```
+
+## Simulate multigenerational hybrids 
+```{r}
+freqbasedsim_AlleleSample(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/hsyc_skia_pure_genepop_biall_2pop_200_Loci_Panel.txt", NumSims = 3, NumReps = 3)
+
+```
+
+## Determine the SNP names for the 200 diagnostic SNPs discovered in the above analyses - this is necessary, because the hybriddetective workflow code just generates the number of the SNPs that were used to make the panel (SNP_1, 2, 3, etc.) rather than the actual SNP name.
+```{r}
+getwd()
+snp_metadata <- read_excel("../../metadata/smb_snp_metadata.xlsx")
+snp_metadata <- snp_metadata %>%
+  mutate(snp_number = factor(snp_number))
+
+hsyc_white_200_panel_snps <- read_excel("../../metadata/hsyc_white_200_panel.xlsx")
+hsyc_white_200_panel_snps <- hsyc_white_200_panel_snps %>%
+  mutate(snp_number = factor(snp_number))
+
+smb_200_panel_snp_names <- snp_metadata %>%
+  left_join(hsyc_white_200_panel_snps, by = "snp_number")
+
 ```
