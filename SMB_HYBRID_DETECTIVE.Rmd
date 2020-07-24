@@ -57,12 +57,6 @@ getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smal
 where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 ```
 
-## Simulate multigenerational hybrids 
-```{r}
-freqbasedsim_AlleleSample(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/hsyc_skia_pure_genepop_biall_2pop_200_Loci_Panel.txt", NumSims = 3, NumReps = 3)
-
-```
-
 ## Determine the SNP names for the 200 diagnostic SNPs discovered in the above analyses - this is necessary, because the hybriddetective workflow code just generates the number of the SNPs that were used to make the panel (SNP_1, 2, 3, etc.) rather than the actual SNP name.
 ```{r}
 snp_metadata <- read_excel("../../metadata/smb_snp_metadata.xlsx")
@@ -88,6 +82,9 @@ write.table(hsyc_white_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research
 
 write.table(hsyc_skia_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/metadata/hsyc_skia_200_panel_snp_names.txt", sep="\t")
 ```
+
+## HYBRIDLAB ANALYSIS
+### In the program HYBRIDLAB, I am simulating 6 hybrid categories (P1, P2, F1, F2, BC1, BC2) for hybrid populations between HSYC and WHITE and between HSYC and SKIA. I am generating 100 simulated individuals for each category, including simulated parent individuals, even though I have empirical data for the parents. This will allow me to assess all differences or similarities with equal sample sizes. Simulated genotypes will be compared to the individual admixed populations from my study
 
 ## Format simulated data files from HYBRIDLAB 
 ```{r}
