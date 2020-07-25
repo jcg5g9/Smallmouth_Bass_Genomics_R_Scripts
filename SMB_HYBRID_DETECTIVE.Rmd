@@ -14,6 +14,7 @@ library(readxl)
 library(tidyverse)
 library(graph4lg)
 library(adegenet)
+library(cowplot)
 ```
 
 ## Get top 200 diagnostic loci
@@ -172,45 +173,6 @@ genepop_detective("../../../../../../hsyc_skia_ILLINOIS_genepop_correct.txt", va
 
 ```{r}
 
-hsyc_skia_baron_genepop <- read_excel("../../raw_data/genepop_data/hybrid_lab_simulations/hybrid_category_genotypes/hsyc_skia/HSYC_SKIA_all_hybrids_BARON_df.xlsx")
-baron_pops <- factor(c(rep("HSYC", times = 100), rep("SKIA", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("BC_HSYC", times = 100), rep("BC_SKIA", times = 100), rep("BARON", times = 5)))
-
-hsyc_skia_baron_genepop <- column_to_rownames(hsyc_skia_baron_genepop, "...1")
-hsyc_skia_baron_genepop <- as.matrix(hsyc_skia_baron_genepop)
-
-hsyc_skia_baron_genepop_genind <- df2genind(hsyc_skia_baron_genepop, ncode = 3, pop = baron_pops, ploidy = 2)
-
-hsyc_skia_baron_genepop_genind <- scaleGen(hsyc_skia_baron_genepop_genind, 
-                                           center = TRUE, 
-                                           scale = TRUE, 
-                                           NA.method = c("mean"), 
-                                           truenames = TRUE)
-
-dapc_hsyc_skia_baron <- dapc(hsyc_skia_baron_genepop_genind, baron_pops)
-
-scatter(dapc_hsyc_skia_baron)
-
-
-hsyc_skia_caney_genepop <- read_excel("../../raw_data/genepop_data/hybrid_lab_simulations/hybrid_category_genotypes/hsyc_skia/HSYC_SKIA_all_hybrids_CANEY_df.xlsx")
-
-caney_pops <- factor(c(rep("HSYC", times = 100), rep("SKIA", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("BC_HSYC", times = 100), rep("BC_SKIA", times = 100), rep("CANEY", times = 5)))
-
-hsyc_skia_caney_genepop <- column_to_rownames(hsyc_skia_caney_genepop, "ind")
-hsyc_skia_caney_genepop <- as.matrix(hsyc_skia_caney_genepop)
-
-hsyc_skia_caney_genepop_genind <- df2genind(hsyc_skia_caney_genepop, ncode = 3, pop = caney_pops, ploidy = 2)
-
-hsyc_skia_caney_genepop_genind <- scaleGen(hsyc_skia_caney_genepop_genind, 
-                                           center = TRUE, 
-                                           scale = TRUE, 
-                                           NA.method = c("mean"), 
-                                           truenames = TRUE)
-
-dapc_hsyc_skia_caney <- dapc(hsyc_skia_caney_genepop_genind, caney_pops)
-
-scatter(dapc_hsyc_skia_caney)
-
-
 hsyc_skia_all_admix_genepop <- read_excel("../../raw_data/genepop_data/hybrid_lab_simulations/hybrid_category_genotypes/hsyc_skia/HSYC_SKIA_all_hybrids_allADMIX.xlsx")
 
 admix_pops <- factor(c(rep("HSYC", times = 100), rep("SKIA", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("BC_HSYC", times = 100), rep("BC_SKIA", times = 100), rep("BARON", times = 5), rep("CANEY", times = 5), rep("ILLINOIS", times = 7)))
@@ -218,7 +180,10 @@ admix_pops <- factor(c(rep("HSYC", times = 100), rep("SKIA", times = 100), rep("
 hsyc_skia_all_admix_genepop <- column_to_rownames(hsyc_skia_all_admix_genepop, "ind")
 hsyc_skia_all_admix_genepop <- as.matrix(hsyc_skia_all_admix_genepop)
 
-hsyc_skia_all_admix_genepop_genind <- df2genind(hsyc_skia_all_admix_genepop, ncode = 3, pop = admix_pops, ploidy = 2)
+hsyc_skia_all_admix_genepop_genind <- df2genind(hsyc_skia_all_admix_genepop, 
+                                                ncode = 3, 
+                                                pop = admix_pops, 
+                                                ploidy = 2)
 
 hsyc_skia_all_admix_genepop_genind <- scaleGen(hsyc_skia_all_admix_genepop_genind, 
                                            center = TRUE, 
@@ -238,7 +203,10 @@ admix_pops_white <- factor(c(rep("HSYC", times = 100), rep("WHITE", times = 100)
 hsyc_white_all_admix_genepop <- column_to_rownames(hsyc_white_all_admix_genepop, "ind")
 hsyc_white_all_admix_genepop <- as.matrix(hsyc_white_all_admix_genepop)
 
-hsyc_white_all_admix_genepop_genind <- df2genind(hsyc_white_all_admix_genepop, ncode = 3, pop = admix_pops_white, ploidy = 2)
+hsyc_white_all_admix_genepop_genind <- df2genind(hsyc_white_all_admix_genepop, 
+                                                 ncode = 3, 
+                                                 pop = admix_pops_white, 
+                                                 ploidy = 2)
 
 hsyc_white_all_admix_genepop_genind <- scaleGen(hsyc_white_all_admix_genepop_genind, 
                                            center = TRUE, 
@@ -250,4 +218,50 @@ dapc_hsyc_white_admix <- dapc(hsyc_white_all_admix_genepop_genind, admix_pops_wh
 
 scatter(dapc_hsyc_white_admix)
 
+## HSYC SKIA Plot
+dapc_hsyc_skia_admix_LDs <- as.data.frame(dapc_hsyc_skia_admix$ind.coord)
+dapc_hsyc_skia_admix_LDs <- cbind(data.frame(admix_pops), dapc_hsyc_skia_admix_LDs)
+colnames(dapc_hsyc_skia_admix_LDs) <- c("pop","LD1","LD2")
+
+dapc_hsyc_skia_admix_plot <- ggplot(dapc_hsyc_skia_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "grey44","grey100", "firebrick3","grey84","grey64","deepskyblue","mediumpurple","navyblue", "deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold")) +
+   theme(legend.text = element_text(size = 15)) +
+   theme(legend.position = c(0.7,0.7)) +
+   theme(legend.background = element_rect(color = "black", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20))
+
+## HSYC WHITE Plot
+dapc_hsyc_white_admix_LDs <- as.data.frame(dapc_hsyc_white_admix$ind.coord)
+dapc_hsyc_white_admix_LDs <- cbind(data.frame(admix_pops_white), dapc_hsyc_white_admix_LDs)
+colnames(dapc_hsyc_white_admix_LDs) <- c("pop","LD1","LD2")
+
+dapc_hsyc_white_admix_plot <- ggplot(dapc_hsyc_white_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("lightgreen", "grey44","grey100", "sienna4", "lightyellow","lightsalmon","grey84","grey64","deepskyblue","orchid1", "deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold")) +
+   theme(legend.text = element_text(size = 15)) +
+   theme(legend.position = c(0.7,0.7)) +
+   theme(legend.background = element_rect(color = "black", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) +
+   theme(axis.text.x = element_blank()) +
+   theme(axis.title.x = element_blank())
+
+
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybrid_detective/hyb_simulation_plots.pdf", width=9, height=12)
+
+plot_grid(dapc_hsyc_white_admix_plot, dapc_hsyc_skia_admix_plot, nrow = 2, labels = c("a","b"), label_size = 27)
+
+dev.off()
 ```
