@@ -171,6 +171,7 @@ genepop_flatten("../../../../../../hsyc_skia_ILLINOIS_genepop_correct.txt")
 genepop_detective("../../../../../../hsyc_skia_ILLINOIS_genepop_correct.txt", variable = "PopNum")
 ```
 
+
 ```{r}
 
 hsyc_skia_all_admix_genepop <- read_excel("../../raw_data/genepop_data/hybrid_lab_simulations/hybrid_category_genotypes/hsyc_skia/HSYC_SKIA_all_hybrids_allADMIX.xlsx")
@@ -218,6 +219,10 @@ dapc_hsyc_white_admix <- dapc(hsyc_white_all_admix_genepop_genind, admix_pops_wh
 
 scatter(dapc_hsyc_white_admix)
 
+```
+
+## Make plots
+```{r}
 ## HSYC SKIA Plot
 dapc_hsyc_skia_admix_LDs <- as.data.frame(dapc_hsyc_skia_admix$ind.coord)
 dapc_hsyc_skia_admix_LDs <- cbind(data.frame(admix_pops), dapc_hsyc_skia_admix_LDs)
@@ -262,6 +267,64 @@ dapc_hsyc_white_admix_plot <- ggplot(dapc_hsyc_white_admix_LDs, aes(x = LD1, y =
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybrid_detective/hyb_simulation_plots.pdf", width=9, height=12)
 
 plot_grid(dapc_hsyc_white_admix_plot, dapc_hsyc_skia_admix_plot, nrow = 2, labels = c("a","b"), label_size = 27)
+
+dev.off()
+```
+
+## BLACK AND WHITE plots
+```{r}
+## HSYC SKIA Plot
+dapc_hsyc_skia_admix_LDs <- as.data.frame(dapc_hsyc_skia_admix$ind.coord)
+dapc_hsyc_skia_admix_LDs <- cbind(data.frame(admix_pops), dapc_hsyc_skia_admix_LDs)
+colnames(dapc_hsyc_skia_admix_LDs) <- c("pop","LD1","LD2")
+
+dapc_hsyc_skia_admix_plot_black <- ggplot(dapc_hsyc_skia_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "grey44","grey100", "firebrick3","grey84","grey64","deepskyblue","mediumpurple","navyblue", "deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold", color = "white")) +
+   theme(legend.text = element_text(size = 15, color = "white")) +
+   theme(legend.position = c(0.7,0.7)) +
+   theme(legend.background = element_rect(color = "white", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
+   theme(legend.text = element_text(color = "white")) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) + 
+   theme(axis.title = element_text(color = "white")) +
+   theme(axis.text = element_text(color = "white"))
+
+## HSYC WHITE Plot
+dapc_hsyc_white_admix_LDs <- as.data.frame(dapc_hsyc_white_admix$ind.coord)
+dapc_hsyc_white_admix_LDs <- cbind(data.frame(admix_pops_white), dapc_hsyc_white_admix_LDs)
+colnames(dapc_hsyc_white_admix_LDs) <- c("pop","LD1","LD2")
+
+dapc_hsyc_white_admix_plot_black <- ggplot(dapc_hsyc_white_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("lightgreen", "grey44","grey100", "sienna4", "lightyellow","lightsalmon","grey84","grey64","deepskyblue","orchid1", "deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold", color = "white")) +
+   theme(legend.text = element_text(size = 15, color = "white")) +
+   theme(legend.position = c(0.7,0.7)) +
+   theme(legend.background = element_rect(color = "white", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
+   theme(axis.title = element_text(size = 20, color = "white")) +
+   theme(axis.text = element_text(size = 20, color = "white")) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) + 
+   theme(axis.title = element_text(color = "white")) +
+   theme(axis.text = element_text(color = "white"))
+
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybrid_detective/hyb_simulation_plots_black.pdf", width=9, height=12)
+
+plot_grid(dapc_hsyc_white_admix_plot_black, dapc_hsyc_skia_admix_plot_black, nrow = 2, labels = c("a","b"), label_size = 27)
 
 dev.off()
 ```

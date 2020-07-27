@@ -227,6 +227,99 @@ plot_grid(smb_outlier_dapc_plot, smb_neutral_dapc_plot, neosho_outlier_dapc_plot
 dev.off()
 ```
 
+
+## Plot DAPC in BLACK and WHITE
+```{r}
+####DAPC Plots###
+
+###SMB Samples Only###
+###Outlier SNPs###
+smb_outlier_dapc_plot_black <- ggplot(dapc_smb_outlier_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = F) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4","lightyellow", "firebrick3", "lightsalmon", "deepskyblue", "mediumpurple","forestgreen","chocolate1","navyblue","orchid1","deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) +
+   theme(axis.text = element_text(color = "white")) +
+   theme(axis.title = element_text(color = "white")) 
+   
+   
+
+###Neutral SNPs###
+smb_neutral_dapc_plot_black <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4","lightyellow", "firebrick3", "lightsalmon", "deepskyblue", "mediumpurple","forestgreen","chocolate1","navyblue","orchid1","deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold", color = "white")) +
+   theme(legend.text = element_text(size = 15, color = "white")) +
+   theme(legend.position = c(0.15,0.71)) +
+   theme(legend.background = element_rect(color = "white", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
+   theme(axis.title.y = element_blank()) +
+   theme(legend.text = element_text(size = 20)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) + 
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) +
+   theme(axis.text = element_text(color = "white")) +
+   theme(axis.title = element_text(color = "white")) 
+
+
+###Neosho Samples Only###
+###Outlier SNPs###
+neosho_outlier_dapc_plot_black <- ggplot(dapc_neosho_outlier_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = F) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","lightsalmon","deepskyblue","mediumpurple","forestgreen","orchid1")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold")) +
+   theme(legend.text = element_text(size = 20)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) +
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) +
+   theme(axis.text = element_text(color = "white")) +
+   theme(axis.title = element_text(color = "white")) 
+
+###Neutral SNPs###
+neosho_neutral_dapc_plot_black <- ggplot(dapc_neosho_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","lightsalmon","deepskyblue","mediumpurple","forestgreen","orchid1")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold", color = "white")) +
+   theme(legend.text = element_text(size = 20, color = "white")) +
+   theme(legend.position = c(0.15,0.76)) +
+   theme(legend.background = element_rect(color = "white", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) +
+   theme(axis.title.y = element_blank()) +
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) +
+   theme(axis.text = element_text(color = "white")) +
+   theme(axis.title = element_text(color = "white"))
+
+#Combine both DAPC Plots
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/dapc_plots_black.pdf", width=16, height=14)
+
+plot_grid(smb_outlier_dapc_plot_black, smb_neutral_dapc_plot_black, neosho_outlier_dapc_plot_black, neosho_neutral_dapc_plot_black, nrow = 2, labels = c("a","b","c","d"), label_size = 27)
+
+dev.off()
+```
+
 ## Identify SNPs that are contributing most to the population structure seen in the Outlier SNP analysis for SMB Samples Only
 ```{r}
 #In order to determine which SNPs are contributing most to the population structure seen in the DAPC plot, we can retrieve the variation contributed by each individual SNP and allele (var.contrib within the dapc outlier objec). The loading plot built into DAPC in adegenet will show the contributed variation by each SNP in a bar plot, and the y axis appears to be the numerical value of LD1. The variance contributed by each individual allele within a SNP are always identical, so it is not necessary to plot each allele independently
