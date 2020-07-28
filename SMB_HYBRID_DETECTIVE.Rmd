@@ -12,7 +12,6 @@ library(parallelnewhybrid)
 library(hybriddetective)
 library(readxl)
 library(tidyverse)
-library(graph4lg)
 library(adegenet)
 library(cowplot)
 ```
