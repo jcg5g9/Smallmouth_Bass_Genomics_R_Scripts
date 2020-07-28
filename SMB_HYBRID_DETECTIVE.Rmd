@@ -164,10 +164,10 @@ write.table(hsyc_skia_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/
 ### In order to convert the simulated genepop data into a genind formatted file for DAPC in adegenet, I had to create a matrix of genotypes, rather than using a standard genepop format (I think there is a way to use a genepop file strictly, but I couldn't figure it out). My genotype matrix consisted of one row per individual sample, and each column was a SNP (200 total). Genotypes were coded as ###### (six numbers in a row)
 ```{r}
 ## Run DAPC for HSYC and SKIA parents, along with admixed populations (BARON, CANEY, ILLINOIS)
-hsyc_skia_all_admix_genepop <- read_excel("../../raw_data/genepop_data/hybrid_lab_simulations/hybrid_category_genotypes/hsyc_skia/HSYC_SKIA_all_hybrids_allADMIX.xlsx")
+hsyc_skia_all_admix_genepop <- read_excel("../../raw_data/genepop_data/hybrid_lab_simulations/hybrid_category_genotypes/hsyc_skia/HSYC_SKIA_all_hybrids_allADMIX_plusParent.xlsx")
 
 ## Create population vector
-admix_pops_skia <- factor(c(rep("HSYC", times = 100), rep("SKIA", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("BC_HSYC", times = 100), rep("BC_SKIA", times = 100), rep("BARON", times = 5), rep("CANEY", times = 5), rep("ILLINOIS", times = 7)))
+admix_pops_skia <- factor(c(rep("HSYC", times = 100), rep("SKIA", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("BC_HSYC", times = 100), rep("BC_SKIA", times = 100), rep("BARON", times = 5), rep("CANEY", times = 5), rep("ILLINOIS", times = 7), rep("HSYC_emp", times = 8), rep("SKIA_emp", times = 5)))
 
 hsyc_skia_all_admix_genepop <- column_to_rownames(hsyc_skia_all_admix_genepop, "ind")
 hsyc_skia_all_admix_genepop <- as.matrix(hsyc_skia_all_admix_genepop)
@@ -177,7 +177,7 @@ hsyc_skia_all_admix_genepop_genind <- df2genind(hsyc_skia_all_admix_genepop,
                                                 ncode = 3, 
                                                 pop = admix_pops_skia, 
                                                 ploidy = 2)
-## Get genind file
+## Scale genind file
 hsyc_skia_all_admix_genepop_genind <- scaleGen(hsyc_skia_all_admix_genepop_genind, 
                                            center = TRUE, 
                                            scale = TRUE, 
@@ -193,10 +193,10 @@ dapc_hsyc_skia_admix <- dapc(hsyc_skia_all_admix_genepop_genind, admix_pops_skia
 scatter(dapc_hsyc_skia_admix)
 
 ## Run DAPC for HSYC and WHITE parents, along with admixed populations (SPAV, ELK, BSUG, BUFF, BAYOU)
-hsyc_white_all_admix_genepop <- read_excel("../../raw_data/genepop_data/hybrid_lab_simulations/hybrid_category_genotypes/hsyc_white/HSYC_WHITE_all_hybrids_allADMIX.xlsx")
+hsyc_white_all_admix_genepop <- read_excel("../../raw_data/genepop_data/hybrid_lab_simulations/hybrid_category_genotypes/hsyc_white/HSYC_WHITE_all_hybrids_allADMIX_plusParent.xlsx")
 
 ## Create population vector
-admix_pops_white <- factor(c(rep("HSYC", times = 100), rep("WHITE", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("BC_HSYC", times = 100), rep("BC_WHITE", times = 100), rep("BAYOU", times = 5), rep("BSUG", times = 6), rep("BUFF", times = 6), rep("ELK", times = 6), rep("SPVW", times = 6)))
+admix_pops_white <- factor(c(rep("HSYC_sim", times = 100), rep("WHITE_sim", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("BC_HSYC", times = 100), rep("BC_WHITE", times = 100), rep("BAYOU", times = 5), rep("BSUG", times = 6), rep("BUFF", times = 6), rep("ELK", times = 6), rep("SPVW", times = 6), rep("HSYC_emp", times = 8), rep("WHITE_emp", times = 10)))
 
 hsyc_white_all_admix_genepop <- column_to_rownames(hsyc_white_all_admix_genepop, "ind")
 hsyc_white_all_admix_genepop <- as.matrix(hsyc_white_all_admix_genepop)
@@ -206,7 +206,7 @@ hsyc_white_all_admix_genepop_genind <- df2genind(hsyc_white_all_admix_genepop,
                                                  ncode = 3, 
                                                  pop = admix_pops_white, 
                                                  ploidy = 2)
-## Get genind file
+## Scale genind file
 hsyc_white_all_admix_genepop_genind <- scaleGen(hsyc_white_all_admix_genepop_genind, 
                                            center = TRUE, 
                                            scale = TRUE, 
@@ -227,13 +227,13 @@ scatter(dapc_hsyc_white_admix)
 ```{r}
 ## HSYC SKIA Plot
 dapc_hsyc_skia_admix_LDs <- as.data.frame(dapc_hsyc_skia_admix$ind.coord)
-dapc_hsyc_skia_admix_LDs <- cbind(data.frame(admix_pops), dapc_hsyc_skia_admix_LDs)
+dapc_hsyc_skia_admix_LDs <- cbind(data.frame(admix_pops_skia), dapc_hsyc_skia_admix_LDs)
 colnames(dapc_hsyc_skia_admix_LDs) <- c("pop","LD1","LD2")
 
 dapc_hsyc_skia_admix_plot <- ggplot(dapc_hsyc_skia_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
    geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("turquoise", "grey44","grey100", "firebrick3","grey84","grey64","deepskyblue","mediumpurple","navyblue", "deeppink2")) +
+   scale_fill_manual(values = c("turquoise", "grey35","grey85", "firebrick3","grey70","grey50","grey15","deepskyblue","mediumpurple", "grey100", "navyblue")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -252,7 +252,7 @@ colnames(dapc_hsyc_white_admix_LDs) <- c("pop","LD1","LD2")
 dapc_hsyc_white_admix_plot <- ggplot(dapc_hsyc_white_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
    geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("lightgreen", "grey44","grey100", "sienna4", "lightyellow","lightsalmon","grey84","grey64","deepskyblue","orchid1", "deeppink2")) +
+   scale_fill_manual(values = c("lightgreen", "grey35","grey85", "sienna4", "lightyellow","lightsalmon","grey70","grey50","deepskyblue","grey15", "orchid1", "deeppink2", "grey100")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
