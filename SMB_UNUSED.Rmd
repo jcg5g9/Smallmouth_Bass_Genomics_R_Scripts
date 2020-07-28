@@ -5,8 +5,6 @@ date: "3/26/2020"
 output: html_document
 ---
 
-
-
 ```{r}
 #Run first pass analysis with 30 replicates
 cv_dapc <- xvalDapc(smb_noBFC10_genind, smb_phylo_pops_noBFC10, n.pca.max = 100, training.set = 0.9, result = "groupMean", xval.plot = TRUE)
