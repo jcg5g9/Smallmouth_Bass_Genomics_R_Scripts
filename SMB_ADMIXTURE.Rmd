@@ -7,7 +7,6 @@ output: html_document
 
 ## Libraries needed for analysis
 ```{r setup, echo = FALSE, include=FALSE}
-library(radiator)
 library(readxl)
 library(tidyverse)
 library(cowplot)
