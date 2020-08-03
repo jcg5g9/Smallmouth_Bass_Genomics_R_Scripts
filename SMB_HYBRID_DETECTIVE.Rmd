@@ -44,7 +44,7 @@ subset_genepop_rename("../../raw_data/genepop_data/leemulb_white_genepop_full_da
 #Run command to extract the top 200 diagnositic SNPs (with highest Fst values) across pure Neosho and Northern populations. Both PGDSpider and PLINK needed to be installed on my local computer, and the respective paths to both executables are given in this function. 
 ```
 
-## Run getTopLoc() funtion from hybriddetective to get 200 diagnostic, high linkage, high Fst SNPs 
+## Run getTopLoc() funtion from hybriddetective to get 200 diagnostic, high linkage, high Fst SNPs. There must be a "/" after the directories that PLINK and PGDSpider are in!
 ```{r}
 #Get panel SNP panel for Skiatook lake and Honey Syc populations
 getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/hsyc_skia_pure_genepop_biall_2pop.txt", panel.size = 200,
