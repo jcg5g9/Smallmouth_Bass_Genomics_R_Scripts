@@ -29,6 +29,10 @@ source("../../R_packages/FinestructureLibrary.R") #Fine-structure R source code
 chunkfile_all <- "../../raw_data/fineradstructure_data/hap_withfilters_chunks.out"
 mcmcfile_all <- "../../raw_data/fineradstructure_data/hap_withfilters_chunks.mcmc.xml"
 treefile_all <- "../../raw_data/fineradstructure_data/hap_withfilters_chunks.mcmcTree.xml"
+
+chunkfile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chunks.out"
+mcmcfile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chunks.mcmc.xml"
+treefile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chunks.mcmcTree.xml"
 ```
 
 ## Set path name for depositing completed fineRADstructure figures
@@ -62,6 +66,15 @@ mcmcdata_all <- as.data.frame.myres(mcmcxml_all) ## convert this into a data fra
 treexml_all <- xmlTreeParse(treefile_all) ## read the tree as xml format
 ttree_all <- extractTree(treexml_all) ## extract the tree into ape's phylo format
 
+dataraw_neo <- as.matrix(read.table(chunkfile_neo, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
+
+###### READ IN THE MCMC FILES
+mcmcxml_neo <- xmlTreeParse(mcmcfile_neo) ## read into xml format
+mcmcdata_neo <- as.data.frame.myres(mcmcxml_neo) ## convert this into a data frame
+
+###### READ IN THE TREE FILES
+treexml_neo <- xmlTreeParse(treefile_neo) ## read the tree as xml format
+ttree_neo <- extractTree(treexml_neo) ## extract the tree into ape's phylo format
 ```
 
 ## Make files for coancestry plot and dendrogram
@@ -86,6 +99,26 @@ popdend_all <- fixMidpointMembers(popdend_all) # needed for obscure dendrogram r
 popdendclear_all <- makemydend(tdend_all, mapstatelist_all, "NameMoreSummary")# use NameMoreSummary to make popdend
 popdendclear_all <- fixMidpointMembers(popdendclear_all) # needed for obscure dendrogram reasons
 
+
+## Reduce the amount of significant digits printed in the posteror assignment probabilities (numbers shown in the tree):
+ttree_neo$node.label[ttree_neo$node.label!=""] <- format(as.numeric(ttree_neo$node.label[ttree_neo$node.label!=""]),digits=2)
+
+ # convert to dendrogram format
+tdend_neo <- myapetodend(ttree_neo, factor=1)
+## Now we work on the MAP state
+mapstate_neo <- extractValue(treexml_neo,"Pop") # map state as a finestructure clustering
+mapstatelist_neo <- popAsList(mapstate_neo) # .. and as a list of individuals in populations
+popnames_neo <- lapply(mapstatelist_neo, NameSummary) # population names IN A REVERSIBLE FORMAT (I.E LOSSLESS)
+## NOTE: if your population labels don't correspond to the format we used (NAME<number>) YOU MAY HAVE TROUBLE HERE. YOU MAY NEED TO RENAME THEM INTO THIS FORM AND DEFINE YOUR POPULATION NAMES IN popnamesplot BELOW
+popnamesplot_neo <-lapply(mapstatelist_neo, NameMoreSummary) # a nicer summary of the populations
+
+names(popnames_neo) <- popnamesplot_neo # for nicety only
+names(popnamesplot_neo ) <- popnamesplot_neo # for nicety only
+
+popdend_neo <- makemydend(tdend_neo, mapstatelist_neo) # use NameSummary to make popdend
+popdend_neo <- fixMidpointMembers(popdend_neo) # needed for obscure dendrogram reasons
+popdendclear_neo <- makemydend(tdend_neo, mapstatelist_neo, "NameMoreSummary")# use NameMoreSummary to make popdend
+popdendclear_neo <- fixMidpointMembers(popdendclear_neo) # needed for obscure dendrogram reasons
 ```
 
 ## Print fineRADstructure Plots
@@ -150,6 +183,77 @@ plotFinestructure(tmpmat_all,
                   cols = my_palette, 
                   ycrt = ycrt, 
                   dend = tdend_all, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2), 
+                  hmmar = c(3,0,0,1))
+
+dev.off()
+
+##################
+
+## Plot 1: COANCESTRY MATRIX
+fullorder_neo <- labels(tdend_neo) # the order according to the tree
+datamatrix_neo <- dataraw_neo[fullorder_neo, fullorder_neo] # reorder the data matrix
+
+tmpmat_neo <- datamatrix_neo
+tmpmat_neo[tmpmat_neo > maxIndv] <- maxIndv #  # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/neo_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+
+plotFinestructure(tmpmat_neo, 
+                  dimnames(tmpmat_neo)[[1]], 
+                  dend = tdend_neo,
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2))
+
+dev.off()
+
+
+## Plot 2: POPULATIONS AND COANCESTRY AVERAGES
+popmeanmatrix_neo <- getPopMeanMatrix(datamatrix_neo, mapstatelist_neo)
+
+tmpmat_neo <- popmeanmatrix_neo
+tmpmat_neo[tmpmat_neo > maxPop] <- maxPop # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/neo_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+
+plotFinestructure(tmpmat_neo, 
+                  dimnames(tmpmat_neo)[[1]], 
+                  dend = tdend_neo, 
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                                 t.srt = 1, 
+                                 t.off = -0.5, 
+                                 t.cex = 2))
+
+dev.off()
+
+
+## Plot 3: POPULATIONS AND COANCESTRY AVERAGES WITH PERHAPS MORE INFORMATIVE LABELS
+mappopcorrectorder_neo <- NameExpand(labels(popdend_neo))
+mappopsizes_neo <- sapply(mappopcorrectorder_neo,length)
+labellocs_neo <- PopCenters(mappopsizes_neo)
+xcrt=0
+ycrt=45
+
+pdf("../FINERADSTRUCTURE_analysis/neo_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+ 
+plotFinestructure(tmpmat_neo, 
+                  dimnames(tmpmat_neo)[[1]], 
+                  labelsx=labels(popdendclear_neo), 
+                  labelsatx = labellocs_neo, 
+                  xcrt = xcrt, 
+                  cols = my_palette, 
+                  ycrt = ycrt, 
+                  dend = tdend_neo, 
                   cex.axis = 1.5, 
                   edgePar = list(p.lwd = 0, 
                                t.srt = 1, 
