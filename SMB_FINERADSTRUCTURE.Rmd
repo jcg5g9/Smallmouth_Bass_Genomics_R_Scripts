@@ -53,7 +53,7 @@ maxPop <-10000
 
 ## Prepare color palette, 
 ```{r color palette, echo=FALSE}
-my_palette <- colorRampPalette(c("white", "navyblue","deeppink2","black"))(n = 299)
+my_palette <- colorRampPalette(c("white", "grey70","grey40","black"))(n = 299)
 ```
 
 ## Prepare Plots for ALL SAMPLES
