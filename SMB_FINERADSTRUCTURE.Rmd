@@ -25,14 +25,20 @@ source("../../R_packages/FinestructureLibrary.R") #Fine-structure R source code
 ### haplotype files were produced using the hapsFromVCF on my vcf file, and coancestry matrics were produced using the RADpainter and finestructure commands. R code and figures were adapted from the fineRADstructurePlot.R and FinestructureLibrary.R libraries (Milan Malinski)
 ## Read in data output from fineRADstructure 
 ```{r}
-#Finerad files for SMB samples only
+#Finerad files for All SMB samples only
 chunkfile_all <- "../../raw_data/fineradstructure_data/hap_withfilters_chunks.out"
 mcmcfile_all <- "../../raw_data/fineradstructure_data/hap_withfilters_chunks.mcmc.xml"
 treefile_all <- "../../raw_data/fineradstructure_data/hap_withfilters_chunks.mcmcTree.xml"
 
+#Finerad files for Neosho SMB samples only
 chunkfile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chunks.out"
 mcmcfile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chunks.mcmc.xml"
 treefile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chunks.mcmcTree.xml"
+
+#Finerad files for Northern SMB samples only
+chunkfile_nor <- "../../raw_data/fineradstructure_data/hap_withfilters_northern_chunks.out"
+mcmcfile_nor <- "../../raw_data/fineradstructure_data/hap_withfilters_northern_chunks.mcmc.xml"
+treefile_nor <- "../../raw_data/fineradstructure_data/hap_withfilters_northern_chunks.mcmcTree.xml"
 ```
 
 ## Set path name for depositing completed fineRADstructure figures
@@ -56,6 +62,7 @@ my_palette <- colorRampPalette(c("white", "navyblue","deeppink2","black"))(n = 2
 
 ## Prepare raw coancestry data and tree
 ```{r}
+#All SMB Samples
 dataraw_all <- as.matrix(read.table(chunkfile_all, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
 
 ###### READ IN THE MCMC FILES
@@ -66,6 +73,7 @@ mcmcdata_all <- as.data.frame.myres(mcmcxml_all) ## convert this into a data fra
 treexml_all <- xmlTreeParse(treefile_all) ## read the tree as xml format
 ttree_all <- extractTree(treexml_all) ## extract the tree into ape's phylo format
 
+#Neosho Samples
 dataraw_neo <- as.matrix(read.table(chunkfile_neo, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
 
 ###### READ IN THE MCMC FILES
@@ -75,10 +83,23 @@ mcmcdata_neo <- as.data.frame.myres(mcmcxml_neo) ## convert this into a data fra
 ###### READ IN THE TREE FILES
 treexml_neo <- xmlTreeParse(treefile_neo) ## read the tree as xml format
 ttree_neo <- extractTree(treexml_neo) ## extract the tree into ape's phylo format
+
+#Northern Samples
+dataraw_nor <- as.matrix(read.table(chunkfile_nor, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
+
+###### READ IN THE MCMC FILES
+mcmcxml_nor <- xmlTreeParse(mcmcfile_nor) ## read into xml format
+mcmcdata_nor <- as.data.frame.myres(mcmcxml_nor) ## convert this into a data frame
+
+###### READ IN THE TREE FILES
+treexml_nor <- xmlTreeParse(treefile_nor) ## read the tree as xml format
+ttree_nor <- extractTree(treexml_nor) ## extract the tree into ape's phylo format
 ```
 
 ## Make files for coancestry plot and dendrogram
 ```{r}
+#All SMB Samples
+
 ## Reduce the amount of significant digits printed in the posteror assignment probabilities (numbers shown in the tree):
 ttree_all$node.label[ttree_all$node.label!=""] <- format(as.numeric(ttree_all$node.label[ttree_all$node.label!=""]),digits=2)
 
@@ -99,6 +120,7 @@ popdend_all <- fixMidpointMembers(popdend_all) # needed for obscure dendrogram r
 popdendclear_all <- makemydend(tdend_all, mapstatelist_all, "NameMoreSummary")# use NameMoreSummary to make popdend
 popdendclear_all <- fixMidpointMembers(popdendclear_all) # needed for obscure dendrogram reasons
 
+#Neosho Samples
 
 ## Reduce the amount of significant digits printed in the posteror assignment probabilities (numbers shown in the tree):
 ttree_neo$node.label[ttree_neo$node.label!=""] <- format(as.numeric(ttree_neo$node.label[ttree_neo$node.label!=""]),digits=2)
@@ -119,6 +141,28 @@ popdend_neo <- makemydend(tdend_neo, mapstatelist_neo) # use NameSummary to make
 popdend_neo <- fixMidpointMembers(popdend_neo) # needed for obscure dendrogram reasons
 popdendclear_neo <- makemydend(tdend_neo, mapstatelist_neo, "NameMoreSummary")# use NameMoreSummary to make popdend
 popdendclear_neo <- fixMidpointMembers(popdendclear_neo) # needed for obscure dendrogram reasons
+
+#Northern Samples
+
+## Reduce the amount of significant digits printed in the posteror assignment probabilities (numbers shown in the tree):
+ttree_nor$node.label[ttree_nor$node.label!=""] <- format(as.numeric(ttree_nor$node.label[ttree_nor$node.label!=""]),digits=2)
+
+ # convert to dendrogram format
+tdend_nor <- myapetodend(ttree_nor, factor=1)
+## Now we work on the MAP state
+mapstate_nor <- extractValue(treexml_nor,"Pop") # map state as a finestructure clustering
+mapstatelist_nor <- popAsList(mapstate_nor) # .. and as a list of individuals in populations
+popnames_nor <- lapply(mapstatelist_nor, NameSummary) # population names IN A REVERSIBLE FORMAT (I.E LOSSLESS)
+## NOTE: if your population labels don't correspond to the format we used (NAME<number>) YOU MAY HAVE TROUBLE HERE. YOU MAY NEED TO RENAME THEM INTO THIS FORM AND DEFINE YOUR POPULATION NAMES IN popnamesplot BELOW
+popnamesplot_nor <-lapply(mapstatelist_nor, NameMoreSummary) # a nicer summary of the populations
+
+names(popnames_nor) <- popnamesplot_nor # for nicety only
+names(popnamesplot_nor ) <- popnamesplot_nor # for nicety only
+
+popdend_nor <- makemydend(tdend_nor, mapstatelist_nor) # use NameSummary to make popdend
+popdend_nor <- fixMidpointMembers(popdend_nor) # needed for obscure dendrogram reasons
+popdendclear_nor <- makemydend(tdend_nor, mapstatelist_nor, "NameMoreSummary")# use NameMoreSummary to make popdend
+popdendclear_nor <- fixMidpointMembers(popdendclear_nor) # needed for obscure dendrogram reasons
 ```
 
 ## Print fineRADstructure Plots
@@ -254,6 +298,77 @@ plotFinestructure(tmpmat_neo,
                   cols = my_palette, 
                   ycrt = ycrt, 
                   dend = tdend_neo, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2), 
+                  hmmar = c(3,0,0,1))
+
+dev.off()
+
+##################
+
+## Plot 1: COANCESTRY MATRIX
+fullorder_nor <- labels(tdend_nor) # the order according to the tree
+datamatrix_nor <- dataraw_nor[fullorder_nor, fullorder_nor] # reorder the data matrix
+
+tmpmat_nor <- datamatrix_nor
+tmpmat_nor[tmpmat_nor > maxIndv] <- maxIndv #  # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/nor_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+
+plotFinestructure(tmpmat_nor, 
+                  dimnames(tmpmat_nor)[[1]], 
+                  dend = tdend_nor,
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2))
+
+dev.off()
+
+
+## Plot 2: POPULATIONS AND COANCESTRY AVERAGES
+popmeanmatrix_nor <- getPopMeanMatrix(datamatrix_nor, mapstatelist_nor)
+
+tmpmat_nor <- popmeanmatrix_nor
+tmpmat_nor[tmpmat_nor > maxPop] <- maxPop # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/nor_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+
+plotFinestructure(tmpmat_nor, 
+                  dimnames(tmpmat_nor)[[1]], 
+                  dend = tdend_nor, 
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                                 t.srt = 1, 
+                                 t.off = -0.5, 
+                                 t.cex = 2))
+
+dev.off()
+
+
+## Plot 3: POPULATIONS AND COANCESTRY AVERAGES WITH PERHAPS MORE INFORMATIVE LABELS
+mappopcorrectorder_nor <- NameExpand(labels(popdend_nor))
+mappopsizes_nor <- sapply(mappopcorrectorder_nor,length)
+labellocs_nor <- PopCenters(mappopsizes_nor)
+xcrt=0
+ycrt=45
+
+pdf("../FINERADSTRUCTURE_analysis/nor_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+ 
+plotFinestructure(tmpmat_nor, 
+                  dimnames(tmpmat_nor)[[1]], 
+                  labelsx=labels(popdendclear_nor), 
+                  labelsatx = labellocs_nor, 
+                  xcrt = xcrt, 
+                  cols = my_palette, 
+                  ycrt = ycrt, 
+                  dend = tdend_nor, 
                   cex.axis = 1.5, 
                   edgePar = list(p.lwd = 0, 
                                t.srt = 1, 
