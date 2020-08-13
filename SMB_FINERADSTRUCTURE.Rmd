@@ -39,6 +39,11 @@ treefile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chu
 chunkfile_nor <- "../../raw_data/fineradstructure_data/hap_withfilters_northern_chunks.out"
 mcmcfile_nor <- "../../raw_data/fineradstructure_data/hap_withfilters_northern_chunks.mcmc.xml"
 treefile_nor <- "../../raw_data/fineradstructure_data/hap_withfilters_northern_chunks.mcmcTree.xml"
+
+#Finerad files for Neosho Non-Arkansas (no Leemulb or Bayou) SMB samples only
+chunkfile_nonark <- "../../raw_data/fineradstructure_data/hap_withfilters_nonark_chunks.out"
+mcmcfile_nonark <- "../../raw_data/fineradstructure_data/hap_withfilters_nonark_chunks.mcmc.xml"
+treefile_nonark <- "../../raw_data/fineradstructure_data/hap_withfilters_nonark_chunks.mcmcTree.xml"
 ```
 
 ## Set path name for depositing completed fineRADstructure figures
@@ -94,6 +99,17 @@ mcmcdata_nor <- as.data.frame.myres(mcmcxml_nor) ## convert this into a data fra
 ###### READ IN THE TREE FILES
 treexml_nor <- xmlTreeParse(treefile_nor) ## read the tree as xml format
 ttree_nor <- extractTree(treexml_nor) ## extract the tree into ape's phylo format
+
+#Non-ark Samples
+dataraw_nonark <- as.matrix(read.table(chunkfile_nonark, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
+
+###### READ IN THE MCMC FILES
+mcmcxml_nonark <- xmlTreeParse(mcmcfile_nonark) ## read into xml format
+mcmcdata_nonark <- as.data.frame.myres(mcmcxml_nonark) ## convert this into a data frame
+
+###### READ IN THE TREE FILES
+treexml_nonark <- xmlTreeParse(treefile_nonark) ## read the tree as xml format
+ttree_nonark <- extractTree(treexml_nonark) ## extract the tree into ape's phylo format
 ```
 
 ## Make files for coancestry plot and dendrogram
@@ -163,6 +179,28 @@ popdend_nor <- makemydend(tdend_nor, mapstatelist_nor) # use NameSummary to make
 popdend_nor <- fixMidpointMembers(popdend_nor) # needed for obscure dendrogram reasons
 popdendclear_nor <- makemydend(tdend_nor, mapstatelist_nor, "NameMoreSummary")# use NameMoreSummary to make popdend
 popdendclear_nor <- fixMidpointMembers(popdendclear_nor) # needed for obscure dendrogram reasons
+
+##Non-ark samples
+
+## Reduce the amount of significant digits printed in the posteror assignment probabilities (numbers shown in the tree):
+ttree_nonark$node.label[ttree_nonark$node.label!=""] <- format(as.numeric(ttree_nonark$node.label[ttree_nonark$node.label!=""]),digits=2)
+
+ # convert to dendrogram format
+tdend_nonark <- myapetodend(ttree_nonark, factor=1)
+## Now we work on the MAP state
+mapstate_nonark <- extractValue(treexml_nonark,"Pop") # map state as a finestructure clustering
+mapstatelist_nonark <- popAsList(mapstate_nonark) # .. and as a list of individuals in populations
+popnames_nonark <- lapply(mapstatelist_nonark, NameSummary) # population names IN A REVERSIBLE FORMAT (I.E LOSSLESS)
+## NOTE: if your population labels don't correspond to the format we used (NAME<number>) YOU MAY HAVE TROUBLE HERE. YOU MAY NEED TO RENAME THEM INTO THIS FORM AND DEFINE YOUR POPULATION NAMES IN popnamesplot BELOW
+popnamesplot_nonark <-lapply(mapstatelist_nonark, NameMoreSummary) # a nicer summary of the populations
+
+names(popnames_nonark) <- popnamesplot_nonark # for nicety only
+names(popnamesplot_nonark ) <- popnamesplot_nonark # for nicety only
+
+popdend_nonark <- makemydend(tdend_nonark, mapstatelist_nonark) # use NameSummary to make popdend
+popdend_nonark <- fixMidpointMembers(popdend_nonark) # needed for obscure dendrogram reasons
+popdendclear_nonark <- makemydend(tdend_nonark, mapstatelist_nonark, "NameMoreSummary")# use NameMoreSummary to make popdend
+popdendclear_nonark <- fixMidpointMembers(popdendclear_nonark) # needed for obscure dendrogram reasons
 ```
 
 ## Print fineRADstructure Plots
@@ -369,6 +407,77 @@ plotFinestructure(tmpmat_nor,
                   cols = my_palette, 
                   ycrt = ycrt, 
                   dend = tdend_nor, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2), 
+                  hmmar = c(3,0,0,1))
+
+dev.off()
+
+##################
+
+## Plot 1: COANCESTRY MATRIX
+fullorder_nonark <- labels(tdend_nonark) # the order according to the tree
+datamatrix_nonark <- dataraw_nonark[fullorder_nonark, fullorder_nonark] # reorder the data matrix
+
+tmpmat_nonark <- datamatrix_nonark
+tmpmat_nonark[tmpmat_nonark > maxIndv] <- maxIndv #  # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/nonark_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+
+plotFinestructure(tmpmat_nonark, 
+                  dimnames(tmpmat_nonark)[[1]], 
+                  dend = tdend_nonark,
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2))
+
+dev.off()
+
+
+## Plot 2: POPULATIONS AND COANCESTRY AVERAGES
+popmeanmatrix_nonark <- getPopMeanMatrix(datamatrix_nonark, mapstatelist_nonark)
+
+tmpmat_nonark <- popmeanmatrix_nonark
+tmpmat_nonark[tmpmat_nonark > maxPop] <- maxPop # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/nonark_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+
+plotFinestructure(tmpmat_nonark, 
+                  dimnames(tmpmat_nonark)[[1]], 
+                  dend = tdend_nonark, 
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                                 t.srt = 1, 
+                                 t.off = -0.5, 
+                                 t.cex = 2))
+
+dev.off()
+
+
+## Plot 3: POPULATIONS AND COANCESTRY AVERAGES WITH PERHAPS MORE INFORMATIVE LABELS
+mappopcorrectorder_nonark <- NameExpand(labels(popdend_nonark))
+mappopsizes_nonark <- sapply(mappopcorrectorder_nonark,length)
+labellocs_nonark <- PopCenters(mappopsizes_nonark)
+xcrt=0
+ycrt=45
+
+pdf("../FINERADSTRUCTURE_analysis/nonark_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+ 
+plotFinestructure(tmpmat_nonark, 
+                  dimnames(tmpmat_nonark)[[1]], 
+                  labelsx=labels(popdendclear_nonark), 
+                  labelsatx = labellocs_nonark, 
+                  xcrt = xcrt, 
+                  cols = my_palette, 
+                  ycrt = ycrt, 
+                  dend = tdend_nonark, 
                   cex.axis = 1.5, 
                   edgePar = list(p.lwd = 0, 
                                t.srt = 1, 
