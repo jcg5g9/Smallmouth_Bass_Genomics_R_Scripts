@@ -16,6 +16,8 @@ library(vcfR)
 library(pophelper)
 library(PopGenome)
 library(pcadapt)
+library(viridis)
+
 ```
 
 #Bayescan Analysis 
@@ -28,10 +30,18 @@ library(pcadapt)
 #Each dataset contains 50,828 rows, one for each individual snp along with the corresponding information
 
 #Read in tables of Fst values from BayeScan
+#All samples
 bayes_all_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/smb_all_bayes_noBFC10_results_taxon_fst.xlsx")
-bayes_smb_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/smb_smb_bayes_noBFC10_results_pop_fst.xlsx") #just smallmouth bass samples
-bayes_neosho_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/neo_bayes_noBFC10_results_fst.xlsx") #just neosho samples
-bayes_northern_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/nor_bayes_results_fst.xlsx") #just northern samples
+
+#just smallmouth bass samples
+bayes_smb_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/smb_smb_bayes_noBFC10_results_pop_fst.xlsx") 
+
+#just neosho samples
+bayes_neosho_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/neo_bayes_noBFC10_results_fst.xlsx") 
+bayes_neosho_finerad_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/neo_bayes_noBFC10_finerad_results_fst.xlsx") 
+
+#just northern samples
+bayes_northern_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/nor_bayes_results_fst.xlsx") 
 ```
 
 ## Data Filtering
@@ -43,27 +53,32 @@ bayes_northern_fst <- read_excel("../../raw_data/outlier_fst_data/bayescan_data/
 #Rearrange data files so that significant SNPs (or log10PO is 1.5 or greater) are labeled
  
 bayescan_all_fst_significant <- bayes_all_fst %>% 
-      filter(logPO >= 1.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
+      filter(logPO >= 0.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
 
 bayescan_all_fst_not_significant <- bayes_all_fst %>% 
-      filter(logPO < 1.5) #extract only SNPs with logPO less than 1.5 (not significant)
+      filter(logPO < 0.5) #extract only SNPs with logPO less than 1.5 (not significant)
 
 dim(bayescan_all_fst_significant) #1 total significant SNP
 dim(bayescan_all_fst_not_significant) #50,827 insignificant SNPs
 
 #create separate columns of metadata for both datasets created in the above step (significant and not significant), which will be later appended to each dataset
-sig_label_all = as.data.frame(c(rep("significant", times = 1))) #no significant snps
+sig_label_all <- as.data.frame(c(rep("significant", times = 3))) #no significant snps
       colnames(sig_label_all) <- c("selection")
       
-non_sig_label_all <- as.data.frame(c(rep("insignificant", times = 50827))) #all non-significant snps
+non_sig_label_all <- as.data.frame(c(rep("insignificant", times = 50825))) #all non-significant snps
       colnames(non_sig_label_all) <- c("selection")
+      
+sig_level_label_all <- as.data.frame(c(rep("very_strong", times = 1), rep("substantial", times = 2), rep("not_significant", times = 50825)))
+      colnames(sig_level_label_all) <- c("sig_level")
+
 
 #append metadata to each respective dataset
 bayescan_all_fst_significant <- cbind(bayescan_all_fst_significant, sig_label_all)
 bayescan_all_fst_not_significant <- cbind(bayescan_all_fst_not_significant, non_sig_label_all)
 
 #combine both significant and non-significant datasets into one dataset with all data, now appropriately labeled
-bayescan_all_fst_ready <- rbind(bayescan_all_fst_significant, bayescan_all_fst_not_significant)
+bayescan_all_fst <- rbind(bayescan_all_fst_significant, bayescan_all_fst_not_significant)
+bayescan_all_fst_ready <- cbind(bayescan_all_fst, sig_level_label_all)
 ```
 
 ## Get Significant and Insignificant SNPs for SMB data Only
@@ -71,10 +86,10 @@ bayescan_all_fst_ready <- rbind(bayescan_all_fst_significant, bayescan_all_fst_n
 #Rearrange data files so that significant SNPs (or log10PO is 1.5 or greater) are labeled
  
 bayescan_smb_fst_significant <- bayes_smb_fst %>% 
-      filter(logPO >= 1.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
+      filter(logPO >= 0.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
 
 bayescan_smb_fst_not_significant <- bayes_smb_fst %>% 
-      filter(logPO < 1.5) #extract only SNPs with logPO less than 1.5 (not significant)
+      filter(logPO < 0.5) #extract only SNPs with logPO less than 1.5 (not significant)
 
 dim(bayescan_smb_fst_significant) #766 total significant SNPs
 dim(bayescan_smb_fst_not_significant) #50,062 insignificant SNPs
@@ -97,27 +112,32 @@ bayescan_smb_fst_ready <- rbind(bayescan_smb_fst_significant, bayescan_smb_fst_n
 ## Get Significant and Insignificant SNPs for Neosho data only
 ```{r}
 
-bayescan_neosho_fst_significant <- bayes_neosho_fst %>% 
-      filter(logPO >= 1.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
+bayescan_neosho_finerad_fst_significant <- bayes_neosho_finerad_fst %>% 
+      filter(logPO >= 0.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
 
-bayescan_neosho_fst_not_significant <- bayes_neosho_fst %>% 
-      filter(logPO < 1.5) #extract only SNPs with logPO less than 1.5 (not significant)
+bayescan_neosho_finerad_fst_not_significant <- bayes_neosho_finerad_fst %>% 
+      filter(logPO < 0.5) #extract only SNPs with logPO less than 1.5 (not significant)
 
-dim(bayescan_neosho_fst_significant) #45 total significant SNPs
-dim(bayescan_neosho_fst_not_significant) #50,783 insignificant SNPs
+dim(bayescan_neosho_finerad_fst_significant) #40 total significant SNPs
+dim(bayescan_neosho_finerad_fst_not_significant) #50,788 total insignificant SNPs
 
 #create separate columns of metadata for both datasets created in the above step (significant and not significant), which will be later appended to each dataset
-sig_label_neosho = as.data.frame(c(rep("significant", times = 45))) #there are 45 total significant SNPs within Neosho Smallmouth Bass
-      colnames(sig_label_neosho) <- c("selection")
-non_sig_label_neosho <- as.data.frame(c(rep("insignificant", times = 50783)))
-      colnames(non_sig_label_neosho) <- c("selection")
-
+sig_label_neosho_finerad = as.data.frame(c(rep("significant", times = 40)))
+      colnames(sig_label_neosho_finerad) <- c("selection")
+      
+non_sig_label_neosho_finerad <- as.data.frame(c(rep("insignificant", times = 50788)))
+      colnames(non_sig_label_neosho_finerad) <- c("selection")
+      
+sig_level_label_neosho <- as.data.frame(c(rep("decisive", times = 3), rep("very_strong", times = 10), rep("strong", times = 15), rep("substantial", times = 12), rep("not_significant", times = 50788)))
+      colnames(sig_level_label_neosho) <- c("sig_level")
+      
 #append metadata to each respective dataset
-bayescan_neosho_fst_significant <- cbind(bayescan_neosho_fst_significant, sig_label_neosho)
-bayescan_neosho_fst_not_significant <- cbind(bayescan_neosho_fst_not_significant, non_sig_label_neosho)
+bayescan_neosho_finerad_fst_significant <- cbind(bayescan_neosho_finerad_fst_significant, sig_label_neosho_finerad)
+bayescan_neosho_finerad_fst_not_significant <- cbind(bayescan_neosho_finerad_fst_not_significant, non_sig_label_neosho_finerad)
 
 #combine both significant and non-significant datasets into one dataset with all data, now appropriately labeled
-bayescan_neosho_fst_ready <- rbind(bayescan_neosho_fst_significant, bayescan_neosho_fst_not_significant)
+bayescan_neosho_finerad_fst_almost_ready <- rbind(bayescan_neosho_finerad_fst_significant, bayescan_neosho_finerad_fst_not_significant)
+bayescan_neosho_finerad_fst_ready <- cbind(bayescan_neosho_finerad_fst_almost_ready, sig_level_label_neosho)
 ```
 
 ## Get Significant and Insignificant SNPs for Northern data only
@@ -211,17 +231,20 @@ smb_bayes_plot <- ggplot(bayescan_smb_fst_not1000, aes(x = logPO, y = fst, color
       theme(axis.title.y = element_blank())
 
 #Plot neosho outliers
-neosho_bayes_plot <- ggplot(bayescan_neosho_fst_not1000, aes(x = logPO, y = fst, color = selection)) + #make plot from non-1000 logPO for neosho only
-      geom_point(show.legend = F) + #do not show legend on the plot itself
+neosho_bayes_plot <- ggplot(bayescan_neosho_finerad_fst_ready, aes(x = logPO, y = fst, fill = sig_level)) + #make plot from non-1000 logPO for neosho only
+      geom_point(aes(fill = sig_level), color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
+      geom_vline(xintercept = 2, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
       geom_vline(xintercept = 1.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
+       geom_vline(xintercept = 1, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
+      geom_vline(xintercept = 0.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
       theme_set(theme_cowplot(12)) + #set ggplot to cowplot style 12 (gets rid of grid lines)
-      scale_color_manual(values = c("red","black")) + #set the color of non-significant points to black and significant points to red
+      scale_fill_manual(values = c("#56106EFF","grey","#F98C0AFF","#FCFFA4FF","#BB3754FF")) + #set the color of non-significant points to black and significant points to red
       labs(x = "Log10(Posterior Odds)", y = "FST") + #re-name the labels for the x and y axis
       theme(axis.title = element_text(size = 15, color = "black")) + #make the axis titles size 15
       theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
       theme(axis.line = element_line(color = "black")) +
       theme(axis.ticks = element_line(color = "black")) 
-
+inferno(5)
 #Plot northern outliers
 northern_bayes_plot <- ggplot(bayescan_northern_fst_not1000, aes(x = logPO, y = fst, color = selection)) + 
       geom_point(show.legend = F) + #do not show legend on the plot itself
