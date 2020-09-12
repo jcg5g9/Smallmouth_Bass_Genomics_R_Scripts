@@ -58,8 +58,8 @@ bayescan_all_fst_significant <- bayes_all_fst %>%
 bayescan_all_fst_not_significant <- bayes_all_fst %>% 
       filter(logPO < 0.5) #extract only SNPs with logPO less than 1.5 (not significant)
 
-dim(bayescan_all_fst_significant) #1 total significant SNP
-dim(bayescan_all_fst_not_significant) #50,827 insignificant SNPs
+dim(bayescan_all_fst_significant) #3 total significant SNP
+dim(bayescan_all_fst_not_significant) #50,825 insignificant SNPs
 
 #create separate columns of metadata for both datasets created in the above step (significant and not significant), which will be later appended to each dataset
 sig_label_all <- as.data.frame(c(rep("significant", times = 3))) #no significant snps
@@ -77,8 +77,8 @@ bayescan_all_fst_significant <- cbind(bayescan_all_fst_significant, sig_label_al
 bayescan_all_fst_not_significant <- cbind(bayescan_all_fst_not_significant, non_sig_label_all)
 
 #combine both significant and non-significant datasets into one dataset with all data, now appropriately labeled
-bayescan_all_fst <- rbind(bayescan_all_fst_significant, bayescan_all_fst_not_significant)
-bayescan_all_fst_ready <- cbind(bayescan_all_fst, sig_level_label_all)
+bayescan_all_fst_almost_ready <- rbind(bayescan_all_fst_significant, bayescan_all_fst_not_significant)
+bayescan_all_fst_ready <- cbind(bayescan_all_fst_almost_ready, sig_level_label_all)
 ```
 
 ## Get Significant and Insignificant SNPs for SMB data Only
@@ -143,28 +143,32 @@ bayescan_neosho_finerad_fst_ready <- cbind(bayescan_neosho_finerad_fst_almost_re
 ## Get Significant and Insignificant SNPs for Northern data only
 ```{r}
 bayescan_northern_fst_significant <- bayes_northern_fst %>% 
-      filter(logPO >= 1.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
+      filter(logPO >= 0.5) #extract only SNPs with logPO greater than or equal to 1.5 (significant)
 
 bayescan_northern_fst_not_significant <- bayes_northern_fst %>% 
-      filter(logPO < 1.5) #extract only SNPs with logPO less than 1.5 (not significant)
+      filter(logPO < 0.5) #extract only SNPs with logPO less than 1.5 (not significant)
 
 
-dim(bayescan_northern_fst_significant) # zero significant snps
-dim(bayescan_northern_fst_not_significant) #50,828 neutral snps
+dim(bayescan_northern_fst_significant) # 6 significant snps
+dim(bayescan_northern_fst_not_significant) #50,822 neutral snps
 
 
 #create separate columns of metadata for both datasets created in the above step (significant and not significant), which will be later appended to each dataset
-sig_label_northern = as.data.frame(c(rep("significant", times = 0))) #no significant snps
+sig_label_northern = as.data.frame(c(rep("significant", times = 6))) #no significant snps
       colnames(sig_label_northern) <- c("selection")
-non_sig_label_northern <- as.data.frame(c(rep("insignificant", times = 50828))) #all non-significant snps
+non_sig_label_northern <- as.data.frame(c(rep("insignificant", times = 50822))) #all non-significant snps
       colnames(non_sig_label_northern) <- c("selection")
+      
+sig_level_label_northern <- as.data.frame(c(rep("substantial", times = 6), rep("not_significant", times = 50822)))
+      colnames(sig_level_label_northern) <- c("sig_level")
 
 #append metadata to each respective dataset
 bayescan_northern_fst_significant <- cbind(bayescan_northern_fst_significant, sig_label_northern)
 bayescan_northern_fst_not_significant <- cbind(bayescan_northern_fst_not_significant, non_sig_label_northern)
 
 #combine both significant and non-significant datasets into one dataset with all data, now appropriately labeled
-bayescan_northern_fst_ready <- rbind(bayescan_northern_fst_significant, bayescan_northern_fst_not_significant)
+bayescan_northern_fst_almost_ready <- rbind(bayescan_northern_fst_significant, bayescan_northern_fst_not_significant)
+bayescan_northern_fst_ready <- cbind(bayescan_northern_fst_almost_ready, sig_level_label_northern)
 ```
 
 ## Filter datasets to omit SNPs with PO values of 1000 (because they distort the figure. Add the number of SNPs at 1000 to the final count of loci under selection)
@@ -204,11 +208,14 @@ The Plot Results section uses the full dataset produced in the Data Filtering se
 #plot outliers separately - each plot will show logPO on the x axis and fst on the y axis, with significance (selection) shown in different colors
 
 #Plot All samples
-all_bayes_plot <- ggplot(bayescan_all_fst_not1000, aes(x = logPO, y = fst, color = selection)) + #make plot from non-1000 logPO for all SMB 
-      geom_point(show.legend = F) + #do not show legend on the plot itself
-      geom_vline(xintercept = 1.5, linetype = "longdash") + #add a vertical line at the x value 1.5, and make it a dashed line
+all_bayes_plot <- ggplot(bayescan_all_fst_not1000, aes(x = logPO, y = fst, fill = sig_level)) + #make plot from non-1000 logPO for all SMB 
+      geom_point(aes(fill = sig_level), color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
+      geom_vline(xintercept = 2, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
+      geom_vline(xintercept = 1.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
+       geom_vline(xintercept = 1, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
+      geom_vline(xintercept = 0.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
       theme_set(theme_cowplot(12)) + #set ggplot to cowplot style 12 (gets rid of grid lines)
-      scale_color_manual(values = c("red","black")) + #set the color of points to black
+      scale_fill_manual(values = c("grey","#FCFFA4FF","#BB3754FF")) + #set the color of points to black
       labs(x = "Log10(Posterior Odds)", y = "FST") + #re-name the labels for the x and y axis
       theme(axis.title = element_text(size = 15, color = "black")) + #make the axis titles size 15
       theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
@@ -244,13 +251,16 @@ neosho_bayes_plot <- ggplot(bayescan_neosho_finerad_fst_ready, aes(x = logPO, y 
       theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
       theme(axis.line = element_line(color = "black")) +
       theme(axis.ticks = element_line(color = "black")) 
-inferno(5)
+
 #Plot northern outliers
-northern_bayes_plot <- ggplot(bayescan_northern_fst_not1000, aes(x = logPO, y = fst, color = selection)) + 
-      geom_point(show.legend = F) + #do not show legend on the plot itself
+northern_bayes_plot <- ggplot(bayescan_northern_fst_not1000, aes(x = logPO, y = fst, fill = sig_level)) + 
+      geom_point(aes(fill = sig_level), color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
+      geom_vline(xintercept = 2, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
       geom_vline(xintercept = 1.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
+       geom_vline(xintercept = 1, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
+      geom_vline(xintercept = 0.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
       theme_set(theme_cowplot(12)) + #set ggplot to cowplot style 12 (gets rid of grid lines)
-      scale_color_manual(values = c("black")) + #set the color of points to black
+      scale_fill_manual(values = c("grey","#FCFFA4FF")) + #set the color of points to black
       labs(x = "Log10(Posterior Odds)", y = "FST") + #re-name the labels for the x and y axis
       theme(axis.title = element_text(size = 15, color = "black")) + #make the axis titles size 15
       theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
@@ -284,7 +294,6 @@ read_smb_bed <- read.pcadapt("../../raw_data/outlier_fst_data/pcadapt_data/pass2
 read_neo_bed <- read.pcadapt("../../raw_data/outlier_fst_data/pcadapt_data/pass2_noBFC10_neosho.bed", type = "bed", type.out = c("matrix")) #50,828 SNPs kept, 63 samples
 read_nor_bed <- read.pcadapt("../../raw_data/outlier_fst_data/pcadapt_data/pass2_noBFC10_northern.bed", type = "bed") #50,828 SNPs kept, 24 samples
 
-str(read_all_bed)
 ```
 
 ## Metadata for Plotting
@@ -308,10 +317,10 @@ filtered_metadata_northern <- read_excel("../../metadata/genomics_metadata_filte
    filter(species == "Northern") #This is the metadata for only Neosho individuals
 
 #Population name vectors for PCA mapping
-all_pops <- as.vector(filtered_metadata_all[,-c(1:5)])
-smb_pops <- as.vector(filtered_metadata_smb[,-c(1:4,6)])
-neosho_pops <- as.vector(filtered_metadata_neosho[,-c(1:4,6)])
-northern_pops <- as.vector(filtered_metadata_northern[,-c(1:4,6)])
+all_pops <- as.vector(filtered_metadata_all[,-c(1:6)])
+smb_pops <- as.vector(filtered_metadata_smb[,-c(1:5,7)])
+neosho_pops <- as.vector(filtered_metadata_neosho[,-c(1:5,7)])
+northern_pops <- as.vector(filtered_metadata_northern[,-c(1:5,7)])
 ```
 
 ## Run PCA through PCAdapt to identify outlier SNPs
@@ -325,8 +334,8 @@ northern_pca <- pcadapt(read_nor_bed, K = 20, min.maf = 0.0001)
 #Check Scree Plots for all PCAs to see how many PCs to use
 all_scree_plot <- plot(all_pca, option = "screeplot") #2 PCs
 smb_scree_plot <- plot(smb_pca, option = "screeplot") #2 PCs
-neo_scree_plot <- plot(neosho_pca, option = "screeplot") #3 PCs
-nor_scree_plot <- plot(northern_pca, option = "screeplot") #2 PCs
+neo_scree_plot <- plot(neosho_pca, option = "screeplot") #4 PCs
+nor_scree_plot <- plot(northern_pca, option = "screeplot") #3 PCs
 
 #Rerun PCAs with appropriate number of PCs for each data subset
 all_pca_K2 <- pcadapt(read_all_bed, K = 2, min.maf = 0.0001)
@@ -515,7 +524,7 @@ colnames(northern_pca_scores) <- c("pop","PC1","PC2","PC3")
 ###Plots for PCA Scores###
 ###All Samples###
 all_pca_ms_plot <- ggplot(all_pca_scores, aes(x = PC1, y = PC2)) + 
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = F) +
    labs(x = "PC1 (53.94 %)", y = "PC2 (14.74 %)", fill = "Taxon") +
    scale_fill_manual(values = c("deepskyblue", "deeppink2", "goldenrod3")) +
    theme_set(theme_cowplot(12)) +
@@ -527,9 +536,9 @@ all_pca_ms_plot <- ggplot(all_pca_scores, aes(x = PC1, y = PC2)) +
 
 ###SMB Samples Only###
 smb_pca_ms_plot <- ggplot(smb_pca_scores, aes(x = PC1, y = PC2)) + 
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = F) +
    labs(x = "PC1 (18.50 %)", y = "PC2 (5.55 %)", fill = "Population") +
-   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","grey","deepskyblue","mediumpurple","forestgreen","navyblue","chocolate1","orchid1","deeppink2")) +
+   scale_fill_manual(values = c("lightgreen","lightyellow","sienna4","deepskyblue","mediumpurple","forestgreen","chocolate1","navyblue","orchid1","deeppink2")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 15)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -539,9 +548,9 @@ smb_pca_ms_plot <- ggplot(smb_pca_scores, aes(x = PC1, y = PC2)) +
 
 ###Neosho Samples Only###
 neosho_pca_ms_plot <- ggplot(neosho_pca_scores, aes(x = PC1, y = PC2)) + 
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = F) +
    labs(x = "PC1 (6.60 %)", y = "PC2 (5.22 %)", fill = "Population") +
-   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","grey","deepskyblue","mediumpurple","forestgreen","orchid1")) +
+   scale_fill_manual(values = c("lightgreen","lightyellow","sienna4","deepskyblue","mediumpurple","forestgreen","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 15)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -551,7 +560,7 @@ neosho_pca_ms_plot <- ggplot(neosho_pca_scores, aes(x = PC1, y = PC2)) +
 
 ###Northern Samples Only###
 northern_pca_ms_plot <- ggplot(northern_pca_scores, aes(x = PC1, y = PC2)) + 
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 4, show.legend = F) +
    labs(x = "PC1 (15.76 %)", y = "PC2 (11.25 %)", fill = "Population") +
    scale_fill_manual(values = c("navyblue","chocolate1","deeppink2")) +
    theme_set(theme_cowplot(12)) +
@@ -603,6 +612,7 @@ all_bayescan_pcadapt_outlier_merged <- merge(all_pcadapt_snps_significant, bayes
 all_bayescan_pcadapt_neutral_merged <- merge(all_pcadapt_snps_not_significant, bayescan_all_fst_not_significant, by = "snp_id")
 
 #There are no shared outlier SNPs between datasets, so they will not be analyed further
+#There are 34,463 neutral SNPs
 ```
 
 ## Outlier SNPs - SMB Samples Only
@@ -634,6 +644,7 @@ smb_pcadapt_snps_not_significant <- smb_p_vals_bonf %>%
 dim(smb_pcadapt_snps_significant) #1006 SNPs
 dim(smb_pcadapt_snps_not_significant) #41,871 SNPs
 ```
+
 ## MERGE DATASETS
 ## Merge datasets for outlier SNPs and neutral SNPs for BAYESCAN and PCADAPT
 ```{r}
@@ -705,13 +716,13 @@ dim(neosho_pcadapt_snps_not_significant) #35,041 SNPs
 ## Merge datasets for outlier SNPs and neutral SNPs for BAYESCAN and PCADAPT
 ```{r}
 #Merge datasets for outlier SNPs and neutral SNPs for BAYESCAN and PCADAPT
-neosho_bayescan_pcadapt_outlier_merged <- merge(neosho_pcadapt_snps_significant, bayescan_neosho_fst_significant, by = "snp_id")
-neosho_bayescan_pcadapt_neutral_merged <- merge(neosho_pcadapt_snps_not_significant, bayescan_neosho_fst_not_significant, by = "snp_id")
+neosho_bayescan_pcadapt_outlier_merged <- merge(neosho_pcadapt_snps_significant, bayescan_neosho_finerad_fst_significant, by = "snp_id")
+neosho_bayescan_pcadapt_neutral_merged <- merge(neosho_pcadapt_snps_not_significant, bayescan_neosho_finerad_fst_not_significant, by = "snp_id")
 
 #########This is where PCAdapt and Bayescan overlap#############
 
-# 29 SNPs (signficant in both pcadapt analysis and bayescan)
-# 35,025 SNPs (non-significant in both pcadapt analysis and bayescan)
+# 32 SNPs (signficant in both pcadapt analysis and bayescan)
+# 35,033 SNPs (non-significant in both pcadapt analysis and bayescan)
 ```
 
 ###The Merge Datasets section combines the tabular output of both Bayescan and PCAdapt to identify individual SNPs that are signicant outliers in both types of analyses. SNPs that are identified as outliers in both types of analysis are considered to have stronger support as actual outliers. There are no separate subsections for this section. 
@@ -770,4 +781,5 @@ northern_bayescan_pcadapt_outlier_merged <- merge(northern_pcadapt_snps_signific
 northern_bayescan_pcadapt_neutral_merged <- merge(northern_pcadapt_snps_not_significant, bayescan_northern_fst_not_significant, by = "snp_id")
 
 #There are no shared outlier SNPs between datasets, so they will not be analyed further
+#There were 25,656 neutral SNPs 
 ```
