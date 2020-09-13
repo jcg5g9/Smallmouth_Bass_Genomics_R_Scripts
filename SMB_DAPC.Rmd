@@ -29,9 +29,9 @@ neosho_pops <- smb_pops_noBFC10 %>%
   filter(species == "Neosho")
 
 #convert population abbreviations into a single vector
-smb_pops <- cbind(smb_pops$phylo_pop_abb)
+smb_pops <- cbind(smb_pops$finerad_pops)
 as.vector(smb_pops)
-neosho_pops <- cbind(neosho_pops$phylo_pop_abb)
+neosho_pops <- cbind(neosho_pops$finerad_pops)
 as.vector(neosho_pops)
 ```
 
@@ -45,8 +45,8 @@ vcf_smb_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/vcf_pass2_noBFC1
 vcf_smb_noBFC10_neutral <- read.vcfR("../../raw_data/dapc_data/vcf_pass2_noBFC10_smb_neutral.vcf")
 
 ###Neosho Samples Only###
-vcf_neosho_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/vcf_pass2_noBFC10_neosho_outliers.vcf")
-vcf_neosho_noBFC10_neutral <- read.vcfR("../../raw_data/dapc_data/vcf_pass2_noBFC10_neosho_neutral.vcf")
+vcf_neosho_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/neosho_finerad_outlier_snps.vcf")
+vcf_neosho_noBFC10_neutral <- read.vcfR("../../raw_data/dapc_data/neosho_finerad_neutral_snps.vcf")
 
 #Convert VCF to a genind object
 ###SMB Samples Only###
@@ -195,9 +195,9 @@ smb_neutral_dapc_plot <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill
 ###Neosho Samples Only###
 ###Outlier SNPs###
 neosho_outlier_dapc_plot <- ggplot(dapc_neosho_outlier_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = F) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","grey","deepskyblue","mediumpurple","forestgreen","orchid1")) +
+   scale_fill_manual(values = c("lightgreen", "lightyellow", "sienna4", "deepskyblue", "mediumpurple","forestgreen","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -207,9 +207,9 @@ neosho_outlier_dapc_plot <- ggplot(dapc_neosho_outlier_LDs, aes(x = LD1, y = LD2
 
 ###Neutral SNPs###
 neosho_neutral_dapc_plot <- ggplot(dapc_neosho_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = F) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","grey","deepskyblue","mediumpurple","forestgreen","orchid1")) +
+   scale_fill_manual(values = c("lightgreen", "lightyellow", "sienna4", "deepskyblue", "mediumpurple","forestgreen","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
