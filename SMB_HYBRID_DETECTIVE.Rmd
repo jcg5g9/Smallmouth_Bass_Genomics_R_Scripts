@@ -20,42 +20,41 @@ library(cowplot)
 ```{r}
 #Expore genepop data using genepopedit package - here, I am just seeing what the data tables look like with respect to the genepop edit package. I am then using the genepopedit pacakge to make sure that all of the genepop files are in the correct format for the hybriddetective getTopLoc() function
 
-genepop_detective("../../raw_data/genepop_data/hsyc_white_pure_genepop.txt", variable = "PopNum")
-genepop_flatten("../../raw_data/genepop_data/hsyc_white_pure_genepop_biall_2pop.txt")
-genepop_detective("../../raw_data/genepop_data/leemulb_white_genepop_full_data/leemulb_white_pure_genepop_biall_2pop.txt", variable = "PopNum")
-genepop_flatten("../../raw_data/genepop_data/leemulb_white_genepop_full_data/leemulb_white_pure_genepop.txt")
-genepop_flatten("/Users/joegunn/Desktop/leemulb_white_pure_genepop_biall_2pop.txt")
-
+genepop_detective("../../raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt", variable = "PopNum")
+genepop_flatten("../../raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt")
 
 #create a dataframe to designate two different populations (Pure Neosho, Pure Northern)
-#pop_rename_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","",""), Rename = c("HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+pop_rename_hsyc_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","",""), Rename = c("HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
 
-#pop_rename_skia <- data.frame(Opop = c("","","","","","","","","","","","",""), Rename = c("HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","SKIA","SKIA","SKIA","SKIA","SKIA"))
+pop_rename_canbar_skia <- data.frame(Opop = c("","","","","","","","","","","","","",""), Rename = c("CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","SKIA","SKIA","SKIA","SKIA","SKIA"))
 
-pop_rename_leemulb_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","",""), Rename = c("LEEMULB","LEEMULB","LEEMULB","LEEMULB","LEEMULB","LEEMULB","LEEMULB","LEEMULB","LEEMULB","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+pop_rename_hsyc_canbar_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+
 
 #Designate the two different populations (Pure Neosho, Pure Northern)
-#subset_genepop_rename("../../raw_data/genepop_data/hsyc_white_200_panel_genepop_full.txt", pop_rename_white, path = "/Users/joegunn/Desktop/hsyc_white_200_panel_genepop_2pop_full.txt")
+subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_white_parent_genepop.txt", pop_rename_hsyc_white, path = "/Users/joegunn/Desktop/hsyc_white_parent_genepop_goodformat.txt")
 
-#subset_genepop_rename("../../raw_data/genepop_data/hsyc_skia_200_panel_genepop_full.txt", pop_rename_skia, path = "/Users/joegunn/Desktop/hsyc_skia_200_panel_genepop_2pop_full.txt")
+subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/canbar_skia_parent_genepop.txt", pop_rename_canbar_skia, path = "/Users/joegunn/Desktop/canbar_skia_parent_genepop_goodformat.txt")
 
-subset_genepop_rename("../../raw_data/genepop_data/leemulb_white_genepop_full_data/leemulb_white_pure_genepop_biall.txt", pop_rename_leemulb_white, path = "/Users/joegunn/Desktop/leemulb_white_pure_genepop_biall_2pop.txt")
+subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_canbar_white_parent_genepop.txt", pop_rename_hsyc_canbar_white, path = "/Users/joegunn/Desktop/hsyc_canbar_white_parent_genepop_goodformat.txt")
+
+
 
 #Run command to extract the top 200 diagnositic SNPs (with highest Fst values) across pure Neosho and Northern populations. Both PGDSpider and PLINK needed to be installed on my local computer, and the respective paths to both executables are given in this function. 
 ```
 
 ## Run getTopLoc() funtion from hybriddetective to get 200 diagnostic, high linkage, high Fst SNPs. There must be a "/" after the directories that PLINK and PGDSpider are in!
 ```{r}
-#Get panel SNP panel for Skiatook lake and Honey Syc populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/hsyc_skia_genepop_full_data/hsyc_skia_pure_genepop_biall_2pop_test.txt", panel.size = 200,
+#Get panel SNP panel for HSYC and WHITE populations
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_white_parent_genepop_goodformat.txt", panel.size = 200,
 where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 
-#Get panel SNP panel for White and Honey Syc populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/hsyc_white_pure_genepop_biall_2pop.txt", panel.size = 200,
+#Get panel SNP panel for CANBAR and SKIA populations
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/canbar_skia_parent_genepop_goodformat.txt", panel.size = 200,
 where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 
-#Get panel SNP panel for White and LEE MULB populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/genepop_data/leemulb_white_genepop_full_data/leemulb_white_pure_genepop_biall_2pop.txt", panel.size = 200,
+#Get panel SNP panel for HSYC+CANBAR AND WHITE populations
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt", panel.size = 200,
 where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 ```
 
