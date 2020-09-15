@@ -657,13 +657,13 @@ dim(smb_pcadapt_snps_not_significant) #41,871 SNPs
 ## Merge datasets for outlier SNPs and neutral SNPs for BAYESCAN and PCADAPT
 ```{r}
 #Merge datasets for outlier SNPs and neutral SNPs for BAYESCAN and PCADAPT
-smb_bayescan_pcadapt_outlier_merged <- merge(smb_pcadapt_snps_significant, bayescan_smb_fst_significant, by = "snp_id")
-smb_bayescan_pcadapt_neutral_merged <- merge(smb_pcadapt_snps_not_significant, bayescan_smb_fst_not_significant, by = "snp_id")
+smb_bayescan_pcadapt_outlier_merged <- merge(smb_pcadapt_snps_significant, bayescan_smb_finerad_fst_significant, by = "snp_id")
+smb_bayescan_pcadapt_neutral_merged <- merge(smb_pcadapt_snps_not_significant, bayescan_smb_finerad_fst_not_significant, by = "snp_id")
 
 #########This is where PCAdapt and Bayescan overlap#############
 
-# 131 SNPs (signficant in both pcadapt analysis and bayescan)
-# 41,236 SNPs (non-significant in both pcadapt analysis and bayescan)
+# 189 SNPs (signficant in both pcadapt analysis and bayescan)
+# 41,088 SNPs (non-significant in both pcadapt analysis and bayescan)
 ```
 
 ###The Merge Datasets section combines the tabular output of both Bayescan and PCAdapt to identify individual SNPs that are signicant outliers in both types of analyses. SNPs that are identified as outliers in both types of analysis are considered to have stronger support as actual outliers. There are no separate subsections for this section. 
