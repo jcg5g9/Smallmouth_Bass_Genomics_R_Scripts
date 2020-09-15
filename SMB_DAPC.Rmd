@@ -41,8 +41,8 @@ as.vector(neosho_pops)
 ```{r}
 #read-in VCF files for outlier SNPs and neutral SNPs
 ###SMB Samples Only###
-vcf_smb_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/vcf_pass2_noBFC10_smb_outliers.vcf")
-vcf_smb_noBFC10_neutral <- read.vcfR("../../raw_data/dapc_data/vcf_pass2_noBFC10_smb_neutral.vcf")
+vcf_smb_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/smb_finerad_outlier_snps.vcf")
+vcf_smb_noBFC10_neutral <- read.vcfR("../../raw_data/dapc_data/smb_finerad_neutral_snps.vcf")
 
 ###Neosho Samples Only###
 vcf_neosho_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/neosho_finerad_outlier_snps.vcf")
