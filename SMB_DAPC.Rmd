@@ -164,9 +164,9 @@ colnames(dapc_neosho_neutral_LDs) <- c("pop","LD1","LD2")
 ###SMB Samples Only###
 ###Outlier SNPs###
 smb_outlier_dapc_plot <- ggplot(dapc_smb_outlier_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = F) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4","lightyellow", "firebrick3", "grey", "deepskyblue", "mediumpurple","forestgreen","navyblue","chocolate1","orchid1","deeppink2")) +
+   scale_fill_manual(values = c("lightgreen", "lightyellow","sienna4","deepskyblue" ,"mediumpurple", "forestgreen", "chocolate1","navyblue","orchid1","deeppink2","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -180,13 +180,16 @@ smb_outlier_dapc_plot <- ggplot(dapc_smb_outlier_LDs, aes(x = LD1, y = LD2, fill
 
 ###Neutral SNPs###
 smb_neutral_dapc_plot <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = F) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4","lightyellow", "firebrick3", "grey", "deepskyblue", "mediumpurple","forestgreen","navyblue","chocolate1","orchid1","deeppink2")) +
+   scale_fill_manual(values = c("lightgreen", "lightyellow","sienna4","deepskyblue" ,"mediumpurple", "forestgreen", "chocolate1","navyblue","orchid1","deeppink2","orchid1")) +
    theme_set(theme_cowplot(12)) +
-   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(size = 25)) +
    theme(legend.title = element_text(face = "bold")) +
-   theme(legend.text = element_text(size = 20)) +
+   theme(legend.text = element_text(size = 25)) +
+   theme(legend.position = c(0.05,0.7)) +
+   theme(legend.background = element_rect(color = "black", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 20)) + 
    theme(axis.title = element_blank())
@@ -195,25 +198,31 @@ smb_neutral_dapc_plot <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill
 ###Neosho Samples Only###
 ###Outlier SNPs###
 neosho_outlier_dapc_plot <- ggplot(dapc_neosho_outlier_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = F) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
    scale_fill_manual(values = c("lightgreen", "lightyellow", "sienna4", "deepskyblue", "mediumpurple","forestgreen","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 20)) +
+   theme(legend.position = c(0.7,0.26)) +
+   theme(legend.background = element_rect(color = "black", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 20))
 
 ###Neutral SNPs###
 neosho_neutral_dapc_plot <- ggplot(dapc_neosho_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = F) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
    scale_fill_manual(values = c("lightgreen", "lightyellow", "sienna4", "deepskyblue", "mediumpurple","forestgreen","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 20)) +
+   theme(legend.position = c(0.7,0.26)) +
+   theme(legend.background = element_rect(color = "black", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 20)) +
    theme(axis.title.y = element_blank())
@@ -336,6 +345,9 @@ smb_dapc_outlier_driving_snps <- smb_dapc_outlier_driving_snps %>%
   group_by(snp_id) %>%
   summarize(LD1 = mean(LD1))
 
+smb_dapc_outlier_driving_snps_arranged <- smb_dapc_outlier_driving_snps %>%
+   arrange(desc(LD1))
+
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/smb_dapc_driving_snps.pdf", width=8, height=25)
 
 ggplot(smb_dapc_outlier_driving_snps, aes(x = snp_id, y = LD1)) +
@@ -349,18 +361,18 @@ ggplot(smb_dapc_outlier_driving_snps, aes(x = snp_id, y = LD1)) +
     
 dev.off()
 
-#SNPs that are most highly contributing to local adaptation:
+#SNPs that are most highly contributing to local adaptation (TOP 10)
 
-#130606
-#163080
 #175380
-#184351
-#18474
-#198781
-#253461
+#130606
 #46037
 #77748
+#163080
 #87556
+#253461
+#54829
+#175005
+#184351
 ```
 
 
@@ -381,6 +393,9 @@ neosho_dapc_outlier_driving_snps <- neosho_dapc_outlier_driving_snps %>%
   group_by(snp_id) %>%
   summarize(LD1 = mean(LD1))
 
+neosho_dapc_outlier_driving_snps_arrange <- neosho_dapc_outlier_driving_snps %>%
+   arrange(desc(LD1))
+
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/neosho_dapc_driving_snps.pdf", width=8, height=5)
 
 ggplot(neosho_dapc_outlier_driving_snps, aes(x = snp_id, y = LD1)) +
@@ -394,15 +409,16 @@ ggplot(neosho_dapc_outlier_driving_snps, aes(x = snp_id, y = LD1)) +
     
 dev.off()
 
-#SNPs that are most highly contributing to local adaptation:
+#SNPs that are most highly contributing to local adaptation (TOP 10)
 
-#127392
-#131695
-#133235
-#161869
-#191350
+#74243
 #215656
-#231240
+#133235
+#131695
+#321240
 #57650
-#97387
+#191350
+#161869
+#127392
+#41363
 ```
