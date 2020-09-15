@@ -46,15 +46,15 @@ subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepop
 ## Run getTopLoc() funtion from hybriddetective to get 200 diagnostic, high linkage, high Fst SNPs. There must be a "/" after the directories that PLINK and PGDSpider are in!
 ```{r}
 #Get panel SNP panel for HSYC and WHITE populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_white_parent_genepop_goodformat.txt", panel.size = 200,
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_format_genepops/hsyc_white_parent_genepop_goodformat.txt", panel.size = 200,
 where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 
 #Get panel SNP panel for CANBAR and SKIA populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/canbar_skia_parent_genepop_goodformat.txt", panel.size = 200,
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_format_genepops/canbar_skia_parent_genepop_goodformat.txt", panel.size = 200,
 where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 
 #Get panel SNP panel for HSYC+CANBAR AND WHITE populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt", panel.size = 200,
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_format_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt", panel.size = 200,
 where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 ```
 
