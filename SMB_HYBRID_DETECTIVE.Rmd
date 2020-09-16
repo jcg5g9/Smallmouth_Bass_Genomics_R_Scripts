@@ -64,24 +64,36 @@ snp_metadata <- read_excel("../../metadata/smb_snp_metadata.xlsx")
 snp_metadata <- snp_metadata %>%
   mutate(snp_number = factor(snp_number))
 
-#Honey Creek and Sycamore Creek with the White River SNPs
-hsyc_white_200_panel_snps <- read_excel("../../metadata/hsyc_white_200_panel.xlsx")
+#HSYC with the White River SNPs
+hsyc_white_200_panel_snps <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_200_panels/hsyc_white_200_loci_panel.xlsx")
 hsyc_white_200_panel_snps <- hsyc_white_200_panel_snps %>%
   mutate(snp_number = factor(snp_number))
 
 hsyc_white_200_panel_snp_names <- merge(snp_metadata, hsyc_white_200_panel_snps, by = "snp_number")
 
-#Honey Creek and Sycamore Creek with Skiatook Lake SNPs
-hsyc_skia_200_panel_snps <- read_excel("../../metadata/hsyc_skia_200_panel.xlsx")
-hsyc_skia_200_panel_snps <- hsyc_skia_200_panel_snps %>%
+
+#CANBAR with Skiatook Lake SNPs
+canbar_skia_200_panel_snps <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_200_panels/canbar_skia_200_loci_panel.xlsx")
+canbar_skia_200_panel_snps <- canbar_skia_200_panel_snps %>%
   mutate(snp_number = factor(snp_number))
 
-hsyc_skia_200_panel_snp_names <- merge(snp_metadata, hsyc_skia_200_panel_snps, by = "snp_number")
+canbar_skia_200_panel_snp_names <- merge(snp_metadata, canbar_skia_200_panel_snps, by = "snp_number")
+
+
+#CANBAR + HSYC with White River SNPs
+hsyc_canbar_white_200_panel_snps <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_200_panels/hsyc_canbar_white_200_loci_panel.xlsx")
+hsyc_canbar_white_200_panel_snps <- hsyc_canbar_white_200_panel_snps %>%
+  mutate(snp_number = factor(snp_number))
+
+hsyc_canbar_white_200_panel_snp_names <- merge(snp_metadata, hsyc_canbar_white_200_panel_snps, by = "snp_number")
+
 
 #Write out tables with SNP names to be kept for hybrid analysis - these will be text files that can be later used in vcftools to subset vcfs on Lewis 
-write.table(hsyc_white_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/metadata/hsyc_white_200_panel_snp_names.txt", sep="\t")
+write.table(hsyc_white_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_200_panels/hsyc_white_200_panel_snp_names.txt", sep="\t")
 
-write.table(hsyc_skia_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/metadata/hsyc_skia_200_panel_snp_names.txt", sep="\t")
+write.table(canbar_skia_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_200_panels/canbar_skia_200_panel_snp_names.txt", sep="\t")
+
+write.table(hsyc_canbar_white_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_200_panels/hsyc_canbar_white_200_panel_snp_names.txt", sep="\t")
 ```
 
 ## HYBRIDLAB ANALYSIS
@@ -89,6 +101,20 @@ write.table(hsyc_skia_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/
 
 ## Format simulated data files from HYBRIDLAB 
 ```{r}
+
+#Designate the two different populations (Pure Neosho, Pure Northern) for SIMULATED DATASETS
+subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_white_parent_sim.txt", pop_rename_hsyc_white, path = "/Users/joegunn/Desktop/hsyc_white_parent_sim_genepop_goodformat.txt")
+
+subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/canbar_skia_parent_sim.txt", pop_rename_canbar_skia, path = "/Users/joegunn/Desktop/canbar_skia_parent_sim_genepop_goodformat.txt")
+
+subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_canbar_white_parent_sim.txt", pop_rename_hsyc_canbar_white, path = "/Users/joegunn/Desktop/hsyc_canbar_white_parent_sim_genepop_goodformat.txt")
+
+#Take a look at the datafiles to see if they are in the correct format
+genepop_detective("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_white_parent_sim_genepop_goodformat.txt", variable = "PopNum")
+genepop_flatten("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_canbar_white_parent_sim_genepop_goodformat.txt")
+
+
+
 #Format genepop file for simulated HSYC and WHITE parent 1 and 2 
 #pop_rename_hsyc_white_p1_p2 <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2"))
 
