@@ -121,6 +121,91 @@ library(PopGenome)
 library(pcadapt)
 source("./vcf2sfs.r")
 ```
+##unused hybrid detective stuff
+
+
+#Format genepop file for simulated HSYC and WHITE parent 1 and 2 
+#pop_rename_hsyc_white_p1_p2 <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hybrid_lab_simulations/text_files/hsyc_white_P1_P2_sim.txt", pop_rename_hsyc_white_p1_p2, path = "/Users/joegunn/Desktop/hsyc_white_P1_P2_sim_2pop.txt")
+
+#Format genepop file for simulated HSYC and WHITE F1 backcross to HSYC 
+#pop_rename_hsyc_white_F1_HSYC <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hybrid_lab_simulations/text_files/hsyc_white_F1_HSYC_sim.txt", pop_rename_hsyc_white_F1_HSYC, path = "/Users/joegunn/Desktop/hsyc_white_F1_HSYC_sim_2pop.txt")
+
+#Format genepop file for simulated HSYC and WHITE F1 backcross to WHITE 
+#pop_rename_hsyc_white_F1_WHITE <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hybrid_lab_simulations/text_files/hsyc_white_F1_WHITE_sim.txt", pop_rename_hsyc_white_F1_WHITE, path = "/Users/joegunn/Desktop/hsyc_white_F1_WHITE_sim_2pop.txt")
+
+#Format genepop file for simulated HSYC and SKIA parent 1 and 2 
+#pop_rename_hsyc_skia_p1_p2 <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P1","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2","P2"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hybrid_lab_simulations/text_files/hsyc_skia_P1_P2_sim.txt", pop_rename_hsyc_skia_p1_p2, path = "/Users/joegunn/Desktop/hsyc_skia_P1_P2_sim_2pop.txt")
+
+#Format genepop file for simulated HSYC and SKIA F1 backcross to HSYC 
+#pop_rename_hsyc_skia_F1_HSYC <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hybrid_lab_simulations/text_files/hsyc_skia_F1_HSYC_sim.txt", pop_rename_hsyc_skia_F1_HSYC, path = "/Users/joegunn/Desktop/hsyc_skia_F1_HSYC_sim_2pop.txt")
+
+#Format genepop file for simulated HSYC and SKIA F1 backcross to SKIA 
+#pop_rename_hsyc_skia_F1_SKIA <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","SKIA","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1","F1"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hybrid_lab_simulations/text_files/hsyc_skia_F1_SKIA_sim.txt", pop_rename_hsyc_skia_F1_SKIA, path = "/Users/joegunn/Desktop/hsyc_skia_F1_SKIA_sim_2pop.txt")
+```
+
+## Format all hybrid datafiles
+```{r}
+##WHITE RIVER ADMIXED POPS
+#pop_rename_white_bayou <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("AT","AT","AT","AT","AT","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hsyc_white_admixed_vcf/hsyc_white_BAYOU_genepop.txt", pop_rename_white_bayou, path = "/Users/joegunn/Desktop/hsyc_white_BAYOU_genepop_correct.txt")
+
+
+#pop_rename_white_bsug <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("MI","MI","MI","MI","MI","MI","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hsyc_white_admixed_vcf/hsyc_white_BSUG_genepop.txt", pop_rename_white_bsug, path = "/Users/joegunn/Desktop/hsyc_white_BSUG_genepop_correct.txt")
+
+
+#pop_rename_white_buff <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("BC","BC","BC","BC","BC","BC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hsyc_white_admixed_vcf/hsyc_white_BUFF_genepop.txt", pop_rename_white_buff, path = "/Users/joegunn/Desktop/hsyc_white_BUFF_genepop_correct.txt")
+
+
+#pop_rename_white_elk <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("ELK","ELK","ELK","ELK","ELK","ELK","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hsyc_white_admixed_vcf/hsyc_white_ELK_genepop.txt", pop_rename_white_elk, path = "/Users/joegunn/Desktop/hsyc_white_ELK_genepop_correct.txt")
+
+
+#pop_rename_white_spav <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("SPVW","SPVW","SPVW","SPVW","SPVW","SPVW","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hsyc_white_admixed_vcf/hsyc_white_SPAV_genepop.txt", pop_rename_white_spav, path = "/Users/joegunn/Desktop/hsyc_white_SPAV_genepop_correct.txt")
+
+
+
+#SKIATOOK LAKE ADMIXED POPS
+#pop_rename_skia_baron <- data.frame(Opop = c("","","","","","","","","","","","","","","","","",""), Rename = c("BFORK","BFORK","BFORK","BFORK","BFORK","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","SKIA","SKIA","SKIA","SKIA","SKIA"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hsyc_skia_admixed_vcf/hsyc_skia_BARON_genepop.txt", pop_rename_skia_baron, path = "/Users/joegunn/Desktop/hsyc_skia_BARON_genepop_correct.txt")
+
+
+#pop_rename_skia_caney <- data.frame(Opop = c("","","","","","","","","","","","","","","","","",""), Rename = c("CANEY","CANEY","CANEY","CANEY","CANEY","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","SKIA","SKIA","SKIA","SKIA","SKIA"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hsyc_skia_admixed_vcf/hsyc_skia_CANEY_genepop.txt", pop_rename_skia_caney, path = "/Users/joegunn/Desktop/hsyc_skia_CANEY_genepop_correct.txt")
+
+
+#pop_rename_skia_illinois <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","",""), Rename = c("ILLINOIS","ILLINOIS","ILLINOIS","ILLINOIS","ILLINOIS","ILLINOIS","ILLINOIS","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","SKIA","SKIA","SKIA","SKIA","SKIA"))
+
+#subset_genepop_rename("../../raw_data/genepop_data/hsyc_skia_admixed_vcf/hsyc_skia_ILLINOIS_genepop.txt", pop_rename_skia_illinois, path = "/Users/joegunn/Desktop/hsyc_skia_ILLINOIS_genepop_correct.txt")
+
+
+#genepop_flatten("../../../../../../hsyc_skia_ILLINOIS_genepop_correct.txt")
+#genepop_detective("../../../../../../hsyc_skia_ILLINOIS_genepop_correct.txt", variable = "PopNum")
+```
+
+
+
 
 ```{r}
 
