@@ -175,7 +175,7 @@ dapc_hsyc_white_admix <- dapc(hsyc_white_all_admix_genepop_genind, admix_pops_hs
 hsyc_canbar_white_all_admix_genepop <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_sim_hybrids/hsyc_canbar_white_ALL_SIM_hybrids.xlsx")
 
 ## Create population vector
-admix_pops_hsyc_canbar_white <- factor(c(rep("Simulated HSYC + CANBAR", times = 100), rep("Simulated WHITE", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("Backcross to HSYC + CANBAR", times = 100), rep("Backcross to WHITE", times = 100), rep("BAYOU", times = 7)))
+admix_pops_hsyc_canbar_white <- factor(c(rep("Simulated HSYC+CANBAR", times = 100), rep("Simulated WHITE", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("Backcross to HSYC+CANBAR", times = 100), rep("Backcross to WHITE", times = 100), rep("BAYOU", times = 7)))
 
 hsyc_canbar_white_all_admix_genepop <- column_to_rownames(hsyc_canbar_white_all_admix_genepop, "ind")
 hsyc_canbar_white_all_admix_genepop <- as.matrix(hsyc_canbar_white_all_admix_genepop)
@@ -207,12 +207,12 @@ dapc_canbar_skia_admix_LDs <- as.data.frame(dapc_canbar_skia_admix$ind.coord)
 dapc_canbar_skia_admix_LDs <- cbind(data.frame(admix_pops_canbar_skia), dapc_canbar_skia_admix_LDs)
 colnames(dapc_canbar_skia_admix_LDs) <- c("pop","LD1","LD2")
 
-dapc_canbar_skia_admix_LDs$pop <- factor(dapc_canbar_skia_admix_LDs$pop, levels = c("Simulated CANBAR", "Simulated SKIA", "F1", "F2","Backcross to CANBAR", "Backcross to SKIA", "ILLI"))
+dapc_canbar_skia_admix_LDs$pop <- factor(dapc_canbar_skia_admix_LDs$pop, levels = c("Simulated CANBAR","Backcross to CANBAR", "F2", "F1", "Backcross to SKIA","Simulated SKIA", "ILLI"))
 
 dapc_canbar_skia_admix_plot <- ggplot(dapc_canbar_skia_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", alpha = 0.8, pch = 21, size = 5, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Hybrid Category") +
-   scale_fill_manual(values = c("lightyellow","navyblue","grey50","grey85","grey100","grey35","mediumpurple")) +
+   scale_fill_manual(values = c("grey100","grey80","grey60","grey40","grey20","black","mediumpurple")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -229,12 +229,12 @@ dapc_hsyc_white_admix_LDs <- as.data.frame(dapc_hsyc_white_admix$ind.coord)
 dapc_hsyc_white_admix_LDs <- cbind(data.frame(admix_pops_hsyc_white), dapc_hsyc_white_admix_LDs)
 colnames(dapc_hsyc_white_admix_LDs) <- c("pop","LD1","LD2")
 
-dapc_hsyc_white_admix_LDs$pop <- factor(dapc_hsyc_white_admix_LDs$pop, levels = c("Simulated HSYC", "Simulated WHITE", "F1", "F2","Backcross to HSYC", "Backcross to WHITE", "ELK","UPPARK"))
+dapc_hsyc_white_admix_LDs$pop <- factor(dapc_hsyc_white_admix_LDs$pop, levels = c("Simulated HSYC", "Backcross to HSYC","F2","F1","Backcross to WHITE","Simulated WHITE","ELK","UPPARK"))
 
 dapc_hsyc_white_admix_plot <- ggplot(dapc_hsyc_white_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), alpha = 0.8, color = "black", pch = 21, size = 5, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Hybrid Category") +
-   scale_fill_manual(values = c("deepskyblue","deeppink2","grey50","grey85","grey35", "grey100", "sienna4", "orchid1")) +
+   scale_fill_manual(values = c("black","grey20","grey40","grey60","grey80", "grey100", "sienna4", "orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -250,12 +250,12 @@ dapc_hsyc_canbar_white_admix_LDs <- as.data.frame(dapc_hsyc_canbar_white_admix$i
 dapc_hsyc_canbar_white_admix_LDs <- cbind(data.frame(admix_pops_hsyc_canbar_white), dapc_hsyc_canbar_white_admix_LDs)
 colnames(dapc_hsyc_canbar_white_admix_LDs) <- c("pop","LD1","LD2")
 
-dapc_hsyc_canbar_white_admix_LDs$pop <- factor(dapc_hsyc_canbar_white_admix_LDs$pop, levels = c("Simulated HSYC + CANBAR", "Simulated WHITE", "F1", "F2","Backcross to HSYC + CANBAR", "Backcross to WHITE", "BAYOU"))
+dapc_hsyc_canbar_white_admix_LDs$pop <- factor(dapc_hsyc_canbar_white_admix_LDs$pop, levels = c("Simulated HSYC+CANBAR","Backcross to HSYC+CANBAR","F2","F1","Backcross to WHITE","Simulated WHITE", "BAYOU"))
 
 dapc_hsyc_canbar_white_admix_plot <- ggplot(dapc_hsyc_canbar_white_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), alpha = 0.8, color = "black", pch = 21, size = 5, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Hybrid Category") +
-   scale_fill_manual(values = c("deepskyblue", "deeppink2","grey50","grey85","grey35", "grey100", "lightgreen")) +
+   scale_fill_manual(values = c("black", "grey20","grey40","grey60","grey80", "grey100", "lightgreen")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
