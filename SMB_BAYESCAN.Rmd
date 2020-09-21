@@ -111,7 +111,7 @@ bayescan_smb_finerad_fst_not_significant <- cbind(bayescan_smb_finerad_fst_not_s
 
 #combine both significant and non-significant datasets into one dataset with all data, now appropriately labeled
 bayescan_smb_finerad_fst_almost_ready <- rbind(bayescan_smb_finerad_fst_significant, bayescan_smb_finerad_fst_not_significant)
-bayescan_smb_finerad_fst_ready <- cbind(bayescan_smb_fst_almost_ready, sig_level_label_smb)
+bayescan_smb_finerad_fst_ready <- cbind(bayescan_smb_finerad_fst_almost_ready, sig_level_label_smb)
 ```
 
 ## Get Significant and Insignificant SNPs for Neosho data only
@@ -214,7 +214,7 @@ The Plot Results section uses the full dataset produced in the Data Filtering se
 
 #Plot All samples
 all_bayes_plot <- ggplot(bayescan_all_fst_not1000, aes(x = logPO, y = fst, fill = sig_level)) + #make plot from non-1000 logPO for all SMB 
-      geom_point(aes(fill = sig_level), color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
+      geom_point(aes(fill = sig_level), alpha = 0.8, color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
       geom_vline(xintercept = 2, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
       geom_vline(xintercept = 1.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
        geom_vline(xintercept = 1, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
@@ -230,7 +230,7 @@ all_bayes_plot <- ggplot(bayescan_all_fst_not1000, aes(x = logPO, y = fst, fill 
 
 #Plot smallmouth bass outliers
 smb_bayes_plot <- ggplot(bayescan_smb_fst_not1000, aes(x = logPO, y = fst, fill = sig_level)) + #make plot from non-1000 logPO for all SMB 
-      geom_point(aes(fill = sig_level, alpha = 0.8), color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
+      geom_point(aes(fill = sig_level), alpha = 0.8, color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
       geom_vline(xintercept = 2, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
       geom_vline(xintercept = 1.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
        geom_vline(xintercept = 1, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
@@ -247,7 +247,7 @@ smb_bayes_plot <- ggplot(bayescan_smb_fst_not1000, aes(x = logPO, y = fst, fill 
 
 #Plot neosho outliers
 neosho_bayes_plot <- ggplot(bayescan_neosho_finerad_fst_ready, aes(x = logPO, y = fst, fill = sig_level)) + #make plot from non-1000 logPO for neosho only
-      geom_point(aes(fill = sig_level, alpha = 0.8), color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
+      geom_point(aes(fill = sig_level), alpha = 0.8, color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
       geom_vline(xintercept = 2, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
       geom_vline(xintercept = 1.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
        geom_vline(xintercept = 1, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
@@ -262,7 +262,7 @@ neosho_bayes_plot <- ggplot(bayescan_neosho_finerad_fst_ready, aes(x = logPO, y 
 
 #Plot northern outliers
 northern_bayes_plot <- ggplot(bayescan_northern_fst_not1000, aes(x = logPO, y = fst, fill = sig_level)) + 
-      geom_point(aes(fill = sig_level, alpha = 0.8), color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
+      geom_point(aes(fill = sig_level), alpha = 0.8, color = "black", pch = 21, size = 4, show.legend = F) + #do not show legend on the plot itself
       geom_vline(xintercept = 2, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
       geom_vline(xintercept = 1.5, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
        geom_vline(xintercept = 1, linetype = "longdash", color = "black") + #add a vertical line at the x value 1.5, and make it a dashed line
