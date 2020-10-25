@@ -20,7 +20,10 @@ library(cowplot)
 ```{r}
 #Expore genepop data using genepopedit package - here, I am just seeing what the data tables look like with respect to the genepop edit package. I am then using the genepopedit pacakge to make sure that all of the genepop files are in the correct format for the hybriddetective getTopLoc() function
 
-genepop_detective("../../raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt", variable = "PopNum")
+genepop_detective("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_format_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt", variable = "PopNum")
+
+genepop_detective("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_canbar_white_parent_sim_genepop_goodformat.txt", variable = "PopNum")
+
 genepop_flatten("../../raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt")
 
 #create a dataframe to designate two different populations (Pure Neosho, Pure Northern)
@@ -150,7 +153,7 @@ hsyc_white_all_admix_genepop <- read_excel("../../raw_data/hybriddetective_data/
 ## Create population vector
 admix_pops_hsyc_white <- factor(c(rep("Simulated HSYC", times = 100), rep("Simulated WHITE", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("Backcross to HSYC", times = 100), rep("Backcross to WHITE", times = 100), rep("ELK", times = 6), rep("UPPARK", times = 18)))
 
-hsyc_white_all_admix_genepop <- column_to_rownames(hsyc_white_all_admix_genepop, "ind")
+hsyc_white_all_admix_genepop <- column_to_rownames(hsyc_white_all_admix_genepop, "pop")
 hsyc_white_all_admix_genepop <- as.matrix(hsyc_white_all_admix_genepop)
 
 ## Get genind file
@@ -229,7 +232,7 @@ dapc_hsyc_white_admix_LDs <- as.data.frame(dapc_hsyc_white_admix$ind.coord)
 dapc_hsyc_white_admix_LDs <- cbind(data.frame(admix_pops_hsyc_white), dapc_hsyc_white_admix_LDs)
 colnames(dapc_hsyc_white_admix_LDs) <- c("pop","LD1","LD2")
 
-dapc_hsyc_white_admix_LDs$pop <- factor(dapc_hsyc_white_admix_LDs$pop, levels = c("Simulated HSYC", "Backcross to HSYC","F2","F1","Backcross to WHITE","Simulated WHITE","ELK","UPPARK"))
+dapc_hsyc_white_admix_LDs$pop <- factor(dapc_hsyc_white_admix_LDs$pop, levels = c("Simulated HSYC", "Backcross to HSYC","F2","F1","Empirical HSYC","Empirical WHITE","Backcross to WHITE","Simulated WHITE","ELK","UPPARK"))
 
 dapc_hsyc_white_admix_plot <- ggplot(dapc_hsyc_white_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
    geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
