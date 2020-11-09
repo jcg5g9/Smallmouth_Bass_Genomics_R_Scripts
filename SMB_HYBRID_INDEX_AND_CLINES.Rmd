@@ -1,0 +1,18 @@
+---
+title: "SMB_HYBRID_INDEX_AND_CLINES"
+author: "Joe Gunn"
+date: "11/9/2020"
+output: html_document
+---
+
+## Libraries needed for analysis
+```{r}
+library(genepopedit)
+library(parallelnewhybrid)
+library(hybriddetective)
+library(readxl)
+library(tidyverse)
+library(adegenet)
+library(cowplot)
+
+```
