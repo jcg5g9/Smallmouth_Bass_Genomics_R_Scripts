@@ -70,9 +70,11 @@ Purpose: Here I am generating a map for easily displaying my sample distribution
 
 Purpose: Here I am following the procedure outlined in Ebersbach et al. 2020 on assessing hybridization. I am determining the likelihood with which admixed Smallmouth Bass populations are made up of recent generation hybrids rather than being made up of ancient hybrids (or very old mixing). First, I generated a dataset of 200 diagnostic SNP loci that represent highly divergent loci between pure Neosho (HSYC population, inferred in Mixmapper) and pure Northern (WHITE and SKIA populations, inferred in Mixmapper). These diagnostic SNPs were used, because their allelic distributions within the admixed populations will clearly show whether individuals are recent or ancient-generation hybrids. I then used these same 200 diagnostic loci to create simulated recent-generation hybrid data, which I then compared to be real data using DAPC. 
 
+I then used the same 200 diagnostic SNP loci and inferred parent populations to determine hybrid index and test for genomic clines.
+
 ### Genomic Date used:
 
-#### Fully-filtered SMB dataset, HSYC and WHITE or HSYC and SKIA to obtain diagnostic SNPS
+#### Fully-filtered SMB dataset, HSYC and WHITE, HSYC, CANBAR, and WHITE, or HSYC and SKIA to obtain diagnostic SNPS
 #### Fully-filtered SMB dataset, Admixed populations only to assess admixture
 
 # Unused Code

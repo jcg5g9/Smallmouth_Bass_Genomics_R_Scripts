@@ -7,12 +7,97 @@ output: html_document
 
 ## Libraries needed for analysis
 ```{r}
-library(genepopedit)
-library(parallelnewhybrid)
-library(hybriddetective)
 library(readxl)
 library(tidyverse)
 library(adegenet)
 library(cowplot)
+library(gghybrid)
+```
 
+## Read in data to gghybrid and prepare for hybrid index analysis - I am basing all of this code on the example code given on the github repository for RIBailey/gghybrid. The data needed to be in genotype format, with one column per locus, two rows per individual containing the two alleles for each locus, and two additional columns at the front of the data set, one for individual id (INDLABEL) and one for population id (POPID)
+```{r}
+#CANBAR and SKIA
+canbar_skia_data <- read.data("../../raw_data/gghybrid_data/canbar_skia_genotypes.csv", 
+                              nprecol = 2, 
+                              MISSINGVAL = NA, 
+                              markername.dup = 0, 
+                              INDLABEL = 1, 
+                              POPID = 1)
+
+prep_canbar_skia <- data.prep(data = canbar_skia_data$data,
+                              loci = canbar_skia_data$loci,
+                              alleles = canbar_skia_data$alleles,
+                              S0 = "CANBAR",
+                              S1 = "SKIA",
+                              precols = canbar_skia_data$precols,
+                              max.S.MAF = 0.1,
+                              return.genotype.table = T,
+                              return.locus.table = T)
+
+#CANBAR, HSYC and WHITE
+hsyc_canbar_white_data <- read.data("../../raw_data/gghybrid_data/hsyc_canbar_white_genotypes.csv", 
+                              nprecol = 2, 
+                              MISSINGVAL = NA, 
+                              markername.dup = 0, 
+                              INDLABEL = 1, 
+                              POPID = 1)
+
+prep_hsyc_canbar_white <- data.prep(data = hsyc_canbar_white_data$data,
+                              loci = hsyc_canbar_white_data$loci,
+                              alleles = hsyc_canbar_white_data$alleles,
+                              S0 = "HSYC_CANBAR",
+                              S1 = "WHITE",
+                              precols = hsyc_canbar_white_data$precols,
+                              max.S.MAF = 0.1,
+                              return.genotype.table = T,
+                              return.locus.table = T)
+
+#HSYC and WHITE
+hsyc_white_data <- read.data("../../raw_data/gghybrid_data/hsyc_white_genotypes.csv", 
+                              nprecol = 2, 
+                              MISSINGVAL = NA, 
+                              markername.dup = 0, 
+                              INDLABEL = 1, 
+                              POPID = 1)
+
+prep_hsyc_white <- data.prep(data = hsyc_white_data$data,
+                              loci = hsyc_white_data$loci,
+                              alleles = hsyc_white_data$alleles,
+                              S0 = "HSYC",
+                              S1 = "WHITE",
+                              precols = hsyc_white_data$precols,
+                              max.S.MAF = 0.1,
+                              return.genotype.table = T,
+                              return.locus.table = T)
+```
+
+## Run Hybrid Index analysis - again, I am using code from the RI Bailey github repository
+```{r}
+hyb_index_canbar_skia <- esth(prep_canbar_skia$data.prep,
+                             read.data.precols = canbar_skia_data$precols,
+                             include.Source = T,
+                             plot.ind = c("NOIS07","NOIS08","NOIS18","NOIS12","GLVR4","CANEY15"),
+                             plot.col = c("blue","green","cyan","purple","magenta","red"),
+                             nitt = 10000,
+                             burnin = 5000)
+```
+
+## Plotting 
+```{r}
+setkey(hyb_index_canbar_skia$hi,POPID)
+
+abc <- plot_h(data=hyb_index_canbar_skia$hi[c("CANBAR","SKIA","ILLI")],#Subset of POPIDs#
+test.subject=hyb_index_canbar_skia$test.subject,
+mean.h.by="POPID",			#Calculate the mean hybrid index for each value of the "POPID" column#
+sort.by=c("mean_h","POPID","h_posterior_mode"),	#Order test subjects along the x axis by the mean hybrid 
+								#index calculated above and also by individual hybrid index#
+col.group="POPID",
+group.sep="POPID",
+fill.source=TRUE,
+basic.lines=FALSE,
+source.col=c("blue","red"),
+source.limits=c("blue","red"),
+cex=1,pch=16,
+cex.lab=1.5,cex.main=1.5,ylim=c(0,1))
+#
 ```
