@@ -12,6 +12,7 @@ library(tidyverse)
 library(adegenet)
 library(cowplot)
 library(gghybrid)
+library(tidyr)
 ```
 
 ## Read in data to gghybrid and prepare for hybrid index analysis - I am basing all of this code on the example code given on the github repository for RIBailey/gghybrid. The data needed to be in genotype format, with one column per locus, two rows per individual containing the two alleles for each locus, and two additional columns at the front of the data set, one for individual id (INDLABEL) and one for population id (POPID)
@@ -80,10 +81,43 @@ hyb_index_canbar_skia <- esth(prep_canbar_skia$data.prep,
                              plot.col = c("blue","green","cyan","purple","magenta","red"),
                              nitt = 10000,
                              burnin = 5000)
+
+hyb_index_hsyc_canbar_white <- esth(prep_hsyc_canbar_white$data.prep,
+                             read.data.precols = hsyc_canbar_white_data$precols,
+                             include.Source = T,
+                             plot.ind = c("AT05","AR29","AT09","AR30","AT08","AT02"),
+                             plot.col = c("blue","green","cyan","purple","magenta","red"),
+                             nitt = 10000,
+                             burnin = 5000)
+
+hyb_index_hsyc_white <- esth(prep_hsyc_white$data.prep,
+                             read.data.precols = hsyc_white_data$precols,
+                             include.Source = T,
+                             plot.ind = c("ER17","ER20","MI419","BC01","SPV11","BC12"),
+                             plot.col = c("blue","green","cyan","purple","magenta","red"),
+                             nitt = 10000,
+                             burnin = 5000)
 ```
 
 ## Plotting 
 ```{r}
+setkey(hyb_index_hsyc_canbar_white$hi,POPID)
+
+abc <- plot_h(data=hyb_index_hsyc_canbar_white$hi[c("HSYC_CANBAR","WHITE","BAYOU")],#Subset of POPIDs#
+test.subject=hyb_index_hsyc_canbar_white$test.subject,
+mean.h.by="POPID",			#Calculate the mean hybrid index for each value of the "POPID" column#
+sort.by=c("mean_h","POPID","h_posterior_mode"),	#Order test subjects along the x axis by the mean hybrid 
+								#index calculated above and also by individual hybrid index#
+col.group="POPID",
+group.sep="POPID",
+fill.source=TRUE,
+basic.lines=FALSE,
+source.col=c("blue","red"),
+source.limits=c("blue","red"),
+cex=1,pch=16,
+cex.lab=1.5,cex.main=1.5,ylim=c(0,1))
+#
+
 setkey(hyb_index_canbar_skia$hi,POPID)
 
 abc <- plot_h(data=hyb_index_canbar_skia$hi[c("CANBAR","SKIA","ILLI")],#Subset of POPIDs#
@@ -100,4 +134,49 @@ source.limits=c("blue","red"),
 cex=1,pch=16,
 cex.lab=1.5,cex.main=1.5,ylim=c(0,1))
 #
+
+setkey(hyb_index_hsyc_white$hi,POPID)
+
+abc <- plot_h(data=hyb_index_hsyc_white$hi[c("HSYC","WHITE","ELK","BUFF","SPAV","BSUG")],#Subset of POPIDs#
+test.subject=hyb_index_hsyc_white$test.subject,
+mean.h.by="POPID",			#Calculate the mean hybrid index for each value of the "POPID" column#
+sort.by=c("mean_h","POPID","h_posterior_mode"),	#Order test subjects along the x axis by the mean hybrid 
+								#index calculated above and also by individual hybrid index#
+col.group="POPID",
+group.sep="POPID",
+fill.source=TRUE,
+basic.lines=FALSE,
+source.col=c("blue","red"),
+source.limits=c("blue","red"),
+cex=1,pch=16,
+cex.lab=1.5,cex.main=1.5,ylim=c(0,1))
+
+hsyc_white_hyb_index_data <- as.data.frame(hyb_index_hsyc_white$hi) 
+
+hsyc_white_hyb_index_data$Source[hsyc_white_hyb_index_data$Source == "TEST"] <- "Hybrids"
+hsyc_white_hyb_index_data$Source[hsyc_white_hyb_index_data$Source == "S0"] <- "HSYC"
+hsyc_white_hyb_index_data$Source[hsyc_white_hyb_index_data$Source == "S1"] <- "WHITE"
+
+hsyc_white_hyb_index_data <- hsyc_white_hyb_index_data %>%
+  mutate(INDLABEL = factor(INDLABEL), POPID = factor(POPID)) %>%
+  group_by(Source, POPID) %>%
+  arrange(beta_mean, .by_group = T)
+
+
+
+ggplot(hsyc_white_hyb_index_data, aes(x = INDLABEL, y = beta_mean, fill = POPID)) + 
+  theme_set(theme_cowplot(12)) +
+  geom_errorbar(aes(ymin=beta_mean-(beta_mean-h_cred_int_lower), ymax=beta_mean+(h_cred_int_upper-beta_mean), color = POPID)) +
+  geom_point(color = "black", size = 3, pch = 21) +
+  labs(x = "Individual", y = "Hybrid Index", fill = "Population", color = "Population") +
+  facet_wrap(~Source, ncol = 3, scales = "free_x", shrink = F) +
+  scale_fill_manual(values = c("sienna4","deepskyblue","orchid1","deeppink2")) +
+  scale_color_manual(values = c("sienna4","deepskyblue","orchid1","deeppink2")) +
+  theme(axis.text.x = element_text(angle = 50)) +
+  theme(strip.background = element_rect(fill = "white")) +
+  theme(strip.text = element_text(size = 20, hjust = 0.1)) +
+  theme(panel.background = element_rect(color = "black", fill = "white", size = 1, linetype = "solid")) +
+  theme(panel.margin = unit(1, "lines")) +
+  theme(axis.text.x = element_blank())
+
 ```
