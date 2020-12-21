@@ -91,6 +91,37 @@ plotQ(admix_spb_screen,
       imgtype = "pdf",
       imgoutput = "sep",
       height = 5, width = 30)
+
+
+plotQ(admix_spb_screen,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC10","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
+      clustercol = c("forestgreen","goldenrod3","deepskyblue","deeppink2"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 0.5,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.1, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/SPB_X_SMB_screen_finerad_order",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
 ```
 
 ## Create hierarchical structure plots for all samples, including the hybrid discovered above (BFC10)
