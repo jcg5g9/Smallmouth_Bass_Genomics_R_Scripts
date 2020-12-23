@@ -39,6 +39,9 @@ genomics_metadata_hybrid_neosho <- genomics_metadata_hybrid_smb %>%
 genomics_metadata_hybrid_northern <- genomics_metadata_hybrid_smb %>%
    filter(species != "Neosho")
 
+genomics_metadata_pure_smb <- genomics_metadata_pure %>%
+   filter(species != "Spotted Bass")
+
 
 #Filter data file for only Smallmouth Bass and EXCLUDING the SMB X SPB (Spotted Bass) hybrid (BFC10)
 genomics_metadata_nohybrid_all <- genomics_metadata %>%
@@ -74,7 +77,7 @@ plotQ(admix_spb_screen,
       showgrplab = F,
       ordergrp = T,
       selgrp = "sample_id",
-      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","ER35","ER20","SPRMO11","ER33","ER17","ER30","ER44","MI419","GLVR4","SPRMO19","NOIS18","BC01","BC07","BC14","MI425","SPVW12","SPVW07","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","SPVW02","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","BFC10","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
+      subsetgrp =  c("SPRMO49","GRSPB52","GRSPB51","GLVR11","STOCK03","STOCK04","STOCK05","STOCK06","BP01","BP02","BP07","BP10","BP17","TBLR01","TBLR02","TBLR03","TBLR04","GRSPB35","GRSPB36","GRSPB37","GRSPB39","GRSPB41","GRSPB50","SKIA03","SKIA04","SKIA05","SKIA06","SKIA09","BC01","BC07","BC08","BC09","BC12","BC14","SC06","SC37","MI419","MI420","MI421","MI422","MI423","MI425","ER17","ER20","ER30","ER33","ER35","ER44","HC38","HC40","HC41","HC42","HC43","HC44","SPVW11","SPVW02","SPVW05","SPVW07","SPVW12","SPVW14","NOIS07","NOIS08","NOIS12","NOIS18","GLVR4","SPRMO11","SPRMO19","BFORK02","BFORK23","BFORK24","BFORK30","BFORK49","GRSPB02","GRSPB03","GRSPB69","CANEY15","CANEY16","BFC02","BFC06","BFC10","BFC49","AR16","AR18","AR19","AR21","AR29","AR30","AT02","AT05","AT08","AT09","AT12"),
       clustercol = c("forestgreen","goldenrod3","deepskyblue","deeppink2"),
       showlegend = F,
       legendmargin = c(2,2,2,2),
@@ -193,6 +196,69 @@ plotQ(all_pure_4,
       imgoutput = "sep",
       height = 5, width = 30)
 
+#Read-in ADMIXTURE q-value results for all samples at best K value (best K = 4)
+all_pure_5 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.5.Q") # K=5
+
+plotQ(all_pure_5,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_pure,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK49","GRSPB02","GRSPB03","NOIS12","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
+      clustercol = c("deeppink3","goldenrod3","forestgreen","deepskyblue","navyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/pure_lineages_5",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+#Read-in ADMIXTURE q-value results for SMB samples at best K value (best K = 3)
+smb_pure_3 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/smb_pure.3.Q") # K=3 was the best supported value of K at CV = 0.276
+
+plotQ(smb_pure_3,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_pure_smb,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB41","GRSPB37","GRSPB39","GRSPB35","GRSPB36","TBLR02","TBLR03","TBLR04","TBLR01","GRSPB50","SKIA05","SKIA03","SKIA06","SKIA09","SKIA04","STOCK03","STOCK04","STOCK06","STOCK05","BP07","BP17","BP10","BP01","BP02","HC40","HC43","HC44","SC37","SC06","HC38","HC42","HC41","BFORK02","CANEY16","GRSPB69","NOIS12","GRSPB02","GRSPB03","BFORK49","BFORK23","BFC06","BFC49","BFC02","AR18","AR21","AR19","AR16"),
+      clustercol = c("deeppink2","deepskyblue","navyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/smb_pure_lineages_3",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
 ```
 
 
