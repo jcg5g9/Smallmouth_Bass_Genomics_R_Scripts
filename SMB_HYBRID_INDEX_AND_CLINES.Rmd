@@ -17,6 +17,7 @@ library(tidyr)
 
 ## Read in data to gghybrid and prepare for hybrid index analysis - I am basing all of this code on the example code given on the github repository for RIBailey/gghybrid. The data needed to be in genotype format, with one column per locus, two rows per individual containing the two alleles for each locus, and two additional columns at the front of the data set, one for individual id (INDLABEL) and one for population id (POPID)
 ```{r}
+
 #CANBAR and SKIA
 canbar_skia_data <- read.data("../../raw_data/gghybrid_data/canbar_skia_genotypes.csv", 
                               nprecol = 2, 
@@ -101,56 +102,7 @@ hyb_index_hsyc_white <- esth(prep_hsyc_white$data.prep,
 
 ## Plotting 
 ```{r}
-setkey(hyb_index_hsyc_canbar_white$hi,POPID)
-
-abc <- plot_h(data=hyb_index_hsyc_canbar_white$hi[c("HSYC_CANBAR","WHITE","BAYOU")],#Subset of POPIDs#
-test.subject=hyb_index_hsyc_canbar_white$test.subject,
-mean.h.by="POPID",			#Calculate the mean hybrid index for each value of the "POPID" column#
-sort.by=c("mean_h","POPID","h_posterior_mode"),	#Order test subjects along the x axis by the mean hybrid 
-								#index calculated above and also by individual hybrid index#
-col.group="POPID",
-group.sep="POPID",
-fill.source=TRUE,
-basic.lines=FALSE,
-source.col=c("blue","red"),
-source.limits=c("blue","red"),
-cex=1,pch=16,
-cex.lab=1.5,cex.main=1.5,ylim=c(0,1))
-#
-
-setkey(hyb_index_canbar_skia$hi,POPID)
-
-abc <- plot_h(data=hyb_index_canbar_skia$hi[c("CANBAR","SKIA","ILLI")],#Subset of POPIDs#
-test.subject=hyb_index_canbar_skia$test.subject,
-mean.h.by="POPID",			#Calculate the mean hybrid index for each value of the "POPID" column#
-sort.by=c("mean_h","POPID","h_posterior_mode"),	#Order test subjects along the x axis by the mean hybrid 
-								#index calculated above and also by individual hybrid index#
-col.group="POPID",
-group.sep="POPID",
-fill.source=TRUE,
-basic.lines=FALSE,
-source.col=c("blue","red"),
-source.limits=c("blue","red"),
-cex=1,pch=16,
-cex.lab=1.5,cex.main=1.5,ylim=c(0,1))
-#
-
-setkey(hyb_index_hsyc_white$hi,POPID)
-
-abc <- plot_h(data=hyb_index_hsyc_white$hi[c("HSYC","WHITE","ELK","BUFF","SPAV","BSUG")],#Subset of POPIDs#
-test.subject=hyb_index_hsyc_white$test.subject,
-mean.h.by="POPID",			#Calculate the mean hybrid index for each value of the "POPID" column#
-sort.by=c("mean_h","POPID","h_posterior_mode"),	#Order test subjects along the x axis by the mean hybrid 
-								#index calculated above and also by individual hybrid index#
-col.group="POPID",
-group.sep="POPID",
-fill.source=TRUE,
-basic.lines=FALSE,
-source.col=c("blue","red"),
-source.limits=c("blue","red"),
-cex=1,pch=16,
-cex.lab=1.5,cex.main=1.5,ylim=c(0,1))
-
+##Hybrid Index Plot for Hsyc, White, Elk, and Uppark populations
 hsyc_white_hyb_index_data <- as.data.frame(hyb_index_hsyc_white$hi) 
 
 hsyc_white_hyb_index_data$Source[hsyc_white_hyb_index_data$Source == "TEST"] <- "Hybrids"
@@ -159,10 +111,9 @@ hsyc_white_hyb_index_data$Source[hsyc_white_hyb_index_data$Source == "S1"] <- "W
 
 hsyc_white_hyb_index_data <- hsyc_white_hyb_index_data %>%
   mutate(INDLABEL = factor(INDLABEL), POPID = factor(POPID)) %>%
-  group_by(Source, POPID) %>%
-  arrange(beta_mean, .by_group = T)
+  mutate(INDLABEL = fct_reorder(INDLABEL, beta_mean, .fun = "median"))
 
-
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/genomic_cline_analysis/hsyc_white_hyb_index.pdf", width = 12, height = 7)
 
 ggplot(hsyc_white_hyb_index_data, aes(x = INDLABEL, y = beta_mean, fill = POPID)) + 
   theme_set(theme_cowplot(12)) +
@@ -170,13 +121,106 @@ ggplot(hsyc_white_hyb_index_data, aes(x = INDLABEL, y = beta_mean, fill = POPID)
   geom_point(color = "black", size = 3, pch = 21) +
   labs(x = "Individual", y = "Hybrid Index", fill = "Population", color = "Population") +
   facet_wrap(~Source, ncol = 3, scales = "free_x", shrink = F) +
-  scale_fill_manual(values = c("sienna4","deepskyblue","orchid1","deeppink2")) +
-  scale_color_manual(values = c("sienna4","deepskyblue","orchid1","deeppink2")) +
+  scale_fill_manual(values = c("sienna4","grey","orchid1","grey"), breaks = c("ELK","UPPARK")) +
+  scale_color_manual(values = c("sienna4","grey","orchid1","grey"), breaks = c("ELK","UPPARK")) +
   theme(axis.text.x = element_text(angle = 50)) +
   theme(strip.background = element_rect(fill = "white")) +
-  theme(strip.text = element_text(size = 20, hjust = 0.1)) +
+  theme(strip.text = element_text(size = 20, hjust = 0.5, face = "bold")) +
   theme(panel.background = element_rect(color = "black", fill = "white", size = 1, linetype = "solid")) +
   theme(panel.margin = unit(1, "lines")) +
-  theme(axis.text.x = element_blank())
+  theme(axis.text.x = element_blank()) +
+  theme(axis.ticks = element_blank()) +
+  theme(axis.text = element_text(size = 20)) +
+  theme(axis.title = element_text(size = 25)) + 
+  theme(legend.background = element_rect(fill = "white")) +
+  theme(legend.position = c(0.35,0.93)) +
+  theme(legend.text = element_text(size = 15)) +
+  theme(legend.title = element_blank())
+
+dev.off()
+
+##Hybrid Index Plot for Canbar, Skia, and Illi populations
+canbar_skia_hyb_index_data <- as.data.frame(hyb_index_canbar_skia$hi) 
+
+canbar_skia_hyb_index_data$Source[canbar_skia_hyb_index_data$Source == "TEST"] <- "Hybrids"
+canbar_skia_hyb_index_data$Source[canbar_skia_hyb_index_data$Source == "S0"] <- "CANBAR"
+canbar_skia_hyb_index_data$Source[canbar_skia_hyb_index_data$Source == "S1"] <- "SKIA"
+
+canbar_skia_hyb_index_data <- canbar_skia_hyb_index_data %>%
+  mutate(INDLABEL = factor(INDLABEL), POPID = factor(POPID)) %>%
+  mutate(INDLABEL = fct_reorder(INDLABEL, beta_mean, .fun = "median"))
+
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/genomic_cline_analysis/canbar_skia_hyb_index.pdf", width = 12, height = 7)
+
+ggplot(canbar_skia_hyb_index_data, aes(x = INDLABEL, y = beta_mean, fill = POPID)) + 
+  theme_set(theme_cowplot(12)) +
+  geom_errorbar(aes(ymin=beta_mean-(beta_mean-h_cred_int_lower), ymax=beta_mean+(h_cred_int_upper-beta_mean), color = POPID)) +
+  geom_point(color = "black", size = 3, pch = 21) +
+  labs(x = "Individual", y = "Hybrid Index", fill = "Population", color = "Population") +
+  facet_wrap(~Source, ncol = 3, scales = "free_x", shrink = F) +
+  scale_fill_manual(values = c("grey","mediumpurple","grey"), breaks = c("ILLI")) +
+  scale_color_manual(values = c("grey","mediumpurple","grey"),  breaks = c("ILLI")) +
+  theme(axis.text.x = element_text(angle = 50)) +
+  theme(strip.background = element_rect(fill = "white")) +
+  theme(strip.text = element_text(size = 20, hjust = 0.5, face = "bold")) +
+  theme(panel.background = element_rect(color = "black", fill = "white", size = 1, linetype = "solid")) +
+  theme(panel.margin = unit(1, "lines")) +
+  theme(axis.text.x = element_blank()) +
+  theme(axis.ticks = element_blank()) +
+  theme(axis.text = element_text(size = 20)) +
+  theme(axis.title = element_text(size = 25)) + 
+  theme(legend.background = element_rect(fill = "white")) +
+  theme(legend.position = c(0.35,0.93)) +
+  theme(legend.text = element_text(size = 15)) +
+  theme(legend.title = element_blank())
+
+dev.off()
+
+
+##Hybrid Index Plot for Hsyc, Canbar, and Bayou populations
+hsyc_canbar_white_hyb_index_data <- as.data.frame(hyb_index_hsyc_canbar_white$hi) 
+
+hsyc_canbar_white_hyb_index_data$Source[hsyc_canbar_white_hyb_index_data$Source == "TEST"] <- "Hybrids"
+hsyc_canbar_white_hyb_index_data$Source[hsyc_canbar_white_hyb_index_data$Source == "S0"] <- "HSYC_CANBAR"
+hsyc_canbar_white_hyb_index_data$Source[hsyc_canbar_white_hyb_index_data$Source == "S1"] <- "WHITE"
+
+hsyc_canbar_white_hyb_index_data <- hsyc_canbar_white_hyb_index_data %>%
+  mutate(INDLABEL = factor(INDLABEL), POPID = factor(POPID)) %>%
+  mutate(INDLABEL = fct_reorder(INDLABEL, beta_mean, .fun = "median"))
+
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/genomic_cline_analysis/hsyc_canbar_white_hyb_index.pdf", width = 12, height = 7)
+
+ggplot(canbar_skia_hyb_index_data, aes(x = INDLABEL, y = beta_mean, fill = POPID)) + 
+  theme_set(theme_cowplot(12)) +
+  geom_errorbar(aes(ymin=beta_mean-(beta_mean-h_cred_int_lower), ymax=beta_mean+(h_cred_int_upper-beta_mean), color = POPID)) +
+  geom_point(color = "black", size = 3, pch = 21) +
+  labs(x = "Individual", y = "Hybrid Index", fill = "Population", color = "Population") +
+  facet_wrap(~Source, ncol = 3, scales = "free_x", shrink = F) +
+  scale_fill_manual(values = c("grey","lightgreen","grey"), breaks = c("BAYOU")) +
+  scale_color_manual(values = c("grey","lightgreen","grey"),  breaks = c("BAYOU")) +
+  theme(axis.text.x = element_text(angle = 50)) +
+  theme(strip.background = element_rect(fill = "white")) +
+  theme(strip.text = element_text(size = 20, hjust = 0.5, face = "bold")) +
+  theme(panel.background = element_rect(color = "black", fill = "white", size = 1, linetype = "solid")) +
+  theme(panel.margin = unit(1, "lines")) +
+  theme(axis.text.x = element_blank()) +
+  theme(axis.ticks = element_blank()) +
+  theme(axis.text = element_text(size = 20)) +
+  theme(axis.title = element_text(size = 25)) + 
+  theme(legend.background = element_rect(fill = "white")) +
+  theme(legend.position = c(0.35,0.93)) +
+  theme(legend.text = element_text(size = 15)) +
+  theme(legend.title = element_blank())
+
+dev.off()
+```
+
+```{r}
+
+cline_hsyc_white <- ggcline(
+    data.prep.object = prep_hsyc_white$data.prep,
+    esth.object = hyb_index_hsyc_white,
+    read.data.precols = hsyc_white_data$precols,
+    nitt = 10000, burnin = 5000, print.k = 50)
 
 ```

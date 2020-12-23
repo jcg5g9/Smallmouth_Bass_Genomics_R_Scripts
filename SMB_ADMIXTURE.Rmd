@@ -21,11 +21,13 @@ library(PopGenome)
 ```{r METADATA}
 #Read in filtered SMB Genomics metadata. This file should include 92 individuals that passed filters for low genotype calls
 genomics_metadata <- read_excel("../../metadata/genomics_metadata_filtered.xlsx")
+genomics_metadata_pure <- read_excel("../../metadata/genomics_metadata_filtered_pure.xlsx")
 
 #Clean metadata
 genomics_metadata <- as.data.frame(genomics_metadata)
 genomics_metadata <- column_to_rownames(genomics_metadata, "na")
-
+genomics_metadata_pure <- as.data.frame(genomics_metadata_pure)
+genomics_metadata_pure <- column_to_rownames(genomics_metadata_pure, "na")
 
 #Filter data file for only Smallmouth Bass and INCLUDING the SMB X SPB (Spotted Bass) hybrid (BFC10)
 genomics_metadata_hybrid_smb <- genomics_metadata %>%
@@ -123,6 +125,76 @@ plotQ(admix_spb_screen,
       height = 5, width = 30)
 
 ```
+
+## Run only the pure samples to see how many independent lineages you have
+```{r}
+#Read-in ADMIXTURE q-value results for all samples at best K value (best K = 4)
+all_pure_3 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.3.Q") # K=4 was the second best supported value of K at CV = 0.276
+
+plotQ(all_pure_3,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_pure,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GLVR11","GRSPB52","SPRMO49","GRSPB51","GRSPB41","GRSPB37","GRSPB39","GRSPB35","GRSPB36","TBLR02","TBLR03","TBLR04","TBLR01","GRSPB50","SKIA05","SKIA03","SKIA06","SKIA09","SKIA04","STOCK03","STOCK04","STOCK06","STOCK05","BP07","BP17","BP10","BP01","BP02","HC40","HC43","HC44","SC37","SC06","HC38","HC42","HC41","BFORK02","CANEY16","GRSPB69","NOIS12","GRSPB02","GRSPB03","BFORK49","BFORK23","BFC06","BFC49","BFC02","AR18","AR21","AR19","AR16"),
+      clustercol = c("deeppink2","goldenrod3","deepskyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/pure_lineages_3",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+
+#Read-in ADMIXTURE q-value results for all samples at best K value (best K = 4)
+all_pure_4 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.4.Q") # K=4 was the second best supported value of K at CV = 0.276
+
+plotQ(all_pure_4,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_pure,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK49","GRSPB02","GRSPB03","NOIS12","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
+      clustercol = c("goldenrod3","deeppink2","deepskyblue","navyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/pure_lineages_4",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+```
+
 
 ## Create hierarchical structure plots for all samples, including the hybrid discovered above (BFC10)
 ```{r}
