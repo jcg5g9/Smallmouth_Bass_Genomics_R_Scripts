@@ -25,6 +25,15 @@ source("../../R_packages/FinestructureLibrary.R") #Fine-structure R source code
 ### haplotype files were produced using the hapsFromVCF on my vcf file, and coancestry matrics were produced using the RADpainter and finestructure commands. R code and figures were adapted from the fineRADstructurePlot.R and FinestructureLibrary.R libraries (Milan Malinski)
 ## Read in data output from fineRADstructure 
 ```{r}
+#Finerad files for Only Admixed SMB Samples
+chunkfile_admix <- "../../raw_data/fineradstructure_data/hap_withfilters_admixed_chunks.out"
+mcmcfile_admix <- "../../raw_data/fineradstructure_data/hap_withfilters_admixed_chunks.mcmc.xml"
+treefile_admix <- "../../raw_data/fineradstructure_data/hap_withfilters_admixed_chunks.mcmcTree.xml"
+
+#Finerad files for Only Non-Admixed SMB Samples
+chunkfile_noadmix_smb <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_smb_chunks.out"
+mcmcfile_noadmix_smb <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_smb_chunks.mcmc.xml"
+treefile_noadmix_smb <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_smb_chunks.mcmcTree.xml"
 
 #Finerad files for Only Non-Admixed Samples
 chunkfile_noadmix <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_chunks.out"
@@ -83,6 +92,28 @@ my_palette <- colorRampPalette(c("white", "navyblue","deeppink2","black"))(n = 2
 
 ## Prepare raw coancestry data and tree
 ```{r}
+#All ADMIXED Smallmouth Bass (SMB) samples
+dataraw_admix <- as.matrix(read.table(chunkfile_admix, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
+
+###### READ IN THE MCMC FILES
+mcmcxml_admix <- xmlTreeParse(mcmcfile_admix) ## read into xml format
+mcmcdata_admix <- as.data.frame.myres(mcmcxml_admix) ## convert this into a data frame
+
+###### READ IN THE TREE FILES
+treexml_admix <- xmlTreeParse(treefile_admix) ## read the tree as xml format
+ttree_admix <- extractTree(treexml_admix) ## extract the tree into ape's phylo format
+
+
+#All pure Smallmouth Bass (SMB) samples
+dataraw_noadmix_smb <- as.matrix(read.table(chunkfile_noadmix_smb, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
+
+###### READ IN THE MCMC FILES
+mcmcxml_noadmix_smb <- xmlTreeParse(mcmcfile_noadmix_smb) ## read into xml format
+mcmcdata_noadmix_smb <- as.data.frame.myres(mcmcxml_noadmix_smb) ## convert this into a data frame
+
+###### READ IN THE TREE FILES
+treexml_noadmix_smb <- xmlTreeParse(treefile_noadmix_smb) ## read the tree as xml format
+ttree_noadmix_smb <- extractTree(treexml_noadmix_smb) ## extract the tree into ape's phylo format
 
 #All pure Black Bass samples
 dataraw_noadmix <- as.matrix(read.table(chunkfile_noadmix, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
@@ -167,6 +198,53 @@ ttree_nonark <- extractTree(treexml_nonark) ## extract the tree into ape's phylo
 
 ## Make files for coancestry plot and dendrogram
 ```{r}
+
+#Only ADMIXED SMB samples
+
+## Reduce the amount of significant digits printed in the posteror assignment probabilities (numbers shown in the tree):
+ttree_admix$node.label[ttree_admix$node.label!=""] <- format(as.numeric(ttree_admix$node.label[ttree_admix$node.label!=""]),digits=2)
+
+ # convert to dendrogram format
+tdend_admix <- myapetodend(ttree_admix, factor=1)
+## Now we work on the MAP state
+mapstate_admix <- extractValue(treexml_admix,"Pop") # map state as a finestructure clustering
+mapstatelist_admix <- popAsList(mapstate_admix) # .. and as a list of individuals in populations
+popnames_admix <- lapply(mapstatelist_admix, NameSummary) # population names IN A REVERSIBLE FORMAT (I.E LOSSLESS)
+## NOTE: if your population labels don't correspond to the format we used (NAME<number>) YOU MAY HAVE TROUBLE HERE. YOU MAY NEED TO RENAME THEM INTO THIS FORM AND DEFINE YOUR POPULATION NAMES IN popnamesplot BELOW
+popnamesplot_admix <-lapply(mapstatelist_admix, NameMoreSummary) # a nicer summary of the populations
+
+names(popnames_admix) <- popnamesplot_admix # for nicety only
+names(popnamesplot_admix ) <- popnamesplot_admix # for nicety only
+
+popdend_admix <- makemydend(tdend_admix, mapstatelist_admix) # use NameSummary to make popdend
+popdend_admix <- fixMidpointMembers(popdend_admix) # needed for obscure dendrogram reasons
+popdendclear_admix <- makemydend(tdend_admix, mapstatelist_admix, "NameMoreSummary")# use NameMoreSummary to make popdend
+popdendclear_admix <- fixMidpointMembers(popdendclear_admix) # needed for obscure dendrogram reasons
+
+
+#Only Pure SMB samples
+
+## Reduce the amount of significant digits printed in the posteror assignment probabilities (numbers shown in the tree):
+ttree_noadmix_smb$node.label[ttree_noadmix_smb$node.label!=""] <- format(as.numeric(ttree_noadmix_smb$node.label[ttree_noadmix_smb$node.label!=""]),digits=2)
+
+ # convert to dendrogram format
+tdend_noadmix_smb <- myapetodend(ttree_noadmix_smb, factor=1)
+## Now we work on the MAP state
+mapstate_noadmix_smb <- extractValue(treexml_noadmix_smb,"Pop") # map state as a finestructure clustering
+mapstatelist_noadmix_smb <- popAsList(mapstate_noadmix_smb) # .. and as a list of individuals in populations
+popnames_noadmix_smb <- lapply(mapstatelist_noadmix_smb, NameSummary) # population names IN A REVERSIBLE FORMAT (I.E LOSSLESS)
+## NOTE: if your population labels don't correspond to the format we used (NAME<number>) YOU MAY HAVE TROUBLE HERE. YOU MAY NEED TO RENAME THEM INTO THIS FORM AND DEFINE YOUR POPULATION NAMES IN popnamesplot BELOW
+popnamesplot_noadmix_smb <-lapply(mapstatelist_noadmix_smb, NameMoreSummary) # a nicer summary of the populations
+
+names(popnames_noadmix_smb) <- popnamesplot_noadmix_smb # for nicety only
+names(popnamesplot_noadmix_smb ) <- popnamesplot_noadmix_smb # for nicety only
+
+popdend_noadmix_smb <- makemydend(tdend_noadmix_smb, mapstatelist_noadmix_smb) # use NameSummary to make popdend
+popdend_noadmix_smb <- fixMidpointMembers(popdend_noadmix_smb) # needed for obscure dendrogram reasons
+popdendclear_noadmix_smb <- makemydend(tdend_noadmix_smb, mapstatelist_noadmix_smb, "NameMoreSummary")# use NameMoreSummary to make popdend
+popdendclear_noadmix_smb <- fixMidpointMembers(popdendclear_noadmix_smb) # needed for obscure dendrogram reasons
+
+
 #Only Pure samples
 
 ## Reduce the amount of significant digits printed in the posteror assignment probabilities (numbers shown in the tree):
@@ -326,6 +404,147 @@ popdendclear_nonark <- fixMidpointMembers(popdendclear_nonark) # needed for obsc
 
 ## Print fineRADstructure Plots
 ```{r}
+## Plot 1: COANCESTRY MATRIX
+fullorder_admix <- labels(tdend_admix) # the order according to the tree
+datamatrix_admix <- dataraw_admix[fullorder_admix, fullorder_admix] # reorder the data matrix
+
+tmpmat_admix <- datamatrix_admix
+tmpmat_admix[tmpmat_admix > maxIndv] <- maxIndv #  # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/admix_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+
+plotFinestructure(tmpmat_admix, 
+                  dimnames(tmpmat_admix)[[1]], 
+                  dend = tdend_admix,
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2))
+
+dev.off()
+
+
+## Plot 2: POPULATIONS AND COANCESTRY AVERAGES
+popmeanmatrix_admix <- getPopMeanMatrix(datamatrix_admix, mapstatelist_admix)
+
+tmpmat_admix <- popmeanmatrix_admix
+tmpmat_admix[tmpmat_admix > maxPop] <- maxPop # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/admix_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+
+plotFinestructure(tmpmat_admix, 
+                  dimnames(tmpmat_admix)[[1]], 
+                  dend = tdend_admix, 
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                                 t.srt = 1, 
+                                 t.off = -0.5, 
+                                 t.cex = 2))
+
+dev.off()
+
+
+## Plot 3: POPULATIONS AND COANCESTRY AVERAGES WITH PERHAPS MORE INFORMATIVE LABELS
+mappopcorrectorder_admix <- NameExpand(labels(popdend_admix))
+mappopsizes_admix <- sapply(mappopcorrectorder_admix,length)
+labellocs_admix <- PopCenters(mappopsizes_admix)
+xcrt=0
+ycrt=45
+
+pdf("../FINERADSTRUCTURE_analysis/admix_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+ 
+plotFinestructure(tmpmat_admix, 
+                  dimnames(tmpmat_admix)[[1]], 
+                  labelsx=labels(popdendclear_admix), 
+                  labelsatx = labellocs_admix, 
+                  xcrt = xcrt, 
+                  cols = my_palette, 
+                  ycrt = ycrt, 
+                  dend = tdend_admix, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2), 
+                  hmmar = c(3,0,0,1))
+
+dev.off()
+
+
+
+## Plot 1: COANCESTRY MATRIX
+fullorder_noadmix_smb <- labels(tdend_noadmix_smb) # the order according to the tree
+datamatrix_noadmix_smb <- dataraw_noadmix_smb[fullorder_noadmix_smb, fullorder_noadmix_smb] # reorder the data matrix
+
+tmpmat_noadmix_smb <- datamatrix_noadmix_smb
+tmpmat_noadmix_smb[tmpmat_noadmix_smb > maxIndv] <- maxIndv #  # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/noadmix_smb_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+
+plotFinestructure(tmpmat_noadmix_smb, 
+                  dimnames(tmpmat_noadmix_smb)[[1]], 
+                  dend = tdend_noadmix_smb,
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2))
+
+dev.off()
+
+
+## Plot 2: POPULATIONS AND COANCESTRY AVERAGES
+popmeanmatrix_noadmix_smb <- getPopMeanMatrix(datamatrix_noadmix_smb, mapstatelist_noadmix_smb)
+
+tmpmat_noadmix_smb <- popmeanmatrix_noadmix_smb
+tmpmat_noadmix_smb[tmpmat_noadmix_smb > maxPop] <- maxPop # cap the heatmap
+
+pdf("../FINERADSTRUCTURE_analysis/noadmix_smb_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+
+plotFinestructure(tmpmat_noadmix_smb, 
+                  dimnames(tmpmat_noadmix_smb)[[1]], 
+                  dend = tdend_noadmix_smb, 
+                  cols = my_palette, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                                 t.srt = 1, 
+                                 t.off = -0.5, 
+                                 t.cex = 2))
+
+dev.off()
+
+
+## Plot 3: POPULATIONS AND COANCESTRY AVERAGES WITH PERHAPS MORE INFORMATIVE LABELS
+mappopcorrectorder_noadmix_smb <- NameExpand(labels(popdend_noadmix_smb))
+mappopsizes_noadmix_smb <- sapply(mappopcorrectorder_noadmix_smb,length)
+labellocs_noadmix_smb <- PopCenters(mappopsizes_noadmix_smb)
+xcrt=0
+ycrt=45
+
+pdf("../FINERADSTRUCTURE_analysis/noadmix_smb_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+ 
+plotFinestructure(tmpmat_noadmix_smb, 
+                  dimnames(tmpmat_noadmix_smb)[[1]], 
+                  labelsx=labels(popdendclear_noadmix_smb), 
+                  labelsatx = labellocs_noadmix_smb, 
+                  xcrt = xcrt, 
+                  cols = my_palette, 
+                  ycrt = ycrt, 
+                  dend = tdend_noadmix_smb, 
+                  cex.axis = 1.5, 
+                  edgePar = list(p.lwd = 0, 
+                               t.srt = 1, 
+                               t.off = -0.5, 
+                               t.cex = 2), 
+                  hmmar = c(3,0,0,1))
+
+dev.off()
+
+
 ## Plot 1: COANCESTRY MATRIX
 fullorder_noadmix <- labels(tdend_noadmix) # the order according to the tree
 datamatrix_noadmix <- dataraw_noadmix[fullorder_noadmix, fullorder_noadmix] # reorder the data matrix

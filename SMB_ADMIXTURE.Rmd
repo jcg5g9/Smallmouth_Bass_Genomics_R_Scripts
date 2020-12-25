@@ -209,7 +209,7 @@ plotQ(all_pure_5,
       ordergrp = T,
       selgrp = "sample_id",
       subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK49","GRSPB02","GRSPB03","NOIS12","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
-      clustercol = c("deeppink3","goldenrod3","forestgreen","deepskyblue","navyblue"),
+      clustercol = c("deeppink2","goldenrod3","forestgreen","deepskyblue","navyblue"),
       showlegend = F,
       legendmargin = c(2,2,2,2),
       showsp = F, 
@@ -227,6 +227,39 @@ plotQ(all_pure_5,
       imgtype = "pdf",
       imgoutput = "sep",
       height = 5, width = 30)
+
+
+all_pure_6 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.6.Q") # K=6
+
+plotQ(all_pure_6,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_pure,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK49","GRSPB02","GRSPB03","NOIS12","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
+      clustercol = c("deepskyblue","goldenrod3","navyblue","forestgreen","lightyellow","deeppink2"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/pure_lineages_6",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
 
 #Read-in ADMIXTURE q-value results for SMB samples at best K value (best K = 3)
 smb_pure_3 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/smb_pure.3.Q") # K=3 was the best supported value of K at CV = 0.276
@@ -1008,13 +1041,14 @@ cv_all_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_all_sa
 cv_smb_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_smb_all_filters_withhybrids.xlsx")
 cv_neosho_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_neosho_all_filters_withhybrids.xlsx")
 cv_northern_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_northern_all_filters_withhybrids.xlsx")
+cv_all_pure <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_all_pure.xlsx")
 
 #Clean data for all samples, including the hybrid
 cv_all_withhybrids <- as.data.frame(cv_all_withhybrids)
 cv_smb_withhybrids <- as.data.frame(cv_smb_withhybrids)
 cv_neosho_withhybrids <- as.data.frame(cv_neosho_withhybrids)
 cv_northern_withhybrids <- as.data.frame(cv_northern_withhybrids)
-
+cv_all_pure <- as.data.frame(cv_all_pure)
 
 #Read in data for all samples EXCLUDING the Hybrid (BFC10)
 cv_all_nohybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples_noBFC10/cv_all_samples_all_filters_NOhybrids.xlsx")
@@ -1079,6 +1113,17 @@ cv_northern_withhybrids_plot <- ggplot(cv_northern_withhybrids, aes(x = k, y = c
    theme(axis.title.x = element_text(face = "italic")) +
    theme(axis.title = element_text(size = 20))
 
+#cv error plot for all samples, but ONLY PURE SAMPLES
+cv_all_pure_plot <- ggplot(cv_all_pure, aes(x = k, y = cv_error)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_all_pure$k), breaks = cv_all_pure$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) + 
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.title.x = element_blank())
 
 ###CV ERROR PLOTS FOR ALL SAMPLES, EXCLUDING HYBRIDS####
 
@@ -1141,6 +1186,22 @@ cv_nohybrids_combined <- plot_grid(cv_all_nohybrids_plot, cv_smb_nohybrids_plot,
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Admixture/cv_error_plot.pdf", width=16, height=20) 
 
 plot_grid(cv_withhybrids_combined, cv_nohybrids_combined, ncol = 2)
+
+dev.off()
+
+#CV PLOT for PURE SAMPLES
+
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Admixture/cv_error_plot_all_pure_samples.pdf", width=8, height=4) 
+
+ggplot(cv_all_pure, aes(x = k, y = cv_error)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_all_pure$k), breaks = cv_all_pure$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) + 
+   theme(axis.title = element_text(size = 20))
 
 dev.off()
 ```
