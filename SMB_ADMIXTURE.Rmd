@@ -131,6 +131,7 @@ plotQ(admix_spb_screen,
 
 ## Run only the pure samples to see how many independent lineages you have
 ```{r}
+
 #Read-in ADMIXTURE q-value results for all samples at best K value (best K = 4)
 all_pure_3 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.3.Q") # K=4 was the second best supported value of K at CV = 0.276
 
