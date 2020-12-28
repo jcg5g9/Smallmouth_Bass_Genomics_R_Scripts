@@ -5,16 +5,15 @@ date: "10/30/2019"
 output: html_document
 ---
 
+# ADMIXTURE Analysis 
+
 ## Libraries needed for analysis
 ```{r setup, echo = FALSE, include=FALSE}
 library(readxl)
 library(tidyverse)
 library(cowplot)
 library(devtools)
-library(SNPRelate)
-library(vcfR)
 library(pophelper)
-library(PopGenome)
 ```
 
 ## Genomics Metadata
@@ -26,6 +25,9 @@ genomics_metadata_pure <- read_excel("../../metadata/genomics_metadata_filtered_
 #Clean metadata
 genomics_metadata <- as.data.frame(genomics_metadata)
 genomics_metadata <- column_to_rownames(genomics_metadata, "na")
+
+#Below I have created an alterate dataset in excel that only includes samples that were determined to be unadmixed based on results from ADMIXTURE. This dataset was used to re-analyze population structure for only these pure samples.
+
 genomics_metadata_pure <- as.data.frame(genomics_metadata_pure)
 genomics_metadata_pure <- column_to_rownames(genomics_metadata_pure, "na")
 
@@ -38,10 +40,6 @@ genomics_metadata_hybrid_neosho <- genomics_metadata_hybrid_smb %>%
 
 genomics_metadata_hybrid_northern <- genomics_metadata_hybrid_smb %>%
    filter(species != "Neosho")
-
-genomics_metadata_pure_smb <- genomics_metadata_pure %>%
-   filter(species != "Spotted Bass")
-
 
 #Filter data file for only Smallmouth Bass and EXCLUDING the SMB X SPB (Spotted Bass) hybrid (BFC10)
 genomics_metadata_nohybrid_all <- genomics_metadata %>%
@@ -57,17 +55,22 @@ genomics_metadata_nohybrid_neosho <- genomics_metadata_nohybrid_smb %>%
 genomics_metadata_nohybrid_northern <- genomics_metadata_nohybrid_smb %>%
    filter(species != "Neosho")
 
+#Filter PURE samples data file for only Smallmouth Bass (Northern and Neosho) that are pure
+genomics_metadata_pure_smb <- genomics_metadata_pure %>%
+   filter(species != "Spotted Bass")
 ```
 
-## Admixture Analyses
+# Hybrid Screen Analysis
 ### All visualization done using the library "pophelper"
-## Screen for Species-level hybridization between Smallmouth Bass and Spotted Bass
+
+## Screen for Species-level hybridization between Smallmouth Bass and Spotted Bass as well as admixture between Northern Smallmouth Bass and Neosho Smallmouth Bass
 ```{r}
 #Read-in ADMIXTURE q-value results for all samples at best K value (best K = 4)
 admix_spb_screen <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_all/pass2_all.4.Q") # K=4 was the best supported value of K at CV = 0.253
 
 #Plot ADMIXTURE results for K = 4 for all samples (92) to screen for spotted bass and smallmouth bass hybrids. Any hybrids will be removed from downstream analysis
 
+##In order of POPULATION IDs (see pop_num column of metadata)
 plotQ(admix_spb_screen,
       showindlab = T, 
       useindlab=T,
@@ -96,44 +99,14 @@ plotQ(admix_spb_screen,
       imgtype = "pdf",
       imgoutput = "sep",
       height = 5, width = 30)
-
-
-plotQ(admix_spb_screen,
-      showindlab = T, 
-      useindlab=T,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC10","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("forestgreen","goldenrod3","deepskyblue","deeppink2"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = T, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 0.5,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.1, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/SPB_X_SMB_screen_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
 ```
 
-## Run only the pure samples to see how many independent lineages you have
+# Determine Major Lineages (Run only pure samples, no hybridization or admixture)
+
+## All black bass pure samples (SPB, SMB)
 ```{r}
 
-#Read-in ADMIXTURE q-value results for all samples at best K value (best K = 4)
-all_pure_3 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.3.Q") # K=4 was the second best supported value of K at CV = 0.276
+all_pure_3 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.3.Q") # K=3 was the best supported value of K at CV = 0.275
 
 plotQ(all_pure_3,
       showindlab = T, 
@@ -194,7 +167,6 @@ plotQ(all_pure_3,
       imgoutput = "sep",
       height = 5, width = 30)
 
-#Read-in ADMIXTURE q-value results for all samples at best K value (best K = 4)
 all_pure_4 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.4.Q") # K=4 was the second best supported value of K at CV = 0.276
 
 plotQ(all_pure_4,
@@ -256,8 +228,7 @@ plotQ(all_pure_4,
       imgoutput = "sep",
       height = 5, width = 30)
 
-#Read-in ADMIXTURE q-value results for all samples at best K value (best K = 4)
-all_pure_5 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.5.Q") # K=5
+all_pure_5 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.5.Q") # K=5 was close to K=3 and K=4, at CV = 0.283
 
 plotQ(all_pure_5,
       showindlab = T, 
@@ -317,42 +288,10 @@ plotQ(all_pure_5,
       imgtype = "pdf",
       imgoutput = "sep",
       height = 5, width = 30)
+```
 
-
-
-all_pure_6 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/all_pure.6.Q") # K=6
-
-plotQ(all_pure_6,
-      showindlab = T, 
-      useindlab=T,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_pure,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK49","GRSPB02","GRSPB03","NOIS12","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
-      clustercol = c("deepskyblue","goldenrod3","navyblue","forestgreen","lightyellow","deeppink2"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = T, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/pure_lineages_6",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-
-#Read-in ADMIXTURE q-value results for SMB samples at best K value (best K = 3)
+## Only Northern and Neosho Smallmouth Bass samples (SMB)
+```{r}
 smb_pure_3 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/smb_pure.3.Q") # K=3 was the best supported value of K at CV = 0.276
 
 plotQ(smb_pure_3,
@@ -385,744 +324,9 @@ plotQ(smb_pure_3,
       height = 5, width = 30)
 ```
 
-
-## Create hierarchical structure plots for all samples, including the hybrid discovered above (BFC10)
-```{r}
-# #Here I am running hierarchical structure analyses for Smallmouth Bass only (SMB), Neosho Smallmouth Bass only (NEO), and Northern Smallmouth Bass only (NOR), INCLUDING the hybrid detected above (BCF10).I identified a single potential SMB X SPB (spotted bass) hybrid based on the structure results above. I would like to know if including the hybrid in analysis of population structure - using ADMIXTURE - will change results for the best supported number of clusters. So, I am building ADMIXTURE diagrams for each hierarchical level: all samples (completed above), Smallmouth bass only, Neosho Smallmouth Bass only, Northern Smallmouth Bass only.
-
-####Read in ADMIXTURE Q result files
-
-admix_with_hybrid_smb <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_smb/pass2_all_smb.5.Q") # K=5 was the best supported value of K with CV error = 0.288
-
-admix_with_hybrid_neosho <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_neosho/pass2_all_neosho.1.Q") # K=1 was the best supported value of K with CV error = 0.294
-
-admix_with_hybrid_northern <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_northern/pass2_all_northern.1.Q") # K=1 was the best supported value of K with CV error = 0.306
-
-###SMALLMOUTH BASS ONLY###
-plotQ(admix_with_hybrid_smb,
-      showindlab = T, 
-      useindlab=T,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_hybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","ER35","ER20","SPRMO11","ER33","ER17","ER30","ER44","MI419","GLVR4","SPRMO19","NOIS18","BC01","BC07","BC14","MI425","SPVW12","SPVW07","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","SPVW02","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","BFC10","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
-      clustercol = c("deepskyblue", "deeppink2", "mediumpurple", "forestgreen","chocolate1"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = T, 
-      divsize = 0.8, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admixture_withhybrid_smb_k5",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-###NEOSHO ONLY###
-plotQ(admix_with_hybrid_neosho,
-      showindlab = T, 
-      useindlab=T,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_hybrid_neosho,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("ER35","ER20","SPRMO11","ER33","ER17","ER30","ER44","MI419","GLVR4","SPRMO19","NOIS18","BC01","BC07","BC14","MI425","SPVW12","SPVW07","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","SPVW02","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","BFC10","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
-      clustercol = c("deepskyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = T, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admixture_withhybrid_neosho_k1",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-###NORTHERN ONLY###
-plotQ(admix_with_hybrid_northern,
-      showindlab = T, 
-      useindlab=T,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_hybrid_northern,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03"),
-      clustercol = c("deeppink2"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = T, 
-      divsize = 2, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_withhybrid_northern_k1",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-```
-
-## Create hierarchical structure plots for all non-hybrid samples, excluding the hybrid discovered above (BFC10)
-```{r}
-#Here I am running hierarchical structure analyses for all samples (ALL), Smallmouth Bass only (SMB), Neosho Smallmouth Bass only (NEO), and Northern Smallmouth Bass only (NOR), EXCLUDING the hybrid detected above (BCF10). These results will be used to show if there is a difference in structure inferred when hybrids between species are included or not included in the analysis.
-
-####Read in ADMIXTURE Q result files
-
-admix_nohybrid_all <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_all/pass2_noBFC10.5.Q") # K=5 was the best supported value of K with CV error = 0.25002 (vs. K = 4, which had a best K value of 0.2501)
-
-admix_nohybrid_smb <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.3.Q") # K=3 was the best supported value of K with CV error = 0.254
-
-admix_nohybrid_neosho <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_neosho/pass2_noBFC10_neosho.3.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-admix_nohybrid_northern <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_northern/pass2_noBFC10_northern.1.Q") # K=1 was the best supported value of K with CV error = 0.306
-
-
-###ALL SAMPLES###
-plotQ(admix_nohybrid_all,
-      showindlab = T, 
-      useindlab=T,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_all,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","ER35","ER20","SPRMO11","ER33","ER30","ER17","ER44","GLVR4","MI419","BC07","BC14","MI425","SPVW12","SPVW07","SPVW02","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","BC01","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","NOIS18","SPRMO19","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR19","AR18","AR21","AR16"),
-      clustercol = c("forestgreen", "goldenrod3", "navyblue", "deepskyblue", "deeppink2"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = T, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_all_k5",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-###SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","ER35","ER20","SPRMO11","ER33","ER30","ER17","ER44","GLVR4","MI419","BC07","BC14","MI425","SPVW12","SPVW07","SPVW02","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","BC01","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","NOIS18","SPRMO19","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR19","AR18","AR21","AR16"),
-      clustercol = c("deeppink2", "forestgreen", "deepskyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k3",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_neosho,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_neosho,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("ER35","ER20","SPRMO11","ER33","ER30","ER17","ER44","GLVR4","MI419","BC07","BC14","MI425","SPVW12","SPVW07","SPVW02","SPVW05","BC08","BC12","SPVW11","BC09","MI420","MI423","MI422","MI421","BC01","SPVW14","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK30","BFORK49","CANEY15","GRSPB02","GRSPB03","NOIS07","NOIS12","NOIS08","BFORK24","NOIS18","SPRMO19","AR30","AR29","AT02","AT09","AT12","AT08","AT05","BFC02","BFC06","BFC49","AR19","AR18","AR21","AR16"),
-      clustercol = c("deeppink2", "forestgreen", "deepskyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_neosho_k3",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-###NORTHERN SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_northern,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_northern,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03"),
-      clustercol = c("deeppink2"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 2, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_northern_k1",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-```
-
-### Same analyses and data, but in the order of the FINERADSTRUCTURE results 
-### Neosho Only
-```{r}
-admix_nohybrid_neosho_k3 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_neosho/pass2_noBFC10_neosho.3.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_neosho_k3,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_neosho,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29"),
-      clustercol = c("deeppink2", "forestgreen", "deepskyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_neosho_k3_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_neosho_k4 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_neosho/pass2_noBFC10_neosho.4.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_neosho_k4,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_neosho,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29"),
-      clustercol = c("forestgreen", "deeppink2", "mediumpurple","deepskyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_neosho_k4_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_neosho_k5 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_neosho/pass2_noBFC10_neosho.5.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_neosho_k5,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_neosho,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29"),
-      clustercol = c("deepskyblue", "forestgreen", "mediumpurple","orchid1", "deeppink2"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_neosho_k5_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_neosho_k6 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_neosho/pass2_noBFC10_neosho.6.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_neosho_k6,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_neosho,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29"),
-      clustercol = c("forestgreen", "lightgreen", "mediumpurple","deeppink2", "deepskyblue", "orchid1"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_neosho_k6_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_neosho_k7 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_neosho/pass2_noBFC10_neosho.7.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_neosho_k7,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_neosho,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29"),
-      clustercol = c("deepskyblue", "lightsalmon", "mediumpurple","orchid1", "lightgreen", "deeppink2", "forestgreen"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_neosho_k7_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-```
-
-### Same analyses and data, but in the order of the FINERADSTRUCTURE results 
-### All SMB
-```{r}
-
-admix_nohybrid_smb_k2 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.2.Q") # K=2 was the best supported value of K with CV error = 0.254
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb_k2,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("deepskyblue","deeppink2"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k2_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_smb_k3 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.3.Q") # K=3 was the best supported value of K with CV error = 0.254
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb_k3,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("deeppink2", "forestgreen", "deepskyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k3_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_smb_k4 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.4.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb_k4,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("forestgreen", "deeppink2", "mediumpurple","deepskyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k4_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_smb_k5 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.5.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb_k5,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("mediumpurple", "forestgreen", "deeppink2","deepskyblue", "navyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k5_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_smb_k6 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.6.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb_k6,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("mediumpurple", "deepskyblue", "navyblue","chocolate1", "deeppink2", "forestgreen"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k6_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_smb_k7 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.7.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb_k7,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("chocolate1", "lightgreen", "mediumpurple","navyblue", "forestgreen", "deeppink2", "deepskyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k7_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_smb_k8 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.8.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb_k8,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("orchid1", "mediumpurple", "deepskyblue","chocolate1", "deeppink2", "lightgreen", "forestgreen","navyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k8_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_smb_k9 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.9.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb_k9,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("mediumpurple", "deepskyblue", "chocolate1","lightgreen", "orchid1", "navyblue", "deeppink2","forestgreen","lightyellow"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k9_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-admix_nohybrid_smb_k10 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/pass2_noBFC10_smb/pass2_noBFC10_smb.10.Q") # K=3 was the best supported value of K with CV error = 0.256
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_nohybrid_smb_k10,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("deepskyblue", "lightyellow", "navyblue","mediumpurple", "deeppink2", "sienna4", "lightgreen","chocolate1","forestgreen", "orchid1"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_NOhybrid_smb_k10_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-```
-
-### All SMB, 1000 highest FSTs
-```{r}
-
-admix_1000_fst_smb_k2 <- readQ("../ADMIXTURE_analysis/admix_all_samples_noBFC10/admix_results_smb_1000_fst/smb_1000_fst.2.Q") # K=3 was the best supported value of K with CV error = 0.254
-
-###NEOSHO SMALLMOUTH BASS ONLY###
-plotQ(admix_1000_fst_smb_k2,
-      showindlab = T, 
-      useindlab=F,
-      indlabsize = 8,
-      indlabcol = "black",
-      grplab = genomics_metadata_nohybrid_smb,
-      showgrplab = F,
-      ordergrp = T,
-      selgrp = "sample_id",
-      subsetgrp =  c("SPRMO19","CANEY15","SPRMO11","GLVR4","SPVW14","SPVW05","SPVW02","MI421","MI422","SPVW07","SPVW11","BC01","BC09","BC08","BC12","BC07","MI420","MI423","MI419","MI425","BC14","SPVW12","ER35","ER33","ER20","ER17","ER30","ER44","BFORK49","BFORK24","BFORK30","NOIS07","NOIS12","GRSPB03","GRSPB02","BFORK23","NOIS18","NOIS08","GRSPB69","CANEY16","BFORK02","HC44","HC42","HC41","HC38","SC06","SC37","HC43","HC40","BFC02","BFC49","BFC06","AR16","AR19","AR21","AR18","AT05","AT02","AT09","AT08","AT12","AR30","AR29","STOCK05","STOCK06","STOCK03","STOCK04","BP10","BP01","BP17","BP02","BP07","SKIA06","SKIA05","SKIA04","SKIA09","SKIA03","TBLR02","TBLR04","TBLR01","TBLR03","GRSPB50","GRSPB39","GRSPB41","GRSPB35","GRSPB36","GRSPB37"),
-      clustercol = c("deeppink2", "deepskyblue"),
-      showlegend = F,
-      legendmargin = c(2,2,2,2),
-      showsp = F, 
-      showdiv = F, 
-      divsize = 0.5, 
-      divcol = "black",  
-      divtype = 1,
-      legendkeysize = 10, 
-      legendtextsize = 15, 
-      linesize = 0.5, 
-      pointsize = 4, 
-      barbordercolour = "black",
-      barbordersize = 0.2, 
-      outputfilename = "../../visualization/Admixture/admix_1000_fst_smb_k2_finerad_order",
-      imgtype = "pdf",
-      imgoutput = "sep",
-      height = 5, width = 30)
-
-```
-
-
-
 # CV Error
 ###All analyses were conducted in base R
+
 ## Cross-validation (10-fold) error results for ADMIXTURE analyses
 ```{r}
 #For each admixture analysis that I ran, I conducted a 10-fold cross validation to obtain error values for each value of K. The K value with the lowest cross-validation error is the K that is most likely given the data. Here I am graphing the cross-validation error values across all K for each analysis (hierarchical analysis for all samples, INCLUDING the hybrid, and hierarchial analysis for all samples, EXCLUDING the hybrid)
