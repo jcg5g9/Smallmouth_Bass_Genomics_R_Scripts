@@ -18,7 +18,7 @@ library(cowplot)
 
 ## Get top 200 diagnostic loci
 ```{r}
-#Expore genepop data using genepopedit package - here, I am just seeing what the data tables look like with respect to the genepop edit package. I am then using the genepopedit pacakge to make sure that all of the genepop files are in the correct format for the hybriddetective getTopLoc() function
+#Explore genepop data using genepopedit package - here, I am just seeing what the data tables look like with respect to the genepop edit package. I am then using the genepopedit pacakge to make sure that all of the genepop files are in the correct format for the hybriddetective getTopLoc() function
 
 genepop_detective("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_format_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt", variable = "PopNum")
 
