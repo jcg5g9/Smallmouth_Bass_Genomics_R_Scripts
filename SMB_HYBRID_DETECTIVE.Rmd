@@ -16,49 +16,39 @@ library(adegenet)
 library(cowplot)
 ```
 
-## Get top 200 diagnostic loci
+## Prepare parent genepop datasets for PLINK (I used pgdspider on my computer to convert vcf files for only the parent populations, MIDARK and WHITE, and MIDARK and SKIA, into genepop files. The genepop files created in pgdspider do not have the correct population designations, so they need to be reformatted with the "subset_genepop_rename" code below).
 ```{r}
-#Explore genepop data using genepopedit package - here, I am just seeing what the data tables look like with respect to the genepop edit package. I am then using the genepopedit pacakge to make sure that all of the genepop files are in the correct format for the hybriddetective getTopLoc() function
-
-genepop_detective("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_format_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt", variable = "PopNum")
-
-genepop_detective("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_canbar_white_parent_sim_genepop_goodformat.txt", variable = "PopNum")
-
-genepop_flatten("../../raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt")
-
 #create a dataframe to designate two different populations (Pure Neosho, Pure Northern)
-pop_rename_hsyc_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","",""), Rename = c("HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","HSYC","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+pop_rename_midark_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
 
-pop_rename_canbar_skia <- data.frame(Opop = c("","","","","","","","","","","","","",""), Rename = c("CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","CANBAR","SKIA","SKIA","SKIA","SKIA","SKIA"))
-
-pop_rename_hsyc_canbar_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","HSYCCANBAR","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+pop_rename_midark_skia <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","",""), Rename = c("MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","SKIA","SKIA","SKIA","SKIA","SKIA"))
 
 
 #Designate the two different populations (Pure Neosho, Pure Northern)
-subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_white_parent_genepop.txt", pop_rename_hsyc_white, path = "/Users/joegunn/Desktop/hsyc_white_parent_genepop_goodformat.txt")
+subset_genepop_rename("../../raw_data/hybriddetective_data/raw_parent_genepops/MIDARK_WHITE_parent_genepop.txt", pop_rename_midark_white, path = "/Users/joegunn/Desktop/MIDARK_WHITE_edited_parent_genepop.txt")
 
-subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/canbar_skia_parent_genepop.txt", pop_rename_canbar_skia, path = "/Users/joegunn/Desktop/canbar_skia_parent_genepop_goodformat.txt")
-
-subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hsyc_canbar_white_parent_genepop.txt", pop_rename_hsyc_canbar_white, path = "/Users/joegunn/Desktop/hsyc_canbar_white_parent_genepop_goodformat.txt")
+subset_genepop_rename("../../raw_data/hybriddetective_data/raw_parent_genepops/MIDARK_SKIA_parent_genepop.txt", pop_rename_midark_skia, path = "/Users/joegunn/Desktop/MIDARK_SKIA_edited_parent_genepop.txt")
 
 
+#Explore genepop data using genepopedit package - here, I am just seeing what the data tables look like with respect to the genepop edit package. I am then using the genepopedit pacakge to make sure that all of the genepop files are in the correct format for the hybriddetective getTopLoc() function
 
-#Run command to extract the top 200 diagnositic SNPs (with highest Fst values) across pure Neosho and Northern populations. Both PGDSpider and PLINK needed to be installed on my local computer, and the respective paths to both executables are given in this function. 
+genepop_flatten("../../raw_data/hybriddetective_data/edited_parent_genepops/MIDARK_SKIA_edited_parent_genepop.txt")
 ```
+## Get top 200 diagnostic loci
 
-## Run getTopLoc() funtion from hybriddetective to get 200 diagnostic, high linkage, high Fst SNPs. There must be a "/" after the directories that PLINK and PGDSpider are in!
+## Run getTopLoc() funtion from hybriddetective to get 200 diagnostic, high linkage, high Fst SNPs. There must be a "/" after the directories that PLINK and PGDSpider are in! Otherwise the code won't work and you'll be very confused.
 ```{r}
-#Get panel SNP panel for HSYC and WHITE populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_format_genepops/hsyc_white_parent_genepop_goodformat.txt", panel.size = 200,
-where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
+#Get panel SNP panel for MIDARK and WHITE populations
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/edited_parent_genepops/MIDARK_WHITE_edited_parent_genepop.txt",
+          panel.size = 200,
+          where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/",
+          where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 
-#Get panel SNP panel for CANBAR and SKIA populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_format_genepops/canbar_skia_parent_genepop_goodformat.txt", panel.size = 200,
-where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
-
-#Get panel SNP panel for HSYC+CANBAR AND WHITE populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_format_genepops/hsyc_canbar_white_parent_genepop_goodformat.txt", panel.size = 200,
-where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
+#Get panel SNP panel for MIDARK and SKIA populations
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/edited_parent_genepops/MIDARK_SKIA_edited_parent_genepop.txt", 
+          panel.size = 200,
+          where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", 
+          where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 ```
 
 ## Determine the SNP names for the 200 diagnostic SNPs discovered in the above analyses - this is necessary, because the hybriddetective workflow code just generates the number of the SNPs that were used to make the panel (SNP_1, 2, 3, etc.) rather than the actual SNP name.
