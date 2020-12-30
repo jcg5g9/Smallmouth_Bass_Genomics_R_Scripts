@@ -50,6 +50,13 @@ getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smal
           where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", 
           where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 ```
+```{r}
+freqbasedsim_AlleleSample(GPD="../../raw_data/hybriddetective_data/parent_200_loci_panels/MIDARK_SKIA_edited_parent_genepop_200_Loci_Panel.txt", NumSims = 3, NumReps = 3)
+
+parallelnh_OSX("../../raw_data/hybriddetective_data/sim_newhybrid_panels/", where.NH = "/Users/joegunn/Downloads/newhybrids/", burnin = 1000, sweeps = 5000)
+getwd()
+
+```
 
 ## Determine the SNP names for the 200 diagnostic SNPs discovered in the above analyses - this is necessary, because the hybriddetective workflow code just generates the number of the SNPs that were used to make the panel (SNP_1, 2, 3, etc.) rather than the actual SNP name.
 ```{r}

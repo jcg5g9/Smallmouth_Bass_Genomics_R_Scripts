@@ -58,6 +58,12 @@ genomics_metadata_nohybrid_northern <- genomics_metadata_nohybrid_smb %>%
 #Filter PURE samples data file for only Smallmouth Bass (Northern and Neosho) that are pure
 genomics_metadata_pure_smb <- genomics_metadata_pure %>%
    filter(species != "Spotted Bass")
+
+#Filter full dataset for just admixed individuals
+genomics_metadata_admixed <- genomics_metadata %>%
+   filter(adm_status == "admixed") %>%
+   filter(sample_id != "BFC10")
+
 ```
 
 # Hybrid Screen Analysis
@@ -324,6 +330,104 @@ plotQ(smb_pure_3,
       height = 5, width = 30)
 ```
 
+# Determine if there is any population structure among the admixed individuals (within Neosho Smallmouth Bass)
+## Only Northern and Neosho Smallmouth Bass samples (SMB)
+
+```{r}
+admixed_2 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_admixed/admixed_indivs.2.Q") # K=3 was the best supported value of K at CV = 0.276
+
+plotQ(admixed_2,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_admixed,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("NOIS18","NOIS08","NOIS07","BFORK30","BFORK24","SPRMO11","GLVR4","SPRMO19","CANEY15","AT12","AT05","AT08","AT09","AT02","AR29","AR30","ER33","ER35","ER20","ER30","ER44","ER17","BC01","BC08","BC09","BC12","SPVW14","SPVW07","MI422","MI421","SPVW02","SPVW05","SPVW11","MI420","MI423","BC07","SPVW12","BC14","MI425","MI419"),
+      clustercol = c("mediumpurple","orchid1"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/neosho_admixed_lineages_2",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+admixed_3 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_admixed/admixed_indivs.3.Q") # K=3 was the best supported value of K at CV = 0.276
+
+plotQ(admixed_3,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_admixed,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("NOIS18","NOIS08","NOIS07","BFORK30","BFORK24","SPRMO11","GLVR4","SPRMO19","CANEY15","AT12","AT05","AT08","AT09","AT02","AR29","AR30","ER33","ER35","ER20","ER30","ER44","ER17","BC01","BC08","BC09","BC12","SPVW14","SPVW07","MI422","MI421","SPVW02","SPVW05","SPVW11","MI420","MI423","BC07","SPVW12","BC14","MI425","MI419"),
+      clustercol = c("lightgreen","mediumpurple","orchid1"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/neosho_admixed_lineages_3",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+admixed_4 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_admixed/admixed_indivs.4.Q") # K=3 was the best supported value of K at CV = 0.276
+
+plotQ(admixed_4,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_admixed,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("NOIS18","NOIS08","NOIS07","BFORK30","BFORK24","SPRMO11","GLVR4","SPRMO19","CANEY15","AT12","AT05","AT08","AT09","AT02","AR29","AR30","ER33","ER35","ER20","ER30","ER44","ER17","BC01","BC08","BC09","BC12","SPVW14","SPVW07","MI422","MI421","SPVW02","SPVW05","SPVW11","MI420","MI423","BC07","SPVW12","BC14","MI425","MI419"),
+      clustercol = c("lightgreen","orchid1","mediumpurple", "sienna4"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/neosho_admixed_lineages_4",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+```
+
 # CV Error
 ###All analyses were conducted in base R
 
@@ -337,6 +441,7 @@ cv_smb_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_smb_al
 cv_neosho_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_neosho_all_filters_withhybrids.xlsx")
 cv_northern_withhybrids <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_northern_all_filters_withhybrids.xlsx")
 cv_all_pure <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_all_pure.xlsx")
+cv_admixed <- read_excel("../ADMIXTURE_analysis/cv_all_samples/cv_admixed_indivs.xlsx")
 
 #Clean data for all samples, including the hybrid
 cv_all_withhybrids <- as.data.frame(cv_all_withhybrids)
@@ -492,6 +597,20 @@ ggplot(cv_all_pure, aes(x = k, y = cv_error)) +
    geom_point(size = 3) + 
    geom_path(stat = "identity", size = 1) + 
    scale_x_continuous("K", labels = as.character(cv_all_pure$k), breaks = cv_all_pure$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) + 
+   theme(axis.title = element_text(size = 20))
+
+dev.off()
+
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Admixture/cv_error_plot_admixed_indivs.pdf", width=5, height=4) 
+
+ggplot(cv_admixed, aes(x = k, y = cv)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_admixed$k), breaks = cv_admixed$k) + 
    labs(x = "K", y = "10-Fold CV Error") + 
    theme_set(theme_cowplot()) + 
    theme(axis.text = element_text(size = 20)) + 
