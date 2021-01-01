@@ -22,7 +22,9 @@ library(gtools)
 ## Metadata 
 ```{r}
 #Read in metadata file. I am using the population designations as inferred from fineradstructure and admixture analysis, which keeps all of the rivers as separate populations, with the exception of Honey Creek and Sycamore Creek, Piney AR and Illinois Bayou, and Lee Creek and Mulberry River. Northern Smallmouth Bass populations are separated into drainages. 
-smb_pops_noBFC10 <- read_excel("../../metadata/genomics_metadata_filtered_smb_noBFC10.xlsx")
+smb_pops_noBFC10 <- read_excel("../../metadata/genomics_metadata_filtered.xlsx") %>%
+   filter(sample_id != "BFC10") %>%
+   filter(species != "Spotted Bass") 
 
 smb_pops <- smb_pops_noBFC10
 neosho_pops <- smb_pops_noBFC10 %>% 
@@ -41,12 +43,12 @@ as.vector(neosho_pops)
 ```{r}
 #read-in VCF files for outlier SNPs and neutral SNPs
 ###SMB Samples Only###
-vcf_smb_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/smb_finerad_outlier_snps.vcf")
-vcf_smb_noBFC10_neutral <- read.vcfR("../../raw_data/dapc_data/smb_finerad_neutral_snps.vcf")
+vcf_smb_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/smb_lineages_outlier_snps.vcf")
+vcf_smb_noBFC10_neutral <- read.vcfR("../../raw_data/dapc_data/smb_lineages_neutral_snps.vcf")
 
 ###Neosho Samples Only###
-vcf_neosho_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/neosho_finerad_outlier_snps.vcf")
-vcf_neosho_noBFC10_neutral <- read.vcfR("../../raw_data/dapc_data/neosho_finerad_neutral_snps.vcf")
+vcf_neosho_noBFC10_outliers <- read.vcfR("../../raw_data/dapc_data/neosho_lineages_outlier_snps.vcf")
+vcf_neosho_noBFC10_neutral <- read.vcfR("../../raw_data/dapc_data/neosho_lineages_neutral_snps.vcf")
 
 #Convert VCF to a genind object
 ###SMB Samples Only###
@@ -65,7 +67,6 @@ smb_noBFC10_neutral_genind@pop <- as.factor(smb_pops)
 ###Neosho Samples Only###
 neosho_noBFC10_outliers_genind@pop <- as.factor(neosho_pops)
 neosho_noBFC10_neutral_genind@pop <- as.factor(neosho_pops)
-
 
 #In order for DAPC to run, it is important to "scale" the outlier and neutral datasets and to make sure that there is data for EVERY individual at EVERY SNP. To account for missing data, the NA.method = c("mean) command below changes each NA value to an average across samples.
 
@@ -166,7 +167,7 @@ colnames(dapc_neosho_neutral_LDs) <- c("pop","LD1","LD2")
 smb_outlier_dapc_plot <- ggplot(dapc_smb_outlier_LDs, aes(x = LD1, y = LD2, fill = pop)) +
    geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = F) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("lightgreen", "lightyellow","sienna4","deepskyblue" ,"mediumpurple", "forestgreen", "chocolate1","navyblue","orchid1","deeppink2","orchid1")) +
+   scale_fill_manual(values = c("lightgreen", "sienna4","mediumpurple","forestgreen" ,"deepskyblue", "chocolate1", "navyblue","orchid1","deeppink2","deeppink2","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -182,25 +183,24 @@ smb_outlier_dapc_plot <- ggplot(dapc_smb_outlier_LDs, aes(x = LD1, y = LD2, fill
 smb_neutral_dapc_plot <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
    geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("lightgreen", "lightyellow","sienna4","deepskyblue" ,"mediumpurple", "forestgreen", "chocolate1","navyblue","orchid1","deeppink2","orchid1")) +
+   scale_fill_manual(values = c("lightgreen", "sienna4","mediumpurple","forestgreen" ,"deepskyblue", "chocolate1", "navyblue","orchid1","deeppink2","deeppink2","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 25)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 25)) +
-   theme(legend.position = c(0.05,0.7)) +
+   theme(legend.position = c(0.2,0.7)) +
    theme(legend.background = element_rect(color = "black", size = 0.5)) + 
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 20)) + 
    theme(axis.title = element_blank())
 
-
 ###Neosho Samples Only###
 ###Outlier SNPs###
 neosho_outlier_dapc_plot <- ggplot(dapc_neosho_outlier_LDs, aes(x = LD1, y = LD2, fill = pop)) +
    geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = F) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("lightgreen", "lightyellow", "sienna4", "deepskyblue", "mediumpurple","forestgreen","orchid1")) +
+   scale_fill_manual(values = c("lightgreen", "sienna4", "mediumpurple", "forestgreen","deepskyblue","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -215,7 +215,7 @@ neosho_outlier_dapc_plot <- ggplot(dapc_neosho_outlier_LDs, aes(x = LD1, y = LD2
 neosho_neutral_dapc_plot <- ggplot(dapc_neosho_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
    geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = F) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
-   scale_fill_manual(values = c("lightgreen", "lightyellow", "sienna4", "deepskyblue", "mediumpurple","forestgreen","orchid1")) +
+   scale_fill_manual(values = c("lightgreen", "sienna4", "mediumpurple", "forestgreen","deepskyblue","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -228,9 +228,9 @@ neosho_neutral_dapc_plot <- ggplot(dapc_neosho_neutral_LDs, aes(x = LD1, y = LD2
    theme(axis.title.y = element_blank())
 
 #Combine both DAPC Plots
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/dapc_plots.pdf", width=16, height=14)
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/dapc_plots_lineages.pdf", width=16, height=12)
 
-plot_grid(smb_outlier_dapc_plot, smb_neutral_dapc_plot, neosho_outlier_dapc_plot, neosho_neutral_dapc_plot, nrow = 2, labels = c("a","b","c","d"), label_size = 27)
+plot_grid(smb_outlier_dapc_plot, smb_neutral_dapc_plot, neosho_outlier_dapc_plot, neosho_neutral_dapc_plot, nrow = 2)
 
 dev.off()
 ```
@@ -348,11 +348,12 @@ smb_dapc_outlier_driving_snps <- smb_dapc_outlier_driving_snps %>%
 smb_dapc_outlier_driving_snps_arranged <- smb_dapc_outlier_driving_snps %>%
    arrange(desc(LD1))
 
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/smb_dapc_driving_snps.pdf", width=8, height=25)
+smb_dapc_outlier_driving_snps_arranged$snp_id <- factor(smb_dapc_outlier_driving_snps_arranged$snp_id, levels = c("184351", "191669", "151886", "181511", "43845", "232581", "33180","21969","22179","224775","240508","81475"))
 
-ggplot(smb_dapc_outlier_driving_snps, aes(x = snp_id, y = LD1)) +
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/smb_dapc_driving_snps.pdf", width=6, height=6)
+
+ggplot(smb_dapc_outlier_driving_snps_arranged, aes(x = snp_id, y = LD1)) +
    geom_bar(position = position_dodge(), stat="identity", fill = "grey", color = "black") +
-   geom_hline(yintercept = 0.0075, linetype = "longdash") +
    coord_flip() +
    labs(x = "SNP ID", y = "LD1") +
    theme(axis.text.x = element_text(size = 15)) +
@@ -361,18 +362,6 @@ ggplot(smb_dapc_outlier_driving_snps, aes(x = snp_id, y = LD1)) +
     
 dev.off()
 
-#SNPs that are most highly contributing to local adaptation (TOP 10)
-
-#175380
-#130606
-#46037
-#77748
-#163080
-#87556
-#253461
-#54829
-#175005
-#184351
 ```
 
 
@@ -396,29 +385,18 @@ neosho_dapc_outlier_driving_snps <- neosho_dapc_outlier_driving_snps %>%
 neosho_dapc_outlier_driving_snps_arrange <- neosho_dapc_outlier_driving_snps %>%
    arrange(desc(LD1))
 
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/neosho_dapc_driving_snps.pdf", width=8, height=5)
+neosho_dapc_outlier_driving_snps_arrange$snp_id <- factor(neosho_dapc_outlier_driving_snps_arrange$snp_id, levels = c("191350", "74243", "215656", "161869", "131695", "133235", "231240","57650","25440","223852","127392","97387","175714","7106","73735","104211","158900","283009","66019","247400","247001","76850","229494","28111","48061","130070","265552","137991","273968"))
 
-ggplot(neosho_dapc_outlier_driving_snps, aes(x = snp_id, y = LD1)) +
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/neosho_dapc_driving_snps.pdf", width=6, height=10)
+
+ggplot(neosho_dapc_outlier_driving_snps_arrange, aes(x = snp_id, y = LD1)) +
    geom_bar(position = position_dodge(), stat="identity", fill = "grey", color = "black") +
-   geom_hline(yintercept = 0.03, linetype = "longdash") +
+   coord_flip() +
    labs(x = "SNP ID", y = "LD1") +
-   theme(axis.text.x = element_text(angle = 45, hjust = 0.9)) +
-   theme(axis.text.x = element_text(size = 10)) +
+   theme(axis.text.x = element_text(hjust = 0.5)) +
+   theme(axis.text.x = element_text(size = 15)) +
    theme(axis.text.y = element_text(size = 15)) +
    theme(axis.title = element_text(size = 15))
     
 dev.off()
-
-#SNPs that are most highly contributing to local adaptation (TOP 10)
-
-#74243
-#215656
-#133235
-#131695
-#321240
-#57650
-#191350
-#161869
-#127392
-#41363
 ```

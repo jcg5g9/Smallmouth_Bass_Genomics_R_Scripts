@@ -25,14 +25,13 @@ pop_rename_midark_skia <- data.frame(Opop = c("","","","","","","","","","","","
 
 
 #Designate the two different populations (Pure Neosho, Pure Northern)
-subset_genepop_rename("../../raw_data/hybriddetective_data/raw_parent_genepops/MIDARK_WHITE_parent_genepop.txt", pop_rename_midark_white, path = "/Users/joegunn/Desktop/MIDARK_WHITE_edited_parent_genepop.txt")
+subset_genepop_rename("../../raw_data/hybriddetective_data/raw_parent_genepops/MIDARK_WHITE_parent_genepop_snps_random.txt", pop_rename_midark_white, path = "/Users/joegunn/Desktop/MIDARK_WHITE_edited_parent_genepop_snps_random.txt")
 
-subset_genepop_rename("../../raw_data/hybriddetective_data/raw_parent_genepops/MIDARK_SKIA_parent_genepop.txt", pop_rename_midark_skia, path = "/Users/joegunn/Desktop/MIDARK_SKIA_edited_parent_genepop.txt")
+subset_genepop_rename("../../raw_data/hybriddetective_data/raw_parent_genepops/MIDARK_SKIA_parent_genepop_snps_random.txt", pop_rename_midark_skia, path = "/Users/joegunn/Desktop/MIDARK_SKIA_edited_parent_genepop_snps_random.txt")
 
 
 #Explore genepop data using genepopedit package - here, I am just seeing what the data tables look like with respect to the genepop edit package. I am then using the genepopedit pacakge to make sure that all of the genepop files are in the correct format for the hybriddetective getTopLoc() function
-
-genepop_flatten("../../raw_data/hybriddetective_data/edited_parent_genepops/MIDARK_SKIA_edited_parent_genepop.txt")
+genepop_flatten("../../raw_data/hybriddetective_data/edited_parent_genepops/MIDARK_SKIA_edited_parent_genepop_snps_random.txt")
 ```
 ## Get top 200 diagnostic loci
 
@@ -51,11 +50,20 @@ getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smal
           where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 ```
 ```{r}
+
+#Simulate hybrid genotypes based on the VALIDATION parent samples (the non-training parent samples - those not used to discover the 200 most informative, diagnostic loci)
 freqbasedsim_AlleleSample(GPD="../../raw_data/hybriddetective_data/parent_200_loci_panels/MIDARK_SKIA_edited_parent_genepop_200_Loci_Panel.txt", NumSims = 3, NumReps = 3)
 
-parallelnh_OSX("../../raw_data/hybriddetective_data/sim_newhybrid_panels/", where.NH = "/Users/joegunn/Downloads/newhybrids/", burnin = 1000, sweeps = 5000)
-getwd()
+#Run parallelnewhybrids program to assign simulated genotypes to hybrid class (Bayesian Gibbs sampling algorithm)
+parallelnh_OSX("../../raw_data/hybriddetective_data/sim_newhybrid_panels/", where.NH = "/Users/joegunn/Downloads/newhybrids/", burnin = 100, sweeps = 500)
 
+#Check for NewHybrids model convergence - this code will generate a message that either says to re-check the results (the Bayesian threads did not converge) or that you are good to go (the threads successfully converged). Failure to converge results in most individuals being assigned erroneously to the "F2" hybrid class.
+nh_preCheckR(PreDir="/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_panels/NH.Results/")
+
+#Plot results for NewHybrids model convergence
+nh_multiplotR(NHResults = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_panels/NH.Results/")
+
+getwd()
 ```
 
 ## Determine the SNP names for the 200 diagnostic SNPs discovered in the above analyses - this is necessary, because the hybriddetective workflow code just generates the number of the SNPs that were used to make the panel (SNP_1, 2, 3, etc.) rather than the actual SNP name.
