@@ -52,9 +52,9 @@ getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smal
 ```{r}
 
 #Simulate hybrid genotypes based on the VALIDATION parent samples (the non-training parent samples - those not used to discover the 200 most informative, diagnostic loci)
-freqbasedsim_GTFreq(GenePopData ="../../raw_data/hybriddetective_data/parent_200_loci_panels/MIDARK_SKIA_edited_parent_genepop_snps_random_200_Loci_Panel.txt", NumSims = 3, NumReps = 3, sample.sizePure = 200, sample.sizeF1 = 200, sample.sizeF2 = 200, sample.sizeBC = 200)
+freqbasedsim_GTFreq(GenePopData ="../../raw_data/hybriddetective_data/parent_200_loci_panels/MIDARK_SKIA_edited_parent_genepop_snps_random_200_Loci_Panel.txt", NumSims = 3, NumReps = 3, sample.sizePure = 100, sample.sizeF1 = 100, sample.sizeF2 = 100, sample.sizeBC = 100)
 
-?freqbasedsim_GTFreq
+
 #Run parallelnewhybrids program to assign simulated genotypes to hybrid class (Bayesian Gibbs sampling algorithm)
 parallelnh_OSX("../../raw_data/hybriddetective_data/sim_newhybrid_panels_snps_random/", where.NH = "/Users/joegunn/Downloads/newhybrids/", burnin = 1000, sweeps = 5000)
 
@@ -64,7 +64,6 @@ nh_preCheckR(PreDir="/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/
 #Plot results for NewHybrids model convergence
 nh_multiplotR(NHResults = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_panels/NH.Results/")
 
-getwd()
 ```
 
 ## Determine the SNP names for the 200 diagnostic SNPs discovered in the above analyses - this is necessary, because the hybriddetective workflow code just generates the number of the SNPs that were used to make the panel (SNP_1, 2, 3, etc.) rather than the actual SNP name.
