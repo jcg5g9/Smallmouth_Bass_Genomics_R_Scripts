@@ -181,7 +181,7 @@ smb_outlier_dapc_plot <- ggplot(dapc_smb_outlier_LDs, aes(x = LD1, y = LD2, fill
 
 ###Neutral SNPs###
 smb_neutral_dapc_plot <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = T) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = F) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
    scale_fill_manual(values = c("lightgreen", "sienna4","mediumpurple","forestgreen" ,"deepskyblue", "chocolate1", "navyblue","orchid1","deeppink2","deeppink2","orchid1")) +
    theme_set(theme_cowplot(12)) +
@@ -348,11 +348,13 @@ smb_dapc_outlier_driving_snps <- smb_dapc_outlier_driving_snps %>%
 smb_dapc_outlier_driving_snps_arranged <- smb_dapc_outlier_driving_snps %>%
    arrange(desc(LD1))
 
-smb_dapc_outlier_driving_snps_arranged$snp_id <- factor(smb_dapc_outlier_driving_snps_arranged$snp_id, levels = c("184351", "191669", "151886", "181511", "43845", "232581", "33180","21969","22179","224775","240508","81475"))
+smb_dapc_outlier_driving_snps_arranged_top10 <- as.data.frame(smb_dapc_outlier_driving_snps_arranged[1:10,])
+
+smb_dapc_outlier_driving_snps_arranged_top10$snp_id <- factor(smb_dapc_outlier_driving_snps_arranged_top10$snp_id, levels = c("175380", "130606", "46037", "77748", "163080", "87556", "253461","102722","54829","96877"))
 
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/smb_dapc_driving_snps.pdf", width=6, height=6)
 
-ggplot(smb_dapc_outlier_driving_snps_arranged, aes(x = snp_id, y = LD1)) +
+ggplot(smb_dapc_outlier_driving_snps_arranged_top10, aes(x = snp_id, y = LD1)) +
    geom_bar(position = position_dodge(), stat="identity", fill = "grey", color = "black") +
    coord_flip() +
    labs(x = "SNP ID", y = "LD1") +
@@ -385,11 +387,13 @@ neosho_dapc_outlier_driving_snps <- neosho_dapc_outlier_driving_snps %>%
 neosho_dapc_outlier_driving_snps_arrange <- neosho_dapc_outlier_driving_snps %>%
    arrange(desc(LD1))
 
-neosho_dapc_outlier_driving_snps_arrange$snp_id <- factor(neosho_dapc_outlier_driving_snps_arrange$snp_id, levels = c("191350", "74243", "215656", "161869", "131695", "133235", "231240","57650","25440","223852","127392","97387","175714","7106","73735","104211","158900","283009","66019","247400","247001","76850","229494","28111","48061","130070","265552","137991","273968"))
+neosho_dapc_outlier_driving_snps_arrange_top10 <- as.data.frame(neosho_dapc_outlier_driving_snps_arrange[c(1:10),])
+
+neosho_dapc_outlier_driving_snps_arrange_top10$snp_id <- factor(neosho_dapc_outlier_driving_snps_arrange_top10$snp_id, levels = c("191350", "74243", "215656", "161869", "131695", "133235", "231240","57650","25440","223852"))
 
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/DAPC/neosho_dapc_driving_snps.pdf", width=6, height=10)
 
-ggplot(neosho_dapc_outlier_driving_snps_arrange, aes(x = snp_id, y = LD1)) +
+ggplot(neosho_dapc_outlier_driving_snps_arrange_top10, aes(x = snp_id, y = LD1)) +
    geom_bar(position = position_dodge(), stat="identity", fill = "grey", color = "black") +
    coord_flip() +
    labs(x = "SNP ID", y = "LD1") +

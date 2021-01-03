@@ -38,13 +38,13 @@ genepop_flatten("../../raw_data/hybriddetective_data/edited_parent_genepops/MIDA
 ## Run getTopLoc() funtion from hybriddetective to get 200 diagnostic, high linkage, high Fst SNPs. There must be a "/" after the directories that PLINK and PGDSpider are in! Otherwise the code won't work and you'll be very confused.
 ```{r}
 #Get panel SNP panel for MIDARK and WHITE populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/edited_parent_genepops/MIDARK_WHITE_edited_parent_genepop.txt",
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/edited_parent_genepops/MIDARK_WHITE_edited_parent_genepop_snps_random.txt",
           panel.size = 200,
           where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/",
           where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 
 #Get panel SNP panel for MIDARK and SKIA populations
-getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/edited_parent_genepops/MIDARK_SKIA_edited_parent_genepop.txt", 
+getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/edited_parent_genepops/MIDARK_SKIA_edited_parent_genepop_snps_random.txt", 
           panel.size = 200,
           where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", 
           where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
@@ -52,13 +52,14 @@ getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smal
 ```{r}
 
 #Simulate hybrid genotypes based on the VALIDATION parent samples (the non-training parent samples - those not used to discover the 200 most informative, diagnostic loci)
-freqbasedsim_AlleleSample(GPD="../../raw_data/hybriddetective_data/parent_200_loci_panels/MIDARK_SKIA_edited_parent_genepop_200_Loci_Panel.txt", NumSims = 3, NumReps = 3)
+freqbasedsim_GTFreq(GenePopData ="../../raw_data/hybriddetective_data/parent_200_loci_panels/MIDARK_SKIA_edited_parent_genepop_snps_random_200_Loci_Panel.txt", NumSims = 3, NumReps = 3, sample.sizePure = 200, sample.sizeF1 = 200, sample.sizeF2 = 200, sample.sizeBC = 200)
 
+?freqbasedsim_GTFreq
 #Run parallelnewhybrids program to assign simulated genotypes to hybrid class (Bayesian Gibbs sampling algorithm)
-parallelnh_OSX("../../raw_data/hybriddetective_data/sim_newhybrid_panels/", where.NH = "/Users/joegunn/Downloads/newhybrids/", burnin = 100, sweeps = 500)
+parallelnh_OSX("../../raw_data/hybriddetective_data/sim_newhybrid_panels_snps_random/", where.NH = "/Users/joegunn/Downloads/newhybrids/", burnin = 1000, sweeps = 5000)
 
 #Check for NewHybrids model convergence - this code will generate a message that either says to re-check the results (the Bayesian threads did not converge) or that you are good to go (the threads successfully converged). Failure to converge results in most individuals being assigned erroneously to the "F2" hybrid class.
-nh_preCheckR(PreDir="/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_panels/NH.Results/")
+nh_preCheckR(PreDir="/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_panels_snps_random/NH.Results/")
 
 #Plot results for NewHybrids model convergence
 nh_multiplotR(NHResults = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_panels/NH.Results/")
