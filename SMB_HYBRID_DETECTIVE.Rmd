@@ -582,5 +582,56 @@ plot_grid(dapc_midark_white_admix_plot,
 
 dev.off()
 ```
+## NewHybrids Analysis
 
+## Here I am conducting NewHybrids analysi on my empirical data (real data for parents and admixed individuals) using the validated 200 diagnostic snps identified and analyzed above
+```{r}
+#Read in the NewHybrids data (generated on Lewis server)
+midark_white_nh_data <- read_excel("../newhybrids_analysis/midark_white_nh_results/midark_white_nh_results.xlsx")
+
+midark_skia_nh_data <- read_excel("../newhybrids_analysis/midark_skia_nh_results/midark_skia_nh_results.xlsx")
+
+#Clean the datasets
+midark_white_nh_data_gather <- midark_white_nh_data %>%
+   mutate(indiv_id = factor(indiv_id), pop_id = factor(pop_id)) %>%
+   gather(MIDARK:BC_WHITE, key = "hybrid_cat", value = "probability")
+
+midark_skia_nh_data_gather <- midark_skia_nh_data %>%
+   mutate(indiv_id = factor(indiv_id), pop_id = factor(pop_id)) %>%
+   gather(MIDARK:BC_SKIA, key = "hybrid_cat", value = "probability")
+
+midark_white_nh_data_gather$indiv_id <- factor(midark_white_nh_data_gather$indiv_id, levels = c("HC38","HC40","HC41","HC42","HC43","HC44","SC06","SC37","BFORK02","BFORK23","BFORK49","CANEY16","GRSPB02","GRSPB03","GRSPB69","NOIS12","GRSPB35","GRSPB36","GRSPB37","GRSPB39","GRSPB41","GRSPB50","TBLR01","TBLR02","TBLR03","TBLR04","ER17","ER20","ER30","ER33","ER35","ER44","MI419","MI420","MI421","MI422","MI423","MI425","BC01","BC07","BC08","BC09","BC12","BC14","SPVW05","SPVW02","SPVW07","SPVW11","SPVW12","SPVW14","AR29","AR30","AT02","AT05","AT08","AT09","AT12"))
+
+midark_skia_nh_data_gather$indiv_id <- factor(midark_skia_nh_data_gather$indiv_id, levels = c("HC38","HC40","HC41","HC42","HC43","HC44","SC06","SC37","BFORK02","BFORK23","BFORK49","CANEY16","GRSPB02","GRSPB03","GRSPB69","NOIS12","SKIA03","SKIA04","SKIA05","SKIA06","SKIA09","BFORK24","NOIS08","GLVR4","SPRMO11","NOIS18","NOIS07","BFORK30","SPRMO19","CANEY15"))
+
+midark_white_nh_plot <- ggplot(midark_white_nh_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_cat)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = T) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Individual", y = "Cumulative Probability of Hybrid ID", fill = "Hybrid Category") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","deepskyblue","deeppink2")) + 
+   theme(axis.text.x = element_blank()) +
+   theme(legend.title = element_text(face = "bold", size = 15)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15)) +
+   theme(axis.title.x = element_blank())
+
+midark_skia_nh_plot <- ggplot(midark_skia_nh_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_cat)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = T) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Individual", y = "Cumulative Probability of Hybrid ID", fill = "Hybrid Category") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","deepskyblue","navyblue")) + 
+   theme(axis.text.x = element_blank()) +
+   theme(legend.title = element_text(face = "bold", size = 15)) +
+   theme(axis.title = element_text(size = 15)) +
+   theme(axis.text = element_text(size = 15))
+
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybriddetective_figures/nh_empirical_plot.pdf", width=7, height=10)
+
+plot_grid(midark_white_nh_plot, 
+          midark_skia_nh_plot, 
+          nrow = 2, 
+          labels = c("a","b"), label_size = 25)
+
+dev.off()
+```
 

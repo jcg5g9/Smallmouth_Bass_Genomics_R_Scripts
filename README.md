@@ -100,6 +100,8 @@ My 200 diagnostic loci for both sets of parents were validated in program NewHyb
 
 I then used these same 200 diagnostic loci to create simulated recent-generation hybrid data, which I then compared to my real, empirical data using DAPC. 
 
+I then run all of my empirical data in NewHybrids to determine the most likely classification of each individual into one of six hybrid cateogories.
+
 ### Genomic Date used:
 
 #### Fully-filtered SMB dataset, MIDARK and WHITE, MIDARK and SKIA to obtain diagnostic SNPS
