@@ -18,70 +18,74 @@ library(PopGenome)
 library(adegenet)
 library(XML)
 library(RColorBrewer)
-source("../../R_packages/FinestructureLibrary.R") #Fine-structure R source code
+source("../fineradstructure_analysis/FinestructureLibrary.R") #Fine-structure R source code
 ```
 
 # FineRADstructure Analyses
 ### haplotype files were produced using the hapsFromVCF on my vcf file, and coancestry matrics were produced using the RADpainter and finestructure commands. R code and figures were adapted from the fineRADstructurePlot.R and FinestructureLibrary.R libraries (Milan Malinski)
 ## Read in data output from fineRADstructure 
 ```{r}
-#Finerad files for Only Admixed SMB Samples
-chunkfile_admix <- "../../raw_data/fineradstructure_data/hap_withfilters_admixed_chunks.out"
-mcmcfile_admix <- "../../raw_data/fineradstructure_data/hap_withfilters_admixed_chunks.mcmc.xml"
-treefile_admix <- "../../raw_data/fineradstructure_data/hap_withfilters_admixed_chunks.mcmcTree.xml"
-
-#Finerad files for Only Non-Admixed SMB Samples
-chunkfile_noadmix_smb <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_smb_chunks.out"
-mcmcfile_noadmix_smb <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_smb_chunks.mcmc.xml"
-treefile_noadmix_smb <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_smb_chunks.mcmcTree.xml"
-
-#Finerad files for Only Non-Admixed Samples
-chunkfile_noadmix <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_chunks.out"
-mcmcfile_noadmix <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_chunks.mcmc.xml"
-treefile_noadmix <- "../../raw_data/fineradstructure_data/hap_withfilters_noadmix_chunks.mcmcTree.xml"
+##All Samples 
 
 #Finerad files for All SAMPLES, including Smallmouth and Spotted Bass 
-chunkfile_blackbass <- "../../raw_data/fineradstructure_data/hap_withfilters_blackbass_chunks.out"
-mcmcfile_blackbass <- "../../raw_data/fineradstructure_data/hap_withfilters_blackbass_chunks.mcmc.xml"
-treefile_blackbass <- "../../raw_data/fineradstructure_data/hap_withfilters_blackbass_chunks.mcmcTree.xml"
+chunkfile_blackbass <- "../../raw_data/fineradstructure_data/all_samples/hap_withfilters_blackbass_chunks.out"
+mcmcfile_blackbass <- "../../raw_data/fineradstructure_data/all_samples/hap_withfilters_blackbass_chunks.mcmc.xml"
+treefile_blackbass <- "../../raw_data/fineradstructure_data/all_samples/hap_withfilters_blackbass_chunks.mcmcTree.xml"
 
 #All samples, without the Spotted Bass Hybrid
-chunkfile_nohybrid <- "../../raw_data/fineradstructure_data/hap_withfilters_nohybrid_chunks.out"
-mcmcfile_nohybrid <- "../../raw_data/fineradstructure_data/hap_withfilters_nohybrid_chunks.mcmc.xml"
-treefile_nohybrid <- "../../raw_data/fineradstructure_data/hap_withfilters_nohybrid_chunks.mcmcTree.xml"
+chunkfile_nohybrid <- "../../raw_data/fineradstructure_data/all_samples/hap_withfilters_nohybrid_chunks.out"
+mcmcfile_nohybrid <- "../../raw_data/fineradstructure_data/all_samples/hap_withfilters_nohybrid_chunks.mcmc.xml"
+treefile_nohybrid <- "../../raw_data/fineradstructure_data/all_samples/hap_withfilters_nohybrid_chunks.mcmcTree.xml"
 
-#Finerad files for All SMB samples only
-chunkfile_all <- "../../raw_data/fineradstructure_data/hap_withfilters_chunks.out"
-mcmcfile_all <- "../../raw_data/fineradstructure_data/hap_withfilters_chunks.mcmc.xml"
-treefile_all <- "../../raw_data/fineradstructure_data/hap_withfilters_chunks.mcmcTree.xml"
+##Pure samples
+
+#Finerad files for Only Non-Admixed Samples, including Spotted Bass
+chunkfile_noadmix <- "../../raw_data/fineradstructure_data/pure_samples/hap_withfilters_noadmix_chunks.out"
+mcmcfile_noadmix <- "../../raw_data/fineradstructure_data/pure_samples/hap_withfilters_noadmix_chunks.mcmc.xml"
+treefile_noadmix <- "../../raw_data/fineradstructure_data/pure_samples/hap_withfilters_noadmix_chunks.mcmcTree.xml"
+
+#Finerad files for Only Non-Admixed SMB Samples, excluding Spotted Bass
+chunkfile_noadmix_smb <- "../../raw_data/fineradstructure_data/pure_samples/hap_withfilters_noadmix_smb_chunks.out"
+mcmcfile_noadmix_smb <- "../../raw_data/fineradstructure_data/pure_samples/hap_withfilters_noadmix_smb_chunks.mcmc.xml"
+treefile_noadmix_smb <- "../../raw_data/fineradstructure_data/pure_samples/hap_withfilters_noadmix_smb_chunks.mcmcTree.xml"
+
+##Admixed samples
+
+#Finerad files for Only Admixed SMB Samples
+chunkfile_admix <- "../../raw_data/fineradstructure_data/admixed_samples/hap_withfilters_admixed_chunks.out"
+mcmcfile_admix <- "../../raw_data/fineradstructure_data/admixed_samples/hap_withfilters_admixed_chunks.mcmc.xml"
+treefile_admix <- "../../raw_data/fineradstructure_data/admixed_samples/hap_withfilters_admixed_chunks.mcmcTree.xml"
+
+##Hierarchical Structure 
 
 #Finerad files for Neosho SMB samples only
-chunkfile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chunks.out"
-mcmcfile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chunks.mcmc.xml"
-treefile_neo <- "../../raw_data/fineradstructure_data/hap_withfilters_neosho_chunks.mcmcTree.xml"
+chunkfile_neo <- "../../raw_data/fineradstructure_data/neosho_samples/hap_withfilters_neosho_chunks.out"
+mcmcfile_neo <- "../../raw_data/fineradstructure_data/neosho_samples/hap_withfilters_neosho_chunks.mcmc.xml"
+treefile_neo <- "../../raw_data/fineradstructure_data/neosho_samples/hap_withfilters_neosho_chunks.mcmcTree.xml"
 
 #Finerad files for Northern SMB samples only
-chunkfile_nor <- "../../raw_data/fineradstructure_data/hap_withfilters_northern_chunks.out"
-mcmcfile_nor <- "../../raw_data/fineradstructure_data/hap_withfilters_northern_chunks.mcmc.xml"
-treefile_nor <- "../../raw_data/fineradstructure_data/hap_withfilters_northern_chunks.mcmcTree.xml"
+chunkfile_nor <- "../../raw_data/fineradstructure_data/northern_samples/hap_withfilters_northern_chunks.out"
+mcmcfile_nor <- "../../raw_data/fineradstructure_data/northern_samples/hap_withfilters_northern_chunks.mcmc.xml"
+treefile_nor <- "../../raw_data/fineradstructure_data/northern_samples/hap_withfilters_northern_chunks.mcmcTree.xml"
 
 #Finerad files for Neosho Non-Arkansas (no Leemulb or Bayou) SMB samples only
-chunkfile_nonark <- "../../raw_data/fineradstructure_data/hap_withfilters_nonark_chunks.out"
-mcmcfile_nonark <- "../../raw_data/fineradstructure_data/hap_withfilters_nonark_chunks.mcmc.xml"
-treefile_nonark <- "../../raw_data/fineradstructure_data/hap_withfilters_nonark_chunks.mcmcTree.xml"
+chunkfile_nonark <- "../../raw_data/fineradstructure_data/nonark_samples/hap_withfilters_nonark_chunks.out"
+mcmcfile_nonark <- "../../raw_data/fineradstructure_data/nonark_samples/hap_withfilters_nonark_chunks.mcmc.xml"
+treefile_nonark <- "../../raw_data/fineradstructure_data/nonark_samples/hap_withfilters_nonark_chunks.mcmcTree.xml"
 ```
 
 ## Set path name for depositing completed fineRADstructure figures
 ```{r}
 ### 2) EDIT THIS PATH TO WHERE YOU WANT THE PLOTS:
-plotsFolder <- "../FINERADSTRUCTURE_analysis"
+plotsFolder <- "../../visualization/fineradstructure_figures"
+
 ### 3) SET VALUES FOR THESE VARIABLES: "analysisName" will be included in output plots
 analysisName <- "smb_coancestry" 
 maxIndv <- 10000
 maxPop <-10000
 ```
 
-## Prepare color palette, 
+## Prepare color palette 
 ```{r color palette, echo=FALSE}
 my_palette <- colorRampPalette(c("white", "navyblue","deeppink2","black"))(n = 299)
 ```
@@ -149,18 +153,6 @@ mcmcdata_blackbass <- as.data.frame.myres(mcmcxml_blackbass) ## convert this int
 treexml_blackbass <- xmlTreeParse(treefile_blackbass) ## read the tree as xml format
 ttree_blackbass <- extractTree(treexml_blackbass) ## extract the tree into ape's phylo format
 
-
-
-#All SMB Samples
-dataraw_all <- as.matrix(read.table(chunkfile_all, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
-
-###### READ IN THE MCMC FILES
-mcmcxml_all <- xmlTreeParse(mcmcfile_all) ## read into xml format
-mcmcdata_all <- as.data.frame.myres(mcmcxml_all) ## convert this into a data frame
-
-###### READ IN THE TREE FILES
-treexml_all <- xmlTreeParse(treefile_all) ## read the tree as xml format
-ttree_all <- extractTree(treexml_all) ## extract the tree into ape's phylo format
 
 #Neosho Samples
 dataraw_neo <- as.matrix(read.table(chunkfile_neo, row.names=1, header=T, skip=1)) # read in the pairwise coincidence 
@@ -313,27 +305,6 @@ popdend_blackbass <- fixMidpointMembers(popdend_blackbass) # needed for obscure 
 popdendclear_blackbass <- makemydend(tdend_blackbass, mapstatelist_blackbass, "NameMoreSummary")# use NameMoreSummary to make popdend
 popdendclear_blackbass <- fixMidpointMembers(popdendclear_blackbass) # needed for obscure dendrogram reasons
 
-#All SMB Samples
-
-## Reduce the amount of significant digits printed in the posteror assignment probabilities (numbers shown in the tree):
-ttree_all$node.label[ttree_all$node.label!=""] <- format(as.numeric(ttree_all$node.label[ttree_all$node.label!=""]),digits=2)
-
- # convert to dendrogram format
-tdend_all <- myapetodend(ttree_all, factor=1)
-## Now we work on the MAP state
-mapstate_all <- extractValue(treexml_all,"Pop") # map state as a finestructure clustering
-mapstatelist_all <- popAsList(mapstate_all) # .. and as a list of individuals in populations
-popnames_all <- lapply(mapstatelist_all, NameSummary) # population names IN A REVERSIBLE FORMAT (I.E LOSSLESS)
-## NOTE: if your population labels don't correspond to the format we used (NAME<number>) YOU MAY HAVE TROUBLE HERE. YOU MAY NEED TO RENAME THEM INTO THIS FORM AND DEFINE YOUR POPULATION NAMES IN popnamesplot BELOW
-popnamesplot_all <-lapply(mapstatelist_all, NameMoreSummary) # a nicer summary of the populations
-
-names(popnames_all) <- popnamesplot_all # for nicety only
-names(popnamesplot_all ) <- popnamesplot_all # for nicety only
-
-popdend_all <- makemydend(tdend_all, mapstatelist_all) # use NameSummary to make popdend
-popdend_all <- fixMidpointMembers(popdend_all) # needed for obscure dendrogram reasons
-popdendclear_all <- makemydend(tdend_all, mapstatelist_all, "NameMoreSummary")# use NameMoreSummary to make popdend
-popdendclear_all <- fixMidpointMembers(popdendclear_all) # needed for obscure dendrogram reasons
 
 #Neosho Samples
 
@@ -411,7 +382,7 @@ datamatrix_admix <- dataraw_admix[fullorder_admix, fullorder_admix] # reorder th
 tmpmat_admix <- datamatrix_admix
 tmpmat_admix[tmpmat_admix > maxIndv] <- maxIndv #  # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/admix_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/final_figures/admix_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
 
 plotFinestructure(tmpmat_admix, 
                   dimnames(tmpmat_admix)[[1]], 
@@ -432,7 +403,7 @@ popmeanmatrix_admix <- getPopMeanMatrix(datamatrix_admix, mapstatelist_admix)
 tmpmat_admix <- popmeanmatrix_admix
 tmpmat_admix[tmpmat_admix > maxPop] <- maxPop # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/admix_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/admix_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
 
 plotFinestructure(tmpmat_admix, 
                   dimnames(tmpmat_admix)[[1]], 
@@ -454,7 +425,7 @@ labellocs_admix <- PopCenters(mappopsizes_admix)
 xcrt=0
 ycrt=45
 
-pdf("../FINERADSTRUCTURE_analysis/admix_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/admix_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
  
 plotFinestructure(tmpmat_admix, 
                   dimnames(tmpmat_admix)[[1]], 
@@ -482,7 +453,7 @@ datamatrix_noadmix_smb <- dataraw_noadmix_smb[fullorder_noadmix_smb, fullorder_n
 tmpmat_noadmix_smb <- datamatrix_noadmix_smb
 tmpmat_noadmix_smb[tmpmat_noadmix_smb > maxIndv] <- maxIndv #  # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/noadmix_smb_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/final_figures/noadmix_smb_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
 
 plotFinestructure(tmpmat_noadmix_smb, 
                   dimnames(tmpmat_noadmix_smb)[[1]], 
@@ -503,7 +474,7 @@ popmeanmatrix_noadmix_smb <- getPopMeanMatrix(datamatrix_noadmix_smb, mapstateli
 tmpmat_noadmix_smb <- popmeanmatrix_noadmix_smb
 tmpmat_noadmix_smb[tmpmat_noadmix_smb > maxPop] <- maxPop # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/noadmix_smb_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/noadmix_smb_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
 
 plotFinestructure(tmpmat_noadmix_smb, 
                   dimnames(tmpmat_noadmix_smb)[[1]], 
@@ -525,7 +496,7 @@ labellocs_noadmix_smb <- PopCenters(mappopsizes_noadmix_smb)
 xcrt=0
 ycrt=45
 
-pdf("../FINERADSTRUCTURE_analysis/noadmix_smb_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/noadmix_smb_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
  
 plotFinestructure(tmpmat_noadmix_smb, 
                   dimnames(tmpmat_noadmix_smb)[[1]], 
@@ -552,7 +523,7 @@ datamatrix_noadmix <- dataraw_noadmix[fullorder_noadmix, fullorder_noadmix] # re
 tmpmat_noadmix <- datamatrix_noadmix
 tmpmat_noadmix[tmpmat_noadmix > maxIndv] <- maxIndv #  # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/noadmix_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/final_figures/noadmix_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
 
 plotFinestructure(tmpmat_noadmix, 
                   dimnames(tmpmat_noadmix)[[1]], 
@@ -573,7 +544,7 @@ popmeanmatrix_noadmix <- getPopMeanMatrix(datamatrix_noadmix, mapstatelist_noadm
 tmpmat_noadmix <- popmeanmatrix_noadmix
 tmpmat_noadmix[tmpmat_noadmix > maxPop] <- maxPop # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/noadmix_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/noadmix_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
 
 plotFinestructure(tmpmat_noadmix, 
                   dimnames(tmpmat_noadmix)[[1]], 
@@ -595,7 +566,7 @@ labellocs_noadmix <- PopCenters(mappopsizes_noadmix)
 xcrt=0
 ycrt=45
 
-pdf("../FINERADSTRUCTURE_analysis/noadmix_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/noadmix_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
  
 plotFinestructure(tmpmat_noadmix, 
                   dimnames(tmpmat_noadmix)[[1]], 
@@ -623,7 +594,7 @@ datamatrix_nohybrid <- dataraw_nohybrid[fullorder_nohybrid, fullorder_nohybrid] 
 tmpmat_nohybrid <- datamatrix_nohybrid
 tmpmat_nohybrid[tmpmat_nohybrid > maxIndv] <- maxIndv #  # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/nohybrid_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/final_figures/nohybrid_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
 
 plotFinestructure(tmpmat_nohybrid, 
                   dimnames(tmpmat_nohybrid)[[1]], 
@@ -644,7 +615,7 @@ popmeanmatrix_nohybrid <- getPopMeanMatrix(datamatrix_nohybrid, mapstatelist_noh
 tmpmat_nohybrid <- popmeanmatrix_nohybrid
 tmpmat_nohybrid[tmpmat_nohybrid > maxPop] <- maxPop # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/nohybrid_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/nohybrid_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
 
 plotFinestructure(tmpmat_nohybrid, 
                   dimnames(tmpmat_nohybrid)[[1]], 
@@ -666,7 +637,7 @@ labellocs_nohybrid <- PopCenters(mappopsizes_nohybrid)
 xcrt=0
 ycrt=45
 
-pdf("../FINERADSTRUCTURE_analysis/nohybrid_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/nohybrid_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
  
 plotFinestructure(tmpmat_nohybrid, 
                   dimnames(tmpmat_nohybrid)[[1]], 
@@ -693,7 +664,7 @@ datamatrix_blackbass <- dataraw_blackbass[fullorder_blackbass, fullorder_blackba
 tmpmat_blackbass <- datamatrix_blackbass
 tmpmat_blackbass[tmpmat_blackbass > maxIndv] <- maxIndv #  # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/blackbass_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/final_figures/blackbass_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
 
 plotFinestructure(tmpmat_blackbass, 
                   dimnames(tmpmat_blackbass)[[1]], 
@@ -714,7 +685,7 @@ popmeanmatrix_blackbass <- getPopMeanMatrix(datamatrix_blackbass, mapstatelist_b
 tmpmat_blackbass <- popmeanmatrix_blackbass
 tmpmat_blackbass[tmpmat_blackbass > maxPop] <- maxPop # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/blackbass_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/blackbass_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
 
 plotFinestructure(tmpmat_blackbass, 
                   dimnames(tmpmat_blackbass)[[1]], 
@@ -736,7 +707,7 @@ labellocs_blackbass <- PopCenters(mappopsizes_blackbass)
 xcrt=0
 ycrt=45
 
-pdf("../FINERADSTRUCTURE_analysis/blackbass_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/blackbass_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
  
 plotFinestructure(tmpmat_blackbass, 
                   dimnames(tmpmat_blackbass)[[1]], 
@@ -757,78 +728,6 @@ dev.off()
 
 ##################
 
-
-## Plot 1: COANCESTRY MATRIX
-fullorder_all <- labels(tdend_all) # the order according to the tree
-datamatrix_all <- dataraw_all[fullorder_all, fullorder_all] # reorder the data matrix
-
-tmpmat_all <- datamatrix_all
-tmpmat_all[tmpmat_all > maxIndv] <- maxIndv #  # cap the heatmap
-
-pdf("../FINERADSTRUCTURE_analysis/all_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
-
-plotFinestructure(tmpmat_all, 
-                  dimnames(tmpmat_all)[[1]], 
-                  dend = tdend_all,
-                  cols = my_palette, 
-                  cex.axis = 1.5, 
-                  edgePar = list(p.lwd = 0, 
-                               t.srt = 1, 
-                               t.off = -0.5, 
-                               t.cex = 2))
-
-dev.off()
-
-
-## Plot 2: POPULATIONS AND COANCESTRY AVERAGES
-popmeanmatrix_all <- getPopMeanMatrix(datamatrix_all, mapstatelist_all)
-
-tmpmat_all <- popmeanmatrix_all
-tmpmat_all[tmpmat_all > maxPop] <- maxPop # cap the heatmap
-
-pdf("../FINERADSTRUCTURE_analysis/all_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
-
-plotFinestructure(tmpmat_all, 
-                  dimnames(tmpmat_all)[[1]], 
-                  dend = tdend_all, 
-                  cols = my_palette, 
-                  cex.axis = 1.5, 
-                  edgePar = list(p.lwd = 0, 
-                                 t.srt = 1, 
-                                 t.off = -0.5, 
-                                 t.cex = 2))
-
-dev.off()
-
-
-## Plot 3: POPULATIONS AND COANCESTRY AVERAGES WITH PERHAPS MORE INFORMATIVE LABELS
-mappopcorrectorder_all <- NameExpand(labels(popdend_all))
-mappopsizes_all <- sapply(mappopcorrectorder_all,length)
-labellocs_all <- PopCenters(mappopsizes_all)
-xcrt=0
-ycrt=45
-
-pdf("../FINERADSTRUCTURE_analysis/all_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
- 
-plotFinestructure(tmpmat_all, 
-                  dimnames(tmpmat_all)[[1]], 
-                  labelsx=labels(popdendclear_all), 
-                  labelsatx = labellocs_all, 
-                  xcrt = xcrt, 
-                  cols = my_palette, 
-                  ycrt = ycrt, 
-                  dend = tdend_all, 
-                  cex.axis = 1.5, 
-                  edgePar = list(p.lwd = 0, 
-                               t.srt = 1, 
-                               t.off = -0.5, 
-                               t.cex = 2), 
-                  hmmar = c(3,0,0,1))
-
-dev.off()
-
-##################
-
 ## Plot 1: COANCESTRY MATRIX
 fullorder_neo <- labels(tdend_neo) # the order according to the tree
 datamatrix_neo <- dataraw_neo[fullorder_neo, fullorder_neo] # reorder the data matrix
@@ -836,7 +735,7 @@ datamatrix_neo <- dataraw_neo[fullorder_neo, fullorder_neo] # reorder the data m
 tmpmat_neo <- datamatrix_neo
 tmpmat_neo[tmpmat_neo > maxIndv] <- maxIndv #  # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/neo_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/final_figures/neo_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
 
 plotFinestructure(tmpmat_neo, 
                   dimnames(tmpmat_neo)[[1]], 
@@ -857,7 +756,7 @@ popmeanmatrix_neo <- getPopMeanMatrix(datamatrix_neo, mapstatelist_neo)
 tmpmat_neo <- popmeanmatrix_neo
 tmpmat_neo[tmpmat_neo > maxPop] <- maxPop # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/neo_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/neo_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
 
 plotFinestructure(tmpmat_neo, 
                   dimnames(tmpmat_neo)[[1]], 
@@ -879,7 +778,7 @@ labellocs_neo <- PopCenters(mappopsizes_neo)
 xcrt=0
 ycrt=45
 
-pdf("../FINERADSTRUCTURE_analysis/neo_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/neo_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
  
 plotFinestructure(tmpmat_neo, 
                   dimnames(tmpmat_neo)[[1]], 
@@ -907,7 +806,7 @@ datamatrix_nor <- dataraw_nor[fullorder_nor, fullorder_nor] # reorder the data m
 tmpmat_nor <- datamatrix_nor
 tmpmat_nor[tmpmat_nor > maxIndv] <- maxIndv #  # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/nor_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/final_figures/nor_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
 
 plotFinestructure(tmpmat_nor, 
                   dimnames(tmpmat_nor)[[1]], 
@@ -928,7 +827,7 @@ popmeanmatrix_nor <- getPopMeanMatrix(datamatrix_nor, mapstatelist_nor)
 tmpmat_nor <- popmeanmatrix_nor
 tmpmat_nor[tmpmat_nor > maxPop] <- maxPop # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/nor_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/nor_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
 
 plotFinestructure(tmpmat_nor, 
                   dimnames(tmpmat_nor)[[1]], 
@@ -950,7 +849,7 @@ labellocs_nor <- PopCenters(mappopsizes_nor)
 xcrt=0
 ycrt=45
 
-pdf("../FINERADSTRUCTURE_analysis/nor_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/nor_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
  
 plotFinestructure(tmpmat_nor, 
                   dimnames(tmpmat_nor)[[1]], 
@@ -978,7 +877,7 @@ datamatrix_nonark <- dataraw_nonark[fullorder_nonark, fullorder_nonark] # reorde
 tmpmat_nonark <- datamatrix_nonark
 tmpmat_nonark[tmpmat_nonark > maxIndv] <- maxIndv #  # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/nonark_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/final_figures/nonark_coancestry_matrix_betterlabels.pdf", height = 25, width = 25)
 
 plotFinestructure(tmpmat_nonark, 
                   dimnames(tmpmat_nonark)[[1]], 
@@ -999,7 +898,7 @@ popmeanmatrix_nonark <- getPopMeanMatrix(datamatrix_nonark, mapstatelist_nonark)
 tmpmat_nonark <- popmeanmatrix_nonark
 tmpmat_nonark[tmpmat_nonark > maxPop] <- maxPop # cap the heatmap
 
-pdf("../FINERADSTRUCTURE_analysis/nonark_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/nonark_coancestry_matrix_averages_betterlabels.pdf", height = 20, width = 20)
 
 plotFinestructure(tmpmat_nonark, 
                   dimnames(tmpmat_nonark)[[1]], 
@@ -1021,7 +920,7 @@ labellocs_nonark <- PopCenters(mappopsizes_nonark)
 xcrt=0
 ycrt=45
 
-pdf("../FINERADSTRUCTURE_analysis/nonark_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
+pdf("../../visualization/fineradstructure_figures/unused_intermediate_figures/nonark_coancestry_matrix_averages_betterlabels_betterlabels.pdf", height = 25, width = 25)
  
 plotFinestructure(tmpmat_nonark, 
                   dimnames(tmpmat_nonark)[[1]], 
