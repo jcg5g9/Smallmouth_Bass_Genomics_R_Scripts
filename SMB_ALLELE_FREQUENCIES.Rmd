@@ -32,7 +32,7 @@ missing_data <- read_excel("../../raw_data/allele_frequency_data/smb_genomics_mi
 ```{r}
 #Excel file with proportion of missing data by sample. All samples are included
 
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Preliminary_Filtering_Analysis/missing_data_plot.pdf", width=7, height=25)
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/preliminary_filtering_figures/missing_data_plot.pdf", width=7, height=25)
 
 ggplot(missing_data, aes(x = sample_id, y = F_MISS)) + 
   geom_bar(position=position_dodge(), stat="identity", show.legend = T, fill = "grey", color = "black") + 
@@ -97,7 +97,7 @@ dp_postfilter <- ggplot(snp_table_filtered, aes(x = DP)) +
   theme(axis.title = element_text(size = 20))
 
 
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Preliminary_Filtering_Analysis/mean_read_depth_plot.pdf", width=14, height=10)
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/preliminary_filtering_figures/mean_read_depth_plot.pdf", width=14, height=10)
 
 plot_grid(dp_prefilter, dp_postfilter, nrow = 2, labels = c("a","b"), label_size = 25)
 
@@ -198,7 +198,7 @@ maf_filtered_plot <- ggplot(maf_values_filtered, aes(x = maf)) +
 
 
 #Pre and post-filtering plots separate
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/minor_allele_frequency_plots.pdf", width=15, height=6)
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/preliminary_filtering_figures/minor_allele_frequency_plots.pdf", width=15, height=6)
 
 plot_grid(maf_onerad_plot, maf_filtered_plot, nrow = 1, labels = c("a","b"), label_size = 25)
 
@@ -250,7 +250,7 @@ het_postfilter <- ggplot(snp_table_filtered, aes(x = freq_alt, y = freq_het)) +
   ylim(c(0,1)) 
 
 
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Preliminary_Filtering_Analysis/alt_het_plots.pdf", width=6, height=9)
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/preliminary_filtering_figures/alt_het_plots.pdf", width=6, height=9)
 
 plot_grid(het_prefilter, het_postfilter, nrow = 2, labels = c("a", "b"), label_size = 25)
 
@@ -449,7 +449,7 @@ prefilter <- plot_grid(ref_histogram, alt_histogram, homo_ref_histogram, homo_al
 
 postfilter <- plot_grid(ref_histogram_postfilter, alt_histogram_postfilter, homo_ref_histogram_postfilter, homo_alt_histogram_postfilter, het_histogram_postfilter, nrow = 5, labels = c("f","g","h","i","j"), label_size = 30, label_x = 0.001, label_y = 1)
 
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/Preliminary_Filtering_Analysis/allele_freq_plots.pdf", width=15, height=20)
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/preliminary_filtering_figures/allele_freq_plots.pdf", width=15, height=20)
 
 plot_grid(prefilter, postfilter, ncol=2)
 

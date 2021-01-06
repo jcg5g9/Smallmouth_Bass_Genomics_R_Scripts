@@ -1220,3 +1220,225 @@ plot_grid(all_bayes_plot, smb_bayes_plot, neosho_bayes_plot, northern_bayes_plot
 
 dev.off()
 ```
+
+
+## Plot DAPC in BLACK and WHITE
+```{r}
+####DAPC Plots###
+
+###SMB Samples Only###
+###Outlier SNPs###
+smb_outlier_dapc_plot_black <- ggplot(dapc_smb_outlier_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = F) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4","lightyellow", "firebrick3", "lightsalmon", "deepskyblue", "mediumpurple","forestgreen","chocolate1","navyblue","orchid1","deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) +
+   theme(axis.text = element_text(color = "white")) +
+   theme(axis.title = element_text(color = "white")) 
+   
+   
+
+###Neutral SNPs###
+smb_neutral_dapc_plot_black <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4","lightyellow", "firebrick3", "lightsalmon", "deepskyblue", "mediumpurple","forestgreen","chocolate1","navyblue","orchid1","deeppink2")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold", color = "white")) +
+   theme(legend.text = element_text(size = 15, color = "white")) +
+   theme(legend.position = c(0.15,0.71)) +
+   theme(legend.background = element_rect(color = "white", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
+   theme(axis.title.y = element_blank()) +
+   theme(legend.text = element_text(size = 20)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) + 
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) +
+   theme(axis.text = element_text(color = "white")) +
+   theme(axis.title = element_text(color = "white")) 
+
+
+###Neosho Samples Only###
+###Outlier SNPs###
+neosho_outlier_dapc_plot_black <- ggplot(dapc_neosho_outlier_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = F) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","lightsalmon","deepskyblue","mediumpurple","forestgreen","orchid1")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold")) +
+   theme(legend.text = element_text(size = 20)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) +
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) +
+   theme(axis.text = element_text(color = "white")) +
+   theme(axis.title = element_text(color = "white")) 
+
+###Neutral SNPs###
+neosho_neutral_dapc_plot_black <- ggplot(dapc_neosho_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
+   labs(x = "LD1", y = "LD2", fill = "Population") +
+   scale_fill_manual(values = c("turquoise", "lightgreen", "sienna4", "lightyellow", "firebrick3","lightsalmon","deepskyblue","mediumpurple","forestgreen","orchid1")) +
+   theme_set(theme_cowplot(12)) +
+   theme(legend.title = element_text(size = 20)) +
+   theme(legend.title = element_text(face = "bold", color = "white")) +
+   theme(legend.text = element_text(size = 20, color = "white")) +
+   theme(legend.position = c(0.15,0.76)) +
+   theme(legend.background = element_rect(color = "white", size = 0.5)) + 
+   theme(legend.margin = margin(5, 5, 5, 5)) +
+   theme(axis.title = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 20)) +
+   theme(axis.title.y = element_blank()) +
+   theme(plot.background = element_rect(fill = "black")) +
+   theme(axis.line = element_line(color = "white")) +
+   theme(axis.ticks = element_line(color = "white")) +
+   theme(axis.text = element_text(color = "white")) +
+   theme(axis.title = element_text(color = "white"))
+
+#Combine both DAPC Plots
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/outlier_fst_figures/dapc_plots_black.pdf", width=16, height=14)
+
+plot_grid(smb_outlier_dapc_plot_black, smb_neutral_dapc_plot_black, neosho_outlier_dapc_plot_black, neosho_neutral_dapc_plot_black, nrow = 2, labels = c("a","b","c","d"), label_size = 27)
+
+dev.off()
+```
+
+```{r}
+
+plotQ(all_pure_3,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_pure,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GLVR11","GRSPB52","SPRMO49","GRSPB51","GRSPB41","GRSPB37","GRSPB39","GRSPB35","GRSPB36","TBLR02","TBLR03","TBLR04","TBLR01","GRSPB50","SKIA05","SKIA03","SKIA06","SKIA09","SKIA04","STOCK03","STOCK04","STOCK06","STOCK05","BP07","BP17","BP10","BP01","BP02","HC40","HC43","HC44","SC37","SC06","HC38","HC42","HC41","BFORK02","CANEY16","GRSPB69","NOIS12","GRSPB02","GRSPB03","BFORK49","BFORK23","BFC06","BFC49","BFC02","AR18","AR21","AR19","AR16"),
+      clustercol = c("deeppink2","goldenrod3","deepskyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/admixture_figures/pure_lineages_3",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+
+
+plotQ(all_pure_4,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_pure,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK49","GRSPB02","GRSPB03","NOIS12","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
+      clustercol = c("goldenrod3","deeppink2","deepskyblue","navyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/admixture_figures/pure_lineages_4",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+
+plotQ(all_pure_5,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_pure,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB51","GRSPB52","GLVR11","SPRMO49","GRSPB36","GRSPB35","GRSPB50","GRSPB41","GRSPB39","GRSPB37","TBLR03","TBLR01","TBLR02","TBLR04","SKIA05","SKIA06","SKIA03","SKIA09","SKIA04","BP17","BP02","BP01","BP07","BP10","STOCK05","STOCK06","STOCK04","STOCK03","HC38","HC41","HC44","HC42","HC40","HC43","SC37","SC06","GRSPB69","BFORK02","BFORK23","CANEY16","BFORK49","GRSPB02","GRSPB03","NOIS12","BFC02","BFC06","BFC49","AR18","AR19","AR21","AR16"),
+      clustercol = c("deeppink2","goldenrod3","forestgreen","deepskyblue","navyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/admxixture_figures/pure_lineages_5",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+
+
+```
+
+## Only Northern and Neosho Smallmouth Bass samples (SMB)
+```{r}
+smb_pure_3 <- readQ("../ADMIXTURE_analysis/admix_all_samples/pass2_pure/smb_pure.3.Q") # K=3 was the best supported value of K at CV = 0.276
+
+plotQ(smb_pure_3,
+      showindlab = T, 
+      useindlab=T,
+      indlabsize = 8,
+      indlabcol = "black",
+      grplab = genomics_metadata_pure_smb,
+      showgrplab = F,
+      ordergrp = T,
+      selgrp = "sample_id",
+      subsetgrp =  c("GRSPB41","GRSPB37","GRSPB39","GRSPB35","GRSPB36","TBLR02","TBLR03","TBLR04","TBLR01","GRSPB50","SKIA05","SKIA03","SKIA06","SKIA09","SKIA04","STOCK03","STOCK04","STOCK06","STOCK05","BP07","BP17","BP10","BP01","BP02","HC40","HC43","HC44","SC37","SC06","HC38","HC42","HC41","BFORK02","CANEY16","GRSPB69","NOIS12","GRSPB02","GRSPB03","BFORK49","BFORK23","BFC06","BFC49","BFC02","AR18","AR21","AR19","AR16"),
+      clustercol = c("deeppink2","deepskyblue","navyblue"),
+      showlegend = F,
+      legendmargin = c(2,2,2,2),
+      showsp = F, 
+      showdiv = T, 
+      divsize = 0.5, 
+      divcol = "black",  
+      divtype = 1,
+      legendkeysize = 10, 
+      legendtextsize = 15, 
+      linesize = 0.5, 
+      pointsize = 4, 
+      barbordercolour = "black",
+      barbordersize = 0.2, 
+      outputfilename = "../../visualization/Admixture/smb_pure_lineages_3",
+      imgtype = "pdf",
+      imgoutput = "sep",
+      height = 5, width = 30)
+```

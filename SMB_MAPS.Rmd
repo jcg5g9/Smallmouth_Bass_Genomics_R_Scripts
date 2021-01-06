@@ -39,22 +39,22 @@ library(maptools)
 
 ## Read-in shape files
 ```{r, include = FALSE}
-shape_na <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/MAP_building/shape_file_data/NORTH_AMERICA", layer = "North_America") #shape file for the United States, with states outlined
+shape_na <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/map_building/shape_file_data/NORTH_AMERICA", layer = "North_America") #shape file for the United States, with states outlined
 
-shape_state <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/MAP_building/shape_file_data/STATES", layer = "states") #shape file for the United States, with states outlined
+shape_state <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/map_building/shape_file_data/STATES", layer = "states") #shape file for the United States, with states outlined
 
-shape_canada <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/MAP_building/shape_file_data/CANADA", layer = "Canada") #shape file for the Canada, with provinces outlined
+shape_canada <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/map_building/shape_file_data/CANADA", layer = "Canada") #shape file for the Canada, with provinces outlined
 
-shape_river <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/MAP_building/shape_file_data/RIVERS", layer = "River_Data") #shape file for rivers used in this study
+shape_river <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/map_building/shape_file_data/RIVERS", layer = "River_Data") #shape file for rivers used in this study
 
-shape_northern <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/MAP_building/shape_file_data/Species_Distributions/northern_smb", layer = "NORTHERNSMB_Range") #shape file for the entire range of Smallmouth Bass
+shape_northern <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/map_building/shape_file_data/Species_Distributions/northern_smb", layer = "NORTHERNSMB_Range") #shape file for the entire range of Smallmouth Bass
 
-shape_neosho <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/MAP_building/shape_file_data/Species_Distributions/neosho_smb", layer = "NEOSHOSMB_Range") #shape file for Neosho Smallmouth Bass native range
+shape_neosho <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/analysis/map_building/shape_file_data/Species_Distributions/neosho_smb", layer = "NEOSHOSMB_Range") #shape file for Neosho Smallmouth Bass native range
 ```
 
 ## Build full USA Map
 ```{r}
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/map_building/genomics_USA_map.pdf", width=7, height = 5)
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/map_building_figures/genomics_USA_map.pdf", width=7, height = 5)
 
 plot(shape_state, col= alpha("white", 0.8), border = "black", axes = T, ylim = c(25,51), xlim = c(-126,-60)) #United States
 plot(shape_northern, add = TRUE, col = alpha("grey84", 0.8), border = T, axes = TRUE, ylim = c(20,48), xlim = c(-110,-60)) #Northern SMB Range
@@ -66,7 +66,7 @@ dev.off()
 
 ## Build close-up Central Interior Highlands Map
 ```{r}
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/map_building/central_interior_highlands_map.pdf", width = 9, height = 8) #creates a jpeg at customized resolution
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/map_building_figures/central_interior_highlands_map.pdf", width = 9, height = 8) #creates a jpeg at customized resolution
 
 plot(shape_state, col=alpha("white", 0.3), border = "black", axes = T, ylim = c(35,38), xlim = c(-96,-91.1), cex.axis = 1.6)
 plot(shape_smb, add = TRUE, col = "gray94", border = T, axes=TRUE, ylim = c(35,38), xlim = c(-96,-91), cex.axis = 2)
