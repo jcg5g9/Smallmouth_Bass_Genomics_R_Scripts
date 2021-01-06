@@ -14,20 +14,23 @@ library(readxl)
 library(tidyverse)
 library(adegenet)
 library(cowplot)
+library(pophelper)
 ```
 
 ## Prepare parent genepop datasets for PLINK (I used pgdspider on my computer to convert vcf files for only the parent populations, MIDARK and WHITE, and MIDARK and SKIA, into genepop files. The genepop files created in pgdspider do not have the correct population designations, so they need to be reformatted with the "subset_genepop_rename" code below).
+
+## For each original vcf file (MIDARK and WHITE, MIDARK and SKIA), I randomized the order of the RAD tags listed (rows in the vcf file), because, based on my experience,  the getTopLoc() function below, which finds the most diagnostic snps in the dataset, considers each snp in order. So, I usually end up with only the first "diagnostic" snps in the whole vcf, which I do not think is a representative way to scan the whole dataset. Thus, I randomized rows so that each snp has a roughly equal probability of being selected as diagnostic. Rows were randomized in excel using the =RAND() function, which assigns each row a random number, and then organizing rows in ascending order based on the generated random number.
 ```{r}
-#create a dataframe to designate two different populations (Pure Neosho, Pure Northern)
+#create a dataframe to designate two different populations (Pure Neosho, Pure Northern). This must be done to make sure the genepop comes out in the correct format
 pop_rename_midark_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
 
 pop_rename_midark_skia <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","",""), Rename = c("MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","SKIA","SKIA","SKIA","SKIA","SKIA"))
 
 
 #Designate the two different populations (Pure Neosho, Pure Northern)
-subset_genepop_rename("../../raw_data/hybriddetective_data/raw_parent_genepops/MIDARK_WHITE_parent_genepop_snps_random.txt", pop_rename_midark_white, path = "/Users/joegunn/Desktop/MIDARK_WHITE_edited_parent_genepop_snps_random.txt")
+subset_genepop_rename("../../raw_data/hybriddetective_data/parent_genepops/MIDARK_WHITE_parent_genepop_snps_random.txt", pop_rename_midark_white, path = "/Users/joegunn/Desktop/MIDARK_WHITE_edited_parent_genepop_snps_random.txt")
 
-subset_genepop_rename("../../raw_data/hybriddetective_data/raw_parent_genepops/MIDARK_SKIA_parent_genepop_snps_random.txt", pop_rename_midark_skia, path = "/Users/joegunn/Desktop/MIDARK_SKIA_edited_parent_genepop_snps_random.txt")
+subset_genepop_rename("../../raw_data/hybriddetective_data/parent_genepops/MIDARK_SKIA_parent_genepop_snps_random.txt", pop_rename_midark_skia, path = "/Users/joegunn/Desktop/MIDARK_SKIA_edited_parent_genepop_snps_random.txt")
 
 
 #Explore genepop data using genepopedit package - here, I am just seeing what the data tables look like with respect to the genepop edit package. I am then using the genepopedit pacakge to make sure that all of the genepop files are in the correct format for the hybriddetective getTopLoc() function
@@ -49,178 +52,497 @@ getTopLoc(GPD = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smal
           where.PGDspider = "/Users/joegunn/Downloads/PGDSpider_2.1.1.5/", 
           where.PLINK = "/Users/joegunn/Downloads/plink_mac_20200616/")
 ```
+## Diagnostic Loci validation
+
+### PLINK selects the 200 most diagnostic loci only based on approximately 1/2 of the pure parent samples to train the simulation alogrithm, and then generates a new genepop file that includes only the remaining (non-training) pure parent samples and their corresponding genoptypes at the same loci as a validation set. These validation samples can then be used to simulate 6 hybrid cateogries (Parent 1 (MIDARK), Parent 2 (SKIA or WHITE), F1, F2, BC1, and BC2), and the program NewHybrids can validate whether or not these loci were able to successfully identify hybrids based on the genotypes produced.
+
+## Here I am simulating genotypes for 6 hybrid categories using the 200 diagnostic loci discovered in the PLINK validation samples for each parent dataset. The freqbasedsim_AlleleSample() function generates a number of individuals in each hybrid category based on allele frequencies
+
+## Genotypes were simulated 3 separate times (S1, S2, S3), and for each set of simulations (unique genotype datasest), I performed 3 replicate hybrid generation simulations (R1, R2, R3). This way, I can assess deviations across simulations (S) AND within simulations (R).
+```{r}
+#Simulate hybrid genotypes based on the VALIDATION parent samples (the non-training parent samples - those not used to discover the 200 most informative, diagnostic loci)
+
+#Simulate for MIDARK and WHITE
+freqbasedsim_AlleleSample(GPD ="../../raw_data/hybriddetective_data/parent_200_loci_panels/MIDARK_WHITE_edited_parent_genepop_snps_random_200_Loci_Panel.txt", 
+                          NumSims = 3, 
+                          NumReps = 3)
+
+#Simulate for MIDARK and SKIA
+freqbasedsim_AlleleSample(GPD ="../../raw_data/hybriddetective_data/parent_200_loci_panels/MIDARK_SKIA_edited_parent_genepop_snps_random_200_Loci_Panel.txt", 
+                          NumSims = 3, 
+                          NumReps = 3)
+```
+
+## Validation of simulated data in NewHybrids using the parallelnewhybrids() package
 ```{r}
 
-#Simulate hybrid genotypes based on the VALIDATION parent samples (the non-training parent samples - those not used to discover the 200 most informative, diagnostic loci)
-freqbasedsim_GTFreq(GenePopData ="../../raw_data/hybriddetective_data/parent_200_loci_panels/MIDARK_SKIA_edited_parent_genepop_snps_random_200_Loci_Panel.txt", NumSims = 3, NumReps = 3, sample.sizePure = 100, sample.sizeF1 = 100, sample.sizeF2 = 100, sample.sizeBC = 100)
-
+#Run parallelnewhybrids program to assign simulated genotypes to hybrid class (Bayesian Gibbs sampling algorithm). NewHybrids was installed on my local machine (MAC OS) to conduct the analysis
+parallelnh_OSX("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/", 
+               where.NH = "/Users/joegunn/Downloads/newhybrids/", 
+               burnin = 100000, 
+               sweeps = 500000)
 
 #Run parallelnewhybrids program to assign simulated genotypes to hybrid class (Bayesian Gibbs sampling algorithm)
-parallelnh_OSX("../../raw_data/hybriddetective_data/sim_newhybrid_panels_snps_random/", where.NH = "/Users/joegunn/Downloads/newhybrids/", burnin = 1000, sweeps = 5000)
+parallelnh_OSX("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/", 
+               where.NH = "/Users/joegunn/Downloads/newhybrids/", 
+               burnin = 100000, 
+               sweeps = 500000)
 
 #Check for NewHybrids model convergence - this code will generate a message that either says to re-check the results (the Bayesian threads did not converge) or that you are good to go (the threads successfully converged). Failure to converge results in most individuals being assigned erroneously to the "F2" hybrid class.
-nh_preCheckR(PreDir="/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_panels_snps_random/NH.Results/")
 
-#Plot results for NewHybrids model convergence
-nh_multiplotR(NHResults = "/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_panels/NH.Results/")
+#Check for MIDARK and WHITE
+nh_preCheckR(PreDir="/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/")
 
+#Check for MIDARK and SKIA
+nh_preCheckR(PreDir="/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/")
 ```
 
-## Determine the SNP names for the 200 diagnostic SNPs discovered in the above analyses - this is necessary, because the hybriddetective workflow code just generates the number of the SNPs that were used to make the panel (SNP_1, 2, 3, etc.) rather than the actual SNP name.
+## Graph Validation Results
 ```{r}
-snp_metadata <- read_excel("../../metadata/smb_snp_metadata.xlsx")
-snp_metadata <- snp_metadata %>%
-  mutate(snp_number = factor(snp_number))
+#Graph results for MIDARK and WHITE
 
-#HSYC with the White River SNPs
-hsyc_white_200_panel_snps <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_200_panels/hsyc_white_200_loci_panel.xlsx")
-hsyc_white_200_panel_snps <- hsyc_white_200_panel_snps %>%
-  mutate(snp_number = factor(snp_number))
+##SIMULATION 1 (S1): Replicates 1,2,3
+midark_white_s1r1_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/PoZ_results/MIDARK_WHITE_S1R1_PofZ.xlsx")
 
-hsyc_white_200_panel_snp_names <- merge(snp_metadata, hsyc_white_200_panel_snps, by = "snp_number")
+midark_white_s1r1_data_gather <- midark_white_s1r1_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_white_s1r1_plot <- ggplot(midark_white_s1r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank())
+
+midark_white_s1r2_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/PoZ_results/MIDARK_WHITE_S1R2_PofZ.xlsx")
+
+midark_white_s1r2_data_gather <- midark_white_s1r2_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_white_s1r2_plot <- ggplot(midark_white_s1r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank()) +
+   theme(axis.title.y = element_blank())
+
+midark_white_s1r3_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/PoZ_results/MIDARK_WHITE_S1R3_PofZ.xlsx")
+
+midark_white_s1r3_data_gather <- midark_white_s1r3_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_white_s1r3_plot <- ggplot(midark_white_s1r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.y = element_blank()) + 
+   theme(axis.title.x = element_blank())
 
 
-#CANBAR with Skiatook Lake SNPs
-canbar_skia_200_panel_snps <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_200_panels/canbar_skia_200_loci_panel.xlsx")
-canbar_skia_200_panel_snps <- canbar_skia_200_panel_snps %>%
-  mutate(snp_number = factor(snp_number))
+##SIMULATION 2 (S2): Replicates 1,2,3
+midark_white_s2r1_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/PoZ_results/MIDARK_WHITE_S2R1_PofZ.xlsx")
 
-canbar_skia_200_panel_snp_names <- merge(snp_metadata, canbar_skia_200_panel_snps, by = "snp_number")
+midark_white_s2r1_data_gather <- midark_white_s2r1_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_white_s2r1_plot <- ggplot(midark_white_s2r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank())
+
+midark_white_s2r2_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/PoZ_results/MIDARK_WHITE_S2R2_PofZ.xlsx")
+
+midark_white_s2r2_data_gather <- midark_white_s2r2_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_white_s2r2_plot <- ggplot(midark_white_s2r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank()) +
+   theme(axis.title.y = element_blank())
+
+midark_white_s2r3_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/PoZ_results/MIDARK_WHITE_S2R3_PofZ.xlsx")
+
+midark_white_s2r3_data_gather <- midark_white_s2r3_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_white_s2r3_plot <- ggplot(midark_white_s2r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.y = element_blank()) + 
+   theme(axis.title.x = element_blank())
 
 
-#CANBAR + HSYC with White River SNPs
-hsyc_canbar_white_200_panel_snps <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_200_panels/hsyc_canbar_white_200_loci_panel.xlsx")
-hsyc_canbar_white_200_panel_snps <- hsyc_canbar_white_200_panel_snps %>%
-  mutate(snp_number = factor(snp_number))
+##SIMULATION 3 (S3): Replicates 1,2,3
+midark_white_s3r1_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/PoZ_results/MIDARK_WHITE_S3R1_PofZ.xlsx")
 
-hsyc_canbar_white_200_panel_snp_names <- merge(snp_metadata, hsyc_canbar_white_200_panel_snps, by = "snp_number")
+midark_white_s3r1_data_gather <- midark_white_s3r1_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_white_s3r1_plot <- ggplot(midark_white_s3r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) 
+
+midark_white_s3r2_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/PoZ_results/MIDARK_WHITE_S3R2_PofZ.xlsx")
+
+midark_white_s3r2_data_gather <- midark_white_s3r2_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_white_s3r2_plot <- ggplot(midark_white_s3r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.y = element_blank())
+
+midark_white_s3r3_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_white_panels_snps_random/NH.Results/PoZ_results/MIDARK_WHITE_S3R3_PofZ.xlsx")
+
+midark_white_s3r3_data_gather <- midark_white_s3r3_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_white_s3r3_plot <- ggplot(midark_white_s3r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.y = element_blank())
+
+#Plot MIDARK and SKIA Validation Results
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybrid_detective/midark_white_nh_validation_plots.pdf", width=12, height=12)
+
+plot_grid(midark_white_s1r1_plot, 
+          midark_white_s1r2_plot, 
+          midark_white_s1r3_plot, 
+          midark_white_s2r1_plot, 
+          midark_white_s2r2_plot, 
+          midark_white_s2r3_plot, 
+          midark_white_s3r1_plot, 
+          midark_white_s3r2_plot, 
+          midark_white_s3r3_plot,
+          nrow = 3,
+          ncol = 3,
+          labels = c("a","b","c","d","e","f","g","h","i"),
+          label_y = 1.02)
+
+dev.off()
+#####################################################################
+#####################################################################
 
 
-#Write out tables with SNP names to be kept for hybrid analysis - these will be text files that can be later used in vcftools to subset vcfs on Lewis 
-write.table(hsyc_white_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_200_panels/hsyc_white_200_panel_snp_names.txt", sep="\t")
+#Graph results for MIDARK and SKIA
 
-write.table(canbar_skia_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_200_panels/canbar_skia_200_panel_snp_names.txt", sep="\t")
+##SIMULATION 1 (S1): Replicates 1,2,3
+midark_skia_s1r1_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/PoZ_results/MIDARK_SKIA_S1R1_PofZ.xlsx")
 
-write.table(hsyc_canbar_white_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/hyb_detective_200_panels/hsyc_canbar_white_200_panel_snp_names.txt", sep="\t")
+midark_skia_s1r1_data_gather <- midark_skia_s1r1_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_skia_s1r1_plot <- ggplot(midark_skia_s1r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank())
+
+midark_skia_s1r2_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/PoZ_results/MIDARK_SKIA_S1R2_PofZ.xlsx")
+
+midark_skia_s1r2_data_gather <- midark_skia_s1r2_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_skia_s1r2_plot <- ggplot(midark_skia_s1r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank()) + 
+   theme(axis.title.y = element_blank())
+
+midark_skia_s1r3_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/PoZ_results/MIDARK_SKIA_S1R3_PofZ.xlsx")
+
+midark_skia_s1r3_data_gather <- midark_skia_s1r3_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_skia_s1r3_plot <- ggplot(midark_skia_s1r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank()) + 
+   theme(axis.title.y = element_blank())
+
+
+##SIMULATION 2 (S2): Replicates 1,2,3
+midark_skia_s2r1_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/PoZ_results/MIDARK_SKIA_S2R1_PofZ.xlsx")
+
+midark_skia_s2r1_data_gather <- midark_skia_s2r1_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_skia_s2r1_plot <- ggplot(midark_skia_s2r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank())
+
+midark_skia_s2r2_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/PoZ_results/MIDARK_SKIA_S2R2_PofZ.xlsx")
+
+midark_skia_s2r2_data_gather <- midark_skia_s2r2_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_skia_s2r2_plot <- ggplot(midark_skia_s2r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank()) + 
+   theme(axis.title.y = element_blank())
+
+midark_skia_s2r3_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/PoZ_results/MIDARK_SKIA_S2R3_PofZ.xlsx")
+
+midark_skia_s2r3_data_gather <- midark_skia_s2r3_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_skia_s2r3_plot <- ggplot(midark_skia_s2r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(axis.title.x = element_blank()) + 
+   theme(axis.title.y = element_blank())
+
+
+##SIMULATION 3 (S3): Replicates 1,2,3
+midark_skia_s3r1_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/PoZ_results/MIDARK_SKIA_S3R1_PofZ.xlsx")
+
+midark_skia_s3r1_data_gather <- midark_skia_s3r1_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_skia_s3r1_plot <- ggplot(midark_skia_s3r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100"))
+
+midark_skia_s3r2_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/PoZ_results/MIDARK_SKIA_S3R2_PofZ.xlsx")
+
+midark_skia_s3r2_data_gather <- midark_skia_s3r2_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_skia_s3r2_plot <- ggplot(midark_skia_s3r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) + 
+   theme(axis.title.y = element_blank())
+
+midark_skia_s3r3_data <- read_excel("../../raw_data/hybriddetective_data/sim_newhybrid_midark_skia_panels_snps_random/NH.Results/PoZ_results/MIDARK_SKIA_S3R3_PofZ.xlsx")
+
+midark_skia_s3r3_data_gather <- midark_skia_s3r3_data %>%
+   gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+
+midark_skia_s3r3_plot <- ggplot(midark_skia_s3r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
+   geom_bar(stat = "identity", color = "black", show.legend = F) +
+   theme_set(theme_cowplot(12)) +
+   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) + 
+   theme(axis.title.y = element_blank())
+
+#Plot MIDARK and SKIA Validation Results
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybrid_detective/midark_skia_nh_validation_plots.pdf", width=12, height=12)
+
+plot_grid(midark_skia_s1r1_plot, 
+          midark_skia_s1r2_plot, 
+          midark_skia_s1r3_plot, 
+          midark_skia_s2r1_plot, 
+          midark_skia_s2r2_plot, 
+          midark_skia_s2r3_plot, 
+          midark_skia_s3r1_plot, 
+          midark_skia_s3r2_plot, 
+          midark_skia_s3r3_plot,
+          nrow = 3,
+          ncol = 3,
+          labels = c("a","b","c","d","e","f","g","h","i"),
+          label_y = 1.02)
+
+dev.off()
 ```
 
-## HYBRIDLAB ANALYSIS
-### In the program HYBRIDLAB, I am simulating 6 hybrid categories (P1, P2, F1, F2, BC1, BC2) for hybrid populations between HSYC and WHITE and between HSYC and SKIA. I am generating 100 simulated individuals for each category, including simulated parent individuals, even though I have empirical data for the parents. This will allow me to assess all differences or similarities with equal sample sizes. Simulated genotypes will be compared to the individual admixed populations from my study
+## Get SNP IDs for 200 diagnostic SNPs to be used for revised, full diagnostic genepop file
+```{r}
+#MIDARK and WHITE 200 diagnostic SNP names
+midark_white_random_snps <- read_excel("../../raw_data/hybriddetective_data/snps_randomized_names/MIDARK_WHITE_random_snp_names.xlsx")
 
-## Format simulated data files from HYBRIDLAB 
+midark_white_200_panel_snps <- read_excel("../../raw_data/hybriddetective_data/snps_randomized_names/MIDARK_WHITE_random_200_loci_snp_names.xlsx")
+
+midark_white_200_panel_snps <- midark_white_200_panel_snps %>%
+  mutate(snp_num = factor(snp_num))
+
+midark_white_random_snps <- midark_white_random_snps %>%
+  mutate(snp_num = factor(snp_num), snp_id = factor(snp_id))
+
+midark_white_200_panel_snp_names <- merge(midark_white_200_panel_snps, midark_white_random_snps, by = "snp_num")
+
+#MIDARK and SKIA 200 diagnostic SNP names
+midark_skia_random_snps <- read_excel("../../raw_data/hybriddetective_data/snps_randomized_names/MIDARK_SKIA_random_snp_names.xlsx")
+
+midark_skia_200_panel_snps <- read_excel("../../raw_data/hybriddetective_data/snps_randomized_names/MIDARK_SKIA_random_200_loci_snp_names.xlsx")
+
+midark_skia_200_panel_snps <- midark_skia_200_panel_snps %>%
+  mutate(snp_num = factor(snp_num))
+
+midark_skia_random_snps <- midark_skia_random_snps %>%
+  mutate(snp_num = factor(snp_num), snp_id = factor(snp_id))
+
+midark_skia_200_panel_snp_names <- merge(midark_skia_200_panel_snps, midark_skia_random_snps, by = "snp_num")
+
+#Write out text files for both snp name panels
+write.table(midark_white_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/snps_randomized_names/midark_white_200_panel_snp_names.txt", sep="\t")
+
+write.table(midark_skia_200_panel_snp_names,"~/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/raw_data/hybriddetective_data/snps_randomized_names/midark_skia_200_panel_snp_names.txt", sep="\t")
+```
+
+## Prepare 200 panel genepop files (with all individuals for each set of parents) for simulation and analysis
+```{r}
+#create a dataframe to designate two different populations (Pure Neosho, Pure Northern). This must be done to make sure the genepop comes out in the correct format
+pop_rename_midark_white <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","","","","","","",""), Rename = c("MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE","WHITE"))
+
+pop_rename_midark_skia <- data.frame(Opop = c("","","","","","","","","","","","","","","","","","","","",""), Rename = c("MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","MIDARK","SKIA","SKIA","SKIA","SKIA","SKIA"))
+
+
+#Designate the two different populations (Pure Neosho, Pure Northern)
+subset_genepop_rename("../../raw_data/hybriddetective_data/parent_genepops/MIDARK_WHITE_200_panel_genepop.txt", pop_rename_midark_white, path = "/Users/joegunn/Desktop/MIDARK_WHITE_edited_200_panel_genepop.txt")
+
+subset_genepop_rename("../../raw_data/hybriddetective_data/parent_genepops/MIDARK_SKIA_200_panel_genepop.txt", pop_rename_midark_skia, path = "/Users/joegunn/Desktop/MIDARK_SKIA_edited_200_panel_genepop.txt")
+```
+
 ```{r}
 
-#Designate the two different populations (Pure Neosho, Pure Northern) for SIMULATED DATASETS
-subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_white_parent_sim.txt", pop_rename_hsyc_white, path = "/Users/joegunn/Desktop/hsyc_white_parent_sim_genepop_goodformat.txt")
+#Simulate for MIDARK and WHITE
+freqbasedsim_GTFreq(GenePopData="../../raw_data/hybriddetective_data/parent_genepops/MIDARK_WHITE_edited_200_panel_genepop.txt", 
+                    NumSims = 1, 
+                    NumReps = 1,
+                    sample.sizePure = 100,
+                    sample.sizeF1 = 100,
+                    sample.sizeF2 = 100,
+                    sample.sizeBC = 100)
 
-subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/canbar_skia_parent_sim.txt", pop_rename_canbar_skia, path = "/Users/joegunn/Desktop/canbar_skia_parent_sim_genepop_goodformat.txt")
+#Simulate for MIDARK and SKIA
+freqbasedsim_GTFreq(GenePopData="../../raw_data/hybriddetective_data/parent_genepops/MIDARK_SKIA_edited_200_panel_genepop.txt", 
+                    NumSims = 1, 
+                    NumReps = 1,
+                    sample.sizePure = 100,
+                    sample.sizeF1 = 100,
+                    sample.sizeF2 = 100,
+                    sample.sizeBC = 100)
 
-subset_genepop_rename("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_canbar_white_parent_sim.txt", pop_rename_hsyc_canbar_white, path = "/Users/joegunn/Desktop/hsyc_canbar_white_parent_sim_genepop_goodformat.txt")
-
-#Take a look at the datafiles to see if they are in the correct format
-genepop_detective("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_white_parent_sim_genepop_goodformat.txt", variable = "PopNum")
-genepop_flatten("../../raw_data/hybriddetective_data/hyb_detective_genepops/hyb_detective_parent_sim/hsyc_canbar_white_parent_sim_genepop_goodformat.txt")
 ```
+
+
 
 ## DAPC plotting for hybridlab simulations
 ### In order to convert the simulated genepop data into a genind formatted file for DAPC in adegenet, I had to create a matrix of genotypes, rather than using a standard genepop format (I think there is a way to use a genepop file strictly, but I couldn't figure it out). My genotype matrix consisted of one row per individual sample, and each column was a SNP (200 total). Genotypes were coded as ###### (six numbers in a row)
 ```{r}
-## Run DAPC for HSYC and SKIA parents, along with admixed populations (BARON, CANEY, ILLINOIS)
-canbar_skia_all_admix_genepop <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_sim_hybrids/canbar_skia_ALL_SIM_hybrids.xlsx")
+## Run DAPC for MIDARK and WHITE parents, along with admixed populations (BARON, CANEY, ILLINOIS)
+MIDARK_WHITE_all_admix_genepop <- read_excel("../../raw_data/hybriddetective_data/all_simulation_data/MIDARK_WHITE_all_hybrids.xlsx")
 
+MIDARK_WHITE_all_admix_genepop <- as.data.frame(MIDARK_WHITE_all_admix_genepop)
 ## Create population vector
-admix_pops_canbar_skia <- factor(c(rep("Simulated CANBAR", times = 100), rep("Simulated SKIA", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("Backcross to CANBAR", times = 100), rep("Backcross to SKIA", times = 100), rep("ILLI", times = 8)))
+admix_pops_MIDARK_WHITE <- factor(c(rep("Simulated MIDARK", times = 100), rep("Simulated WHITE", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("Backcross to MIDARK", times = 100), rep("Backcross to WHITE", times = 100), rep("Empirical MIDARK", times = 16), rep("Empirical WHITE", times = 10), rep("ELK", times = 6), rep("BAYOU", times = 7), rep("UPPARK", times = 18)))
 
-canbar_skia_all_admix_genepop <- column_to_rownames(canbar_skia_all_admix_genepop, "ind")
-canbar_skia_all_admix_genepop <- as.matrix(canbar_skia_all_admix_genepop)
+MIDARK_WHITE_all_admix_genepop <- column_to_rownames(MIDARK_WHITE_all_admix_genepop, "ind")
+MIDARK_WHITE_all_admix_genepop <- as.matrix(MIDARK_WHITE_all_admix_genepop)
 
 ## Get genind file
-canbar_skia_all_admix_genepop_genind <- df2genind(canbar_skia_all_admix_genepop, 
+MIDARK_WHITE_all_admix_genepop_genind <- df2genind(MIDARK_WHITE_all_admix_genepop, 
                                                 ncode = 3, 
-                                                pop = admix_pops_canbar_skia, 
+                                                pop = admix_pops_MIDARK_WHITE, 
                                                 ploidy = 2)
 ## Scale genind file
-canbar_skia_all_admix_genepop_genind <- scaleGen(canbar_skia_all_admix_genepop_genind, 
+MIDARK_WHITE_all_admix_genepop_genind <- scaleGen(MIDARK_WHITE_all_admix_genepop_genind, 
                                            center = TRUE, 
                                            scale = TRUE, 
                                            NA.method = c("mean"), 
                                            truenames = TRUE)
 
 ## Run DAPC
-dapc_canbar_skia_admix <- dapc(canbar_skia_all_admix_genepop_genind, admix_pops_canbar_skia)
+dapc_midark_white_admix <- dapc(MIDARK_WHITE_all_admix_genepop_genind, admix_pops_MIDARK_WHITE)
 
 ## PCs retained: 10
-## Discriminant Functions retained: 3
+## Discriminant Functions retained: 2
 
-## Run DAPC for HSYC and WHITE parents, along with admixed populations (SPAV, ELK, BSUG, BUFF, BAYOU)
-hsyc_white_all_admix_genepop <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_sim_hybrids/hsyc_white_ALL_SIM_hybrids.xlsx")
 
+
+## Run DAPC for MIDARK and SKIA parents, along with admixed population (ILLI)
+MIDARK_SKIA_all_admix_genepop <- read_excel("../../raw_data/hybriddetective_data/all_simulation_data/MIDARK_SKIA_all_hybrids.xlsx")
+
+MIDARK_SKIA_all_admix_genepop <- as.data.frame(MIDARK_SKIA_all_admix_genepop)
 ## Create population vector
-admix_pops_hsyc_white <- factor(c(rep("Simulated HSYC", times = 100), rep("Simulated WHITE", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("Backcross to HSYC", times = 100), rep("Backcross to WHITE", times = 100), rep("ELK", times = 6), rep("UPPARK", times = 18)))
+admix_pops_MIDARK_SKIA <- factor(c(rep("Simulated MIDARK", times = 100), rep("Simulated SKIA", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("Backcross to MIDARK", times = 100), rep("Backcross to SKIA", times = 100), rep("Empirical MIDARK", times = 16), rep("Empirical SKIA", times = 5), rep("ILLI", times = 9)))
 
-hsyc_white_all_admix_genepop <- column_to_rownames(hsyc_white_all_admix_genepop, "pop")
-hsyc_white_all_admix_genepop <- as.matrix(hsyc_white_all_admix_genepop)
+MIDARK_SKIA_all_admix_genepop <- column_to_rownames(MIDARK_SKIA_all_admix_genepop, "ind")
+MIDARK_SKIA_all_admix_genepop <- as.matrix(MIDARK_SKIA_all_admix_genepop)
 
 ## Get genind file
-hsyc_white_all_admix_genepop_genind <- df2genind(hsyc_white_all_admix_genepop, 
-                                                 ncode = 3, 
-                                                 pop = admix_pops_hsyc_white, 
-                                                 ploidy = 2)
+MIDARK_SKIA_all_admix_genepop_genind <- df2genind(MIDARK_SKIA_all_admix_genepop, 
+                                                ncode = 3, 
+                                                pop = admix_pops_MIDARK_SKIA, 
+                                                ploidy = 2)
 ## Scale genind file
-hsyc_white_all_admix_genepop_genind <- scaleGen(hsyc_white_all_admix_genepop_genind, 
+MIDARK_SKIA_all_admix_genepop_genind <- scaleGen(MIDARK_SKIA_all_admix_genepop_genind, 
                                            center = TRUE, 
                                            scale = TRUE, 
                                            NA.method = c("mean"), 
                                            truenames = TRUE)
 
-# Run DAPC
-dapc_hsyc_white_admix <- dapc(hsyc_white_all_admix_genepop_genind, admix_pops_hsyc_white)
+## Run DAPC
+dapc_midark_skia_admix <- dapc(MIDARK_SKIA_all_admix_genepop_genind, admix_pops_MIDARK_SKIA)
 
 ## PCs retained: 10
-## Discriminant Functions retained: 3
-
-## Run DAPC for HSYC and WHITE parents, along with admixed populations (SPAV, ELK, BSUG, BUFF, BAYOU)
-hsyc_canbar_white_all_admix_genepop <- read_excel("../../raw_data/hybriddetective_data/hyb_detective_sim_hybrids/hsyc_canbar_white_ALL_SIM_hybrids.xlsx")
-
-## Create population vector
-admix_pops_hsyc_canbar_white <- factor(c(rep("Simulated HSYC+CANBAR", times = 100), rep("Simulated WHITE", times = 100), rep("F1", times = 100), rep("F2", times = 100), rep("Backcross to HSYC+CANBAR", times = 100), rep("Backcross to WHITE", times = 100), rep("BAYOU", times = 7)))
-
-hsyc_canbar_white_all_admix_genepop <- column_to_rownames(hsyc_canbar_white_all_admix_genepop, "ind")
-hsyc_canbar_white_all_admix_genepop <- as.matrix(hsyc_canbar_white_all_admix_genepop)
-
-## Get genind file
-hsyc_canbar_white_all_admix_genepop_genind <- df2genind(hsyc_canbar_white_all_admix_genepop, 
-                                                 ncode = 3, 
-                                                 pop = admix_pops_hsyc_canbar_white, 
-                                                 ploidy = 2)
-## Scale genind file
-hsyc_canbar_white_all_admix_genepop_genind <- scaleGen(hsyc_canbar_white_all_admix_genepop_genind, 
-                                           center = TRUE, 
-                                           scale = TRUE, 
-                                           NA.method = c("mean"), 
-                                           truenames = TRUE)
-
-# Run DAPC
-dapc_hsyc_canbar_white_admix <- dapc(hsyc_canbar_white_all_admix_genepop_genind, admix_pops_hsyc_canbar_white)
-
-## PCs retained: 10
-## Discriminant Functions retained: 3
+## Discriminant Functions retained: 2
 
 ```
 
 ## Make plots
 ```{r}
-## HSYC SKIA Plot
-dapc_canbar_skia_admix_LDs <- as.data.frame(dapc_canbar_skia_admix$ind.coord)
-dapc_canbar_skia_admix_LDs <- cbind(data.frame(admix_pops_canbar_skia), dapc_canbar_skia_admix_LDs)
-colnames(dapc_canbar_skia_admix_LDs) <- c("pop","LD1","LD2")
+## Plot MIDARK and WHITE admixed
+dapc_midark_white_admix_LDs <- as.data.frame(dapc_midark_white_admix$ind.coord)
+dapc_midark_white_admix_LDs <- cbind(data.frame(admix_pops_MIDARK_WHITE), dapc_midark_white_admix_LDs)
+colnames(dapc_midark_white_admix_LDs) <- c("pop","LD1","LD2")
 
-dapc_canbar_skia_admix_LDs$pop <- factor(dapc_canbar_skia_admix_LDs$pop, levels = c("Simulated CANBAR","Backcross to CANBAR", "F2", "F1", "Backcross to SKIA","Simulated SKIA", "ILLI"))
+dapc_midark_white_admix_LDs$pop <- factor(dapc_midark_white_admix_LDs$pop, levels = c("Simulated MIDARK","Empirical MIDARK","Backcross to MIDARK", "F2", "F1", "Backcross to WHITE","Simulated WHITE","Empirical WHITE", "ELK","BAYOU","UPPARK"))
 
-dapc_canbar_skia_admix_plot <- ggplot(dapc_canbar_skia_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+dapc_midark_white_admix_plot <- ggplot(dapc_midark_white_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
    geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Hybrid Category") +
-   scale_fill_manual(values = c("grey100","grey80","grey60","grey40","grey20","black","mediumpurple")) +
+   scale_fill_manual(values = c("grey5","deepskyblue","grey35","grey60","grey18","grey90","grey100","deeppink2","sienna4","lightgreen","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
@@ -229,58 +551,41 @@ dapc_canbar_skia_admix_plot <- ggplot(dapc_canbar_skia_admix_LDs, aes(x = LD1, y
    theme(legend.background = element_rect(color = "black", size = 0.5)) + 
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 20)) +
-   theme(axis.title.y = element_blank())
+   theme(axis.text = element_text(size = 15))
 
-## HSYC WHITE Plot
-dapc_hsyc_white_admix_LDs <- as.data.frame(dapc_hsyc_white_admix$ind.coord)
-dapc_hsyc_white_admix_LDs <- cbind(data.frame(admix_pops_hsyc_white), dapc_hsyc_white_admix_LDs)
-colnames(dapc_hsyc_white_admix_LDs) <- c("pop","LD1","LD2")
+options(scipen = 999)
+## Plot MIDARK and SKIA admixed
+dapc_midark_skia_admix_LDs <- as.data.frame(dapc_midark_skia_admix$ind.coord)
+dapc_midark_skia_admix_LDs <- cbind(data.frame(admix_pops_MIDARK_SKIA), dapc_midark_skia_admix_LDs)
+colnames(dapc_midark_skia_admix_LDs) <- c("pop","LD1","LD2")
 
-dapc_hsyc_white_admix_LDs$pop <- factor(dapc_hsyc_white_admix_LDs$pop, levels = c("Simulated HSYC", "Backcross to HSYC","F2","F1","Empirical HSYC","Empirical WHITE","Backcross to WHITE","Simulated WHITE","ELK","UPPARK"))
+dapc_midark_skia_admix_LDs$pop <- factor(dapc_midark_skia_admix_LDs$pop, levels = c("Simulated MIDARK", "Empirical MIDARK", "Backcross to MIDARK","F2","F1","Backcross to SKIA","Simulated SKIA","Empirical SKIA","ILLI"))
 
-dapc_hsyc_white_admix_plot <- ggplot(dapc_hsyc_white_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
+dapc_midark_skia_admix_plot <- ggplot(dapc_midark_skia_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
    geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Hybrid Category") +
-   scale_fill_manual(values = c("black","grey20","grey40","grey60","grey80", "grey100", "sienna4", "orchid1")) +
+   scale_fill_manual(values = c("grey5","deepskyblue","grey35","grey60","grey18","grey90","grey100","navyblue","mediumpurple")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 15)) +
-   theme(legend.position = c(0.05,0.8)) +
+   theme(legend.position = c(0.05,0.2)) +
    theme(legend.background = element_rect(color = "black", size = 0.5)) + 
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 20)) 
-
-## HSYC WHITE Plot
-dapc_hsyc_canbar_white_admix_LDs <- as.data.frame(dapc_hsyc_canbar_white_admix$ind.coord)
-dapc_hsyc_canbar_white_admix_LDs <- cbind(data.frame(admix_pops_hsyc_canbar_white), dapc_hsyc_canbar_white_admix_LDs)
-colnames(dapc_hsyc_canbar_white_admix_LDs) <- c("pop","LD1","LD2")
-
-dapc_hsyc_canbar_white_admix_LDs$pop <- factor(dapc_hsyc_canbar_white_admix_LDs$pop, levels = c("Simulated HSYC+CANBAR","Backcross to HSYC+CANBAR","F2","F1","Backcross to WHITE","Simulated WHITE", "BAYOU"))
-
-dapc_hsyc_canbar_white_admix_plot <- ggplot(dapc_hsyc_canbar_white_admix_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 5, show.legend = T) +
-   labs(x = "LD1", y = "LD2", fill = "Hybrid Category") +
-   scale_fill_manual(values = c("black", "grey20","grey40","grey60","grey80", "grey100", "lightgreen")) +
-   theme_set(theme_cowplot(12)) +
-   theme(legend.title = element_text(size = 20)) +
-   theme(legend.title = element_text(face = "bold")) +
-   theme(legend.text = element_text(size = 15)) +
-   theme(legend.position = c(0.05,0.8)) +
-   theme(legend.background = element_rect(color = "black", size = 0.5)) + 
-   theme(legend.margin = margin(5, 5, 5, 5)) +
-   theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 20)) +
+   theme(axis.text = element_text(size = 15)) +
    theme(axis.title.y = element_blank())
 
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybrid_detective/hybrid_simulation_plots.pdf", width=16, height=7)
 
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybrid_detective/hyb_simulation_plots.pdf", width=25, height=8)
-
-plot_grid(dapc_hsyc_white_admix_plot, dapc_canbar_skia_admix_plot, dapc_hsyc_canbar_white_admix_plot, nrow = 1, labels = c("a","b","c"), label_size = 27)
+plot_grid(dapc_midark_white_admix_plot,
+          dapc_midark_skia_admix_plot,
+          nrow = 1,
+          labels = c("a","b"),
+          label_size = 25)
 
 dev.off()
+
 ```
 
 ## BLACK AND WHITE plots
