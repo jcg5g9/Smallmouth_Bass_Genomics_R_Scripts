@@ -443,8 +443,8 @@ subset_genepop_rename("../../raw_data/hybriddetective_data/parent_genepops/MIDAR
 subset_genepop_rename("../../raw_data/hybriddetective_data/parent_genepops/MIDARK_SKIA_200_panel_genepop.txt", pop_rename_midark_skia, path = "/Users/joegunn/Desktop/MIDARK_SKIA_edited_200_panel_genepop.txt")
 ```
 
+## Simulate 100 individuals in each of 6 Hybrid Categories for both parent sets (MIDARK and WHITE and MIDARK and SKIA)
 ```{r}
-
 #Simulate for MIDARK and WHITE
 freqbasedsim_GTFreq(GenePopData="../../raw_data/hybriddetective_data/parent_genepops/MIDARK_WHITE_edited_200_panel_genepop.txt", 
                     NumSims = 1, 
@@ -462,7 +462,6 @@ freqbasedsim_GTFreq(GenePopData="../../raw_data/hybriddetective_data/parent_gene
                     sample.sizeF1 = 100,
                     sample.sizeF2 = 100,
                     sample.sizeBC = 100)
-
 ```
 
 
