@@ -13,18 +13,41 @@ Purpose: For Aim 1, I am assessing sample quality, mean read depth per contig, f
 # Aim 2 - Admixture Analysis
 ### File: SMB_ADMIXTURE.Rmd
 
-Purpose: Here I assess population genomic structure both between Smallmouth Bass and Spotted Bass and with Smallmouth Bass subspecies (Northern Smallmouth Bass and Neosho Smallmouth Bass). My aims are 1) to first screen for first generation or later-generation interspecies hybrids of Smallmouth Bass and Spotted Bass, 2) to determine if population structure patterns differ when including or excluding any hybrids detected in aim (1), and 3) to assess hierarchical population structure among the Smallmouth Bass subspecies. With the analysis, I will infer patterns of genomic differentiation and admixture between populations. I will match results from ADMIXTURE to results from SNPhylo, which will produce phylognetic tree to show evolutionary relationships among individuals.
+Purpose: Here I assess population genomic structure both between Smallmouth Bass and Spotted Bass and with Smallmouth Bass subspecies (Northern Smallmouth Bass and Neosho Smallmouth Bass). My aims are 1) to first screen for first generation or later-generation interspecies hybrids of Smallmouth Bass and Spotted Bass, 2) to identify individuals who are potentially hybridized (admixed) between the two subspecies of Smallmouth Bass, 3) to determine if population structure patterns differ when including or excluding any hybrids detected in aim (1), and 3) to assess population structure of samples when all hybrids and admixed individuals are removed from the dataset. With these aims, I hope to determine the number and geography of indepdendent lineages within the Black Basses in the Central Interior Highlands. With the analysis, I will infer patterns of genomic differentiation and admixture between populations. I will match results from ADMIXTURE to results from SNPhylo, which will produce phylognetic tree to show evolutionary relationships among individuals.
 
 ### Genomic Data used: 92 samples (64 Neosho Smallmouth Bass, 24 Northern Smallmouth Bass, 4 Spotted Bass), 50,828 SNPs. 
 
-# Aim 3 - Coancestry Analysis with FINERADSTRUCTURE
+### Raw data file: pass2_all.vcf
+
+### Admixture analysis conducted in ADMIXTURE on the Mizzou Lewis Cluster
+
+
+# Aim 3 - Coancestry Analysis with fineRADstructure
 ### File: SMB_FINERADSTRUCTURE.Rmd
 
-Purpose: Here I assess fine-scale population structure among all samples (both including and excluding the hybrid discovered in ADMIXTURE analysis (See SMB_ADMIXUTRE.Rmd)) using nearest-neighbor haplotype linkage in the program fineRADstructure, which is a derivation of the program fineSTRUCTURE specifically for RAD data. With this analysis, I want to determine 1) coancestry among individuals in my dataset by producing a coancestry matrix. This analysis allows one to see which samples are most closely related and can be used to determine which samples belong to which populations. Samples with more coancestry (forming coancestry blocks) can be considered part of the same population. Also with this population, I aim to determine 2) the connectivity among individuals and among populations by interpreting coancestry between samples belonging to putatively different populations.
+Purpose: Here I assess fine-scale population structure among all samples (both including and excluding the hybrid discovered in ADMIXTURE analysis (See SMB_ADMIXUTRE.Rmd)) using nearest-neighbor haplotype linkage in the program fineRADstructure, which is a derivation of the program fineSTRUCTURE specifically for RAD data. With this analysis, I want to determine 1) coancestry among individuals in my dataset by producing a coancestry matrix. This analysis allows one to see which samples are most closely related and can be used to determine which samples belong to which populations. Samples with more coancestry (forming coancestry blocks) can be considered part of the same population. Also with this program, I aim to 2) identify monophyletic, independent populations, both of pure, unadmixed individuals and of admixed individuals, for downstream analysis.
  
-### Genomic Data used:
+### Populations Identified:
+
+####Pure:
+####MIDARK (middle Arkansas River Basin tributaries)
+####WHITE (White River and tributaries)
+####SKIA (Skiatook lake, which is of known Tennessee lake-strain hatchery origin)
+####LMULB (Lee Creek and Mulberry River, AR)
+####MISS (Missouri River tributaries and lakes, Stockton Lake and Big Piney River)
+
+####Admixed:
+####ELK (Elk River, MO)
+####BAYOU (Illinois Bayou River and Big Piney Creek, AR)
+####UPPARK (upper Arkansas River Basin streams)
+####ILLI (Illinois River and tributaries)
+
+### Genomic Data used: 
 
 #### filtered dataset (excluding the hybrid (BFC10) and not including one rad per rad tag: 98,659 SNPs, 91 samples
+
+### Raw data file: vcf_pass2_badsamples_qual_missing_mac2_het45.vcf
+
 #### fineRADstructure requires multiple SNPs per rad-tag to increase statistical power, because it is comparing samples based on haplotype information. It is creating pseudo-haplotypes from non-phased SNP data (in other words, since missing nucleotides cannot be imputed without a reference genome, individual SNPs on the same rad-tag are strung together to create a haplotype for analysis)
 
 # Aim 4 - Outlier SNP Analysis
@@ -51,13 +74,16 @@ For BayesCan, I used the primary population structure obtained from PCAdapt to d
 
 ### Genomic Data used:
       
-#### Fully-filtered SMB dataset, Outlier SNPs (outliers shared between Bayescan and PCAdapt): 131 SNPs, 87 Samples
-#### Fully-filtered SMB dataset, Neutral SNPs (neutrals shared between Bayescan and PCAdapt): 41,236 SNPs, 87 Samples
+#### Fully-filtered SMB dataset, Outlier SNPs (outliers shared between Bayescan and PCAdapt): 156 SNPs, 87 Samples
+#### Fully-filtered SMB dataset, Neutral SNPs (neutrals shared between Bayescan and PCAdapt): 41,324 SNPs, 87 Samples
 #### Fully-filtered Neosho SMB dataset, Outlier SNPs (outliers shared between Bayescan and PCAdapt): 29 SNPs, 63 Samples
-#### Fully-filtered Neosho SMB dataset, Neutral SNPs (neutrals shared between Bayescan and PCAdapt): 35,025 SNPs, 63 Samples
+#### Fully-filtered Neosho SMB dataset, Neutral SNPs (neutrals shared between Bayescan and PCAdapt): 35,038 SNPs, 63 Samples
+
+#Raw data file: pass2_all.vcf (converted to BayeScan format (for Bayescan) in pgdspider and to PED format (for pcadapt) in PLINK)
 
 # Aim 6 - Map Building
 ### File: SMB_MAPS.Rmd
+
 
 Purpose: Here I am generating a map for easily displaying my sample distribution geographically.
 
@@ -68,13 +94,15 @@ Purpose: Here I am generating a map for easily displaying my sample distribution
 # Aim 7 - Hybrid Simulation
 ### File: SMB_HYBRID_DETECTIVE.Rmd
 
-Purpose: Here I am following the procedure outlined in Ebersbach et al. 2020 on assessing hybridization. I am determining the likelihood with which admixed Smallmouth Bass populations are made up of recent generation hybrids rather than being made up of ancient hybrids (or very old mixing). First, I generated a dataset of 200 diagnostic SNP loci that represent highly divergent loci between pure Neosho (HSYC population, inferred in Mixmapper) and pure Northern (WHITE and SKIA populations, inferred in Mixmapper). These diagnostic SNPs were used, because their allelic distributions within the admixed populations will clearly show whether individuals are recent or ancient-generation hybrids. I then used these same 200 diagnostic loci to create simulated recent-generation hybrid data, which I then compared to be real data using DAPC. 
+Purpose: Here I am following the procedure outlined in Ebersbach et al. 2020 on assessing hybridization. I am determining the likelihood with which admixed Smallmouth Bass populations are made up of recent generation hybrids rather than being made up of ancient hybrids (or very old mixing). First, I generated a dataset of 200 diagnostic SNP loci that represent highly divergent loci between pure Neosho (MIDARK population, inferred in Mixmapper) and pure Northern (WHITE and SKIA populations, inferred in Mixmapper). These diagnostic SNPs were used, because their allelic distributions within the admixed populations will clearly show whether individuals are recent or ancient-generation hybrids. Panels were generated for two datasets, representing both sets of parent populations: MIDARK and WHITE, between which ELK, BAYOU, and UPPARK are admixed, and MIDARK and SKIA, between which ILLI is admixed (see above under fineRADstructure for population IDs)
 
-I then used the same 200 diagnostic SNP loci and inferred parent populations to determine hybrid index and test for genomic clines.
+My 200 diagnostic loci for both sets of parents were validated in program NewHybrids by creating a training set of genotypes for 6 hybrid categories and classifying hybrids using a validation set of genotypes
+
+I then used these same 200 diagnostic loci to create simulated recent-generation hybrid data, which I then compared to my real, empirical data using DAPC. 
 
 ### Genomic Date used:
 
-#### Fully-filtered SMB dataset, HSYC and WHITE, HSYC, CANBAR, and WHITE, or HSYC and SKIA to obtain diagnostic SNPS
+#### Fully-filtered SMB dataset, MIDARK and WHITE, MIDARK and SKIA to obtain diagnostic SNPS
 #### Fully-filtered SMB dataset, Admixed populations only to assess admixture
 
 # Unused Code
