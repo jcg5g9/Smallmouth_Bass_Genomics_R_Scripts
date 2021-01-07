@@ -543,7 +543,7 @@ dapc_midark_white_admix_plot <- ggplot(dapc_midark_white_admix_LDs, aes(x = LD1,
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 15)) +
-   theme(legend.position = c(0.6,0.8)) +
+   theme(legend.position = c(0.6,0.75)) +
    theme(legend.background = element_rect(color = "black", size = 0.5)) + 
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
@@ -565,7 +565,7 @@ dapc_midark_skia_admix_plot <- ggplot(dapc_midark_skia_admix_LDs, aes(x = LD1, y
    theme(legend.title = element_text(size = 20)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 15)) +
-   theme(legend.position = c(0.05,0.2)) +
+   theme(legend.position = c(0.05,0.25)) +
    theme(legend.background = element_rect(color = "black", size = 0.5)) + 
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
@@ -582,6 +582,7 @@ plot_grid(dapc_midark_white_admix_plot,
 
 dev.off()
 ```
+
 ## NewHybrids Analysis
 
 ## Here I am conducting NewHybrids analysi on my empirical data (real data for parents and admixed individuals) using the validated 200 diagnostic snps identified and analyzed above
