@@ -109,4 +109,4 @@ I then run all of my empirical data in NewHybrids to determine the most likely c
 
 # Unused Code
 
-All code in this file is miscellaneous, unused code from the SMB Genomics R project
+All code in this file is miscellaneous, unused code from the SMB Genomics R project.
