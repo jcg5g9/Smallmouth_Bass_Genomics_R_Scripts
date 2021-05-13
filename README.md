@@ -57,7 +57,7 @@ Purpose: The Bayescan Analysis section includes all data reading, manipulation, 
 
 The PCAdapt Analysis section includes all data reading, manipulation, organization, analysis, and plotting used to run the R package PCAdapt. PCAdapt is an R program that identifies outlier Fsts (similar to Bayescan) using a multivariate analysis approach (PCA). Significant, outlier SNPs are those that are identified as loading very heavily on the principal components accounting for the highest amount of genomic variation in the data.
 
-### Genomic Date used:
+### Genomic Data used:
 
 #### Fully filtered dataset, excluding hybrids (BFC10) and excluding Spotted Bass: 50,828 SNPs, 87 samples
 
@@ -87,7 +87,7 @@ For BayesCan, I used the primary population structure obtained from PCAdapt to d
 
 Purpose: Here I am generating a map for easily displaying my sample distribution geographically.
 
-### Genomic Date used:
+### Genomic Data used:
 
 #### Shape files downloaded online through ARCgis for North America, USA, States in the USA, Canada, Smallmouth Bass native species distributions, and rivers in teh Central Interior Highlands
 
@@ -102,10 +102,25 @@ I then used these same 200 diagnostic loci to create simulated recent-generation
 
 I then run all of my empirical data in NewHybrids to determine the most likely classification of each individual into one of six hybrid cateogories.
 
-### Genomic Date used:
+### Genomic Data used:
 
 #### Fully-filtered SMB dataset, MIDARK and WHITE, MIDARK and SKIA to obtain diagnostic SNPS
 #### Fully-filtered SMB dataset, Admixed populations only to assess admixture
+
+# Aim 8 - Demographic Analysis with DADI (Diffusion Approximation of Demographic Inference)
+### File 1: SMB_DADI_PREP.Rmd
+
+Purpose: Here I am generating input files for the program DADI, which is used to infer demographic history of lineages, including timing of divergence, migration rates, admixture timing, patterns of population growth or constriction, etc. For this program, demographic inference is conducted using the site frequency spectrum of the populations of interest, which is simply the distribution of allele frequencies in that population (with allele frequency on the x-axis and number of loci with that frequency on the y-axis). Specifically, demographic inference is based on the frequency of the minor or rare allele (usually the derived allele) at a biallelic SNP. There are particular minor allele frequency distributions which signify different demographic events. For example, an excess of rare alleles indicates population growth, and a relatively uniform distribution of allele frequencies (not as many rare alleles relative to other alleles) is indicative of a bottleneck. Admixture has a unique allele frequency signature as well.
+
+I am interested in understanding the demographic history of potentially diverged lineages of Smallmouth Bass, so I am using 2-Dimensional joint site frequency spectra for my pairwise population comparisons. A joint frequency spectrum (JSFS) is a 2D matrix, with site frequency within each population on each of the axis, and with each entry of the matrix being the number of loci with the corresponding frequencies. I am also considering only FOLDED joint frequency spectra, which are based on the frequency of MINOR alleles rather than on the frequency of DERIVED alleles. I am doing this because I do not have a reference genome, so I do not technically know which alleles at each SNP are ancestral vs. derived.
+
+### Genomic Data used:
+
+#### Fully-filtered SMB dataset, ELK and WHITE only
+#### Fully-filtered SMB dataset, BAYOU and WHITE only
+#### Fully-filtered SMB dataset, UPPARK and WHITE only
+#### Fully-filtered SMB dataset, ILLI and SKIA only
+
 
 # Unused Code
 
