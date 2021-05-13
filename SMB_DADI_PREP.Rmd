@@ -1,0 +1,70 @@
+---
+title: "SMB_DADI_PREP"
+author: "Joe Gunn"
+date: "5/12/2021"
+output: html_document
+---
+
+# Libraries needed for analysis
+```{r setup, include=FALSE}
+library(genepopedit)
+library(parallelnewhybrid)
+library(hybriddetective)
+library(readxl)
+library(tidyverse)
+library(cowplot)
+library(pophelper)
+source("../dadi_analysis/vcf2sfs.r") #Fine-structure R source code
+```
+
+# Read in vcf files into genotype format
+```{r}
+
+elk_white_gt <- vcf2gt("../../raw_data/dadi_data/vcfs_for_dadi/dadi_elk_white.vcf","../../raw_data/dadi_data/dadi_pops/dadi_elk_white.txt")
+
+bayou_white_gt <- vcf2gt("../../raw_data/dadi_data/vcfs_for_dadi/dadi_bayou_white.vcf","../../raw_data/dadi_data/dadi_pops/dadi_bayou_white.txt")
+
+uppark_white_gt <- vcf2gt("../../raw_data/dadi_data/vcfs_for_dadi/dadi_uppark_white.vcf","../../raw_data/dadi_data/dadi_pops/dadi_uppark_white.txt")
+
+illi_skia_gt <- vcf2gt("../../raw_data/dadi_data/vcfs_for_dadi/dadi_illi_skia.vcf","../../raw_data/dadi_data/dadi_pops/dadi_illi_skia.txt")
+
+```
+
+# Convert genotype format to dadi SNP format in case you need it
+```{r}
+elk_white_snp <- gt2snp(elk_white_gt, pops = c("ELK","WHITE"))
+bayou_white_snp <- gt2snp(bayou_white_gt, pops = c("BAYOU","WHITE"))
+uppark_white_snp <- gt2snp(uppark_white_gt, pops = c("UPPARK","WHITE"))
+illi_skia_snp <- gt2snp(illi_skia_gt, pops = c("ILLI","SKIA"))
+```
+# Impute missing genotypes and calculate site frequency spectra. Keep the same sample sizes for each population
+```{r}
+#Impute genotypes and generate 2D SFS
+elk_white_imputed_sfs <- gt2sfs.impute(elk_white_gt, pops = c("ELK","WHITE"), sampleSizes = c(6,10))
+bayou_white_imputed_sfs <- gt2sfs.impute(bayou_white_gt, pops = c("BAYOU","WHITE"), sampleSizes = c(7,10))
+uppark_white_imputed_sfs <- gt2sfs.impute(uppark_white_gt, pops = c("UPPARK","WHITE"), sampleSizes = c(18,10))
+illi_skia_imputed_sfs <- gt2sfs.impute(illi_skia_gt, pops = c("ILLI","SKIA"), sampleSizes = c(8,5))
+
+#Get folded SFS. We need folded to calculate SFS for minor allele distributions, rather than for ancestral alleles, because we do not technically know what the ancestral allele is for these populations (the reference was an arbitrarily chosen sample)
+elk_white_2D_folded_imputed_sfs <- fold.sfs(elk_white_imputed_sfs)
+bayou_white_2D_folded_imputed_sfs <- fold.sfs(bayou_white_imputed_sfs)
+uppark_white_2D_folded_imputed_sfs <- fold.sfs(uppark_white_imputed_sfs)
+illi_skia_2D_folded_imputed_sfs <- fold.sfs(illi_skia_imputed_sfs)
+
+#Plot folded SFS
+plot.sfs(elk_white_2D_folded_imputed_sfs)
+plot.sfs(bayou_white_2D_folded_imputed_sfs)
+plot.sfs(uppark_white_2D_folded_imputed_sfs)
+plot.sfs(illi_skia_2D_folded_imputed_sfs)
+
+```
+# Write SFS out to dadi format
+```{r}
+write.sfs.dadi(elk_white_2D_folded_imputed_sfs, f.output = "../../raw_data/dadi_data/dadi_input/elk_white_dadi.fs")
+write.sfs.dadi(bayou_white_2D_folded_imputed_sfs, f.output = "../../raw_data/dadi_data/dadi_input/bayou_white_dadi.fs")
+write.sfs.dadi(uppark_white_2D_folded_imputed_sfs, f.output = "../../raw_data/dadi_data/dadi_input/uppark_white_dadi.fs")
+write.sfs.dadi(illi_skia_2D_folded_imputed_sfs, f.output = "../../raw_data/dadi_data/dadi_input/illi_skia_dadi.fs")
+
+```
+
+
