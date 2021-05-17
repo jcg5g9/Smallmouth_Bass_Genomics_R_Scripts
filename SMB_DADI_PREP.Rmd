@@ -14,8 +14,16 @@ library(readxl)
 library(tidyverse)
 library(cowplot)
 library(pophelper)
-source("../dadi_analysis/vcf2sfs.r") #Fine-structure R source code
+source("../dadi_analysis/vcf2sfs.r") #vcf2sfs source code, see immediately below for citation information
 ```
+
+# Citation information
+
+For this part of the SMB Genomics project, I am preparing input data files (2D folded joint frequency spectra, see Aim 8 of README file) for DADI analysis using an R script (vcf2sfs.r) developed by Shenglin Liu. Citation for this script is given in the github repository (accessed: https://github.com/shenglin-liu/vcf2sfs) for the R package and is listed as shown below:
+
+Citation: 
+
+Liu S, Ferchaud AL, Grønkjær P, Nygaard R, Hansen MM (2018) Genomic parallelism and lack thereof in contrasting systems of three-spined sticklebacks. Molecular Ecology, 27: 4725-4743.
 
 # Read in vcf files into genotype format
 ```{r}
