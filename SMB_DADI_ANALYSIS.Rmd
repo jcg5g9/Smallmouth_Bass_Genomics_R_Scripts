@@ -1,0 +1,94 @@
+---
+title: "SMB_DADI_ANALYSIS"
+author: "Joe Gunn"
+date: "5/18/2021"
+output: html_document
+---
+
+# Libraries needed for analysis
+```{r setup, include=FALSE}
+library(genepopedit)
+library(parallelnewhybrid)
+library(hybriddetective)
+library(readxl)
+library(tidyverse)
+library(cowplot)
+library(pophelper)
+```
+
+#Explanation of dadi analysis
+
+I am running the program DADI using python3 within the Anaconda3 python environment. All of the models I am running are based on 2D folded joint frequency spectra, and the python scripts for each model have all been previously published in the Two_Population_Pipeline within the dadi_pipeline written by Daniel Portik and KC Charles (see below for citations). The two epoch diversification models I have selected were developed by KC Charles, while all of the rest of the models were developed by D. Portik.
+
+To run all models, I adapted the dadi_Run_2D_Set.py python script provided in the dadi_pipeline. I converted vcf files for each pair of populations for analysis directly in the script using the code for coverting a vcf to an fs spectrum object. For each pair of populations, I projected to the exact number of alleles expected in each set of individuals (2*the number of individuals, because diploid). This is because I used the vcf2sfs.r script (see SMB_DADI_PREP.Rmd) to impute missing genotype values based on the binomical distribution. Thus, for each pair of populations, I retained the maximum number of segregating sites (SNPS) with complete data.
+
+I am modeling the demographic history between four pairs of populations:
+
+  1. Elk River (ELK) and White River (WHITE)
+  2. Bayou River (BAYOU) and White River (WHITE)
+  3. Upper Arkansas Tributaries (UPPARK) and the White River (WHITE)
+  4. Illinois River (ILLI) and Skiatook Lake (SKIA)
+  
+I am running 9 independent demographic models on these four population pairs: 
+
+  1. no_mig: Divergence with no migration
+  2. sym_mig: Divdergence with continuous symmetric migration
+  3. asym_mig: Divergence with continuous asymmetric migration
+  4. sec_contact_sym_mig: Divergence in isolation, continuous symmetric secondary contact (recent symmetric admixture)
+  5. sec_contact_asym_mig: Divergence in isolation, continuous asymmetric secondary contact (recent asymmetric admixture)
+  6. anc_sym_mig: Divergence with ancient continuous symmetric migration, then isolation (ancient symmetric admixture)
+  7. anc_asym_mig: Divergence with ancient continuous asymmetric migration, then isolation (ancient asymmetric admixture)
+  8. sym_mig_twoepoch: Divergence with continuous symmetric migration that varies across two epochs
+  9. asym_mig_twoepoch: Divergence with continuous asymmetric migration that varies across two epochs
+
+
+Citation information:
+
+Portik, D.M., Leache, A.D., Rivera, D., Blackburn, D.C., Rodel, M.-O.,
+    Barej, M.F., Hirschfeld, M., Burger, M., and M.K. Fujita. 2017.
+    Evaluating mechanisms of diversification in a Guineo-Congolian forest
+    frog using demographic model selection. Molecular Ecology 26: 5245-5263.
+    doi: 10.1111/mec.14266
+    
+Charles, K.C., Bell, R.C., Blackburn, D.C., Burger, M., Fujita, M.K.,
+    Gvozdik, V., Jongsma, G.F.M., Leache, A.D., and D.M. Portik. Sky, sea,
+    and forest islands: diversification in the African leaf-folding frog
+    Afrixalus paradorsalis (Order: Anura, Family: Hyperoliidae).
+    Journal of Biogeography 45: 1781-1794. 
+    doi: 10.1111/jbi.13365
+
+# DADI Optimization
+```{r}
+#MODEL 1: NO_MIG
+elk_white_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/ELK_WHITE_no_mig_optimized_results.xlsx")
+
+elk_white_no_mig_opt_results_clean <- elk_white_no_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+ggplot(elk_white_no_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 2: SYM_MIG
+elk_white_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/ELK_WHITE_sym_mig_optimized_results.xlsx")
+
+elk_white_sym_mig_opt_results_clean <- elk_white_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+ggplot(elk_white_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+```
