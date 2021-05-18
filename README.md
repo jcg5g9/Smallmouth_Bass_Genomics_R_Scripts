@@ -107,7 +107,7 @@ I then run all of my empirical data in NewHybrids to determine the most likely c
 #### Fully-filtered SMB dataset, MIDARK and WHITE, MIDARK and SKIA to obtain diagnostic SNPS
 #### Fully-filtered SMB dataset, Admixed populations only to assess admixture
 
-# Aim 8 - Demographic Analysis with DADI (Diffusion Approximation of Demographic Inference)
+# Aim 8 - Demographic Analysis with DADI (Diffusion Approximation of Demographic Inference) input file preparation
 ### File 1: SMB_DADI_PREP.Rmd
 
 Purpose: Here I am generating input files for the program DADI, which is used to infer demographic history of lineages, including timing of divergence, migration rates, admixture timing, patterns of population growth or constriction, etc. For this program, demographic inference is conducted using the site frequency spectrum of the populations of interest, which is simply the distribution of allele frequencies in that population (with allele frequency on the x-axis and number of loci with that frequency on the y-axis). Specifically, demographic inference is based on the frequency of the minor or rare allele (usually the derived allele) at a biallelic SNP. There are particular minor allele frequency distributions which signify different demographic events. For example, an excess of rare alleles indicates population growth, and a relatively uniform distribution of allele frequencies (not as many rare alleles relative to other alleles) is indicative of a bottleneck. Admixture has a unique allele frequency signature as well.
@@ -121,7 +121,47 @@ I am interested in understanding the demographic history of potentially diverged
 #### Fully-filtered SMB dataset, UPPARK and WHITE only
 #### Fully-filtered SMB dataset, ILLI and SKIA only
 
+# Aim 9 - Demographic Analysis with DADI (Diffusion Approximation of Demographic Inference) Analysis
+### File 1: SMB_DADI_ANALYSIS.Rmd
 
+Purpose: I am running the program DADI using python3 within the Anaconda3 python environment. All of the models I am running are based on 2D folded joint frequency spectra, and the python scripts for each model have all been previously published in the Two_Population_Pipeline within the dadi_pipeline written by Daniel Portik and KC Charles (see below for citations). The two epoch diversification models I have selected were developed by KC Charles, while all of the rest of the models were developed by D. Portik.
+
+To run all models, I adapted the dadi_Run_2D_Set.py python script provided in the dadi_pipeline. I converted vcf files for each pair of populations for analysis directly in the script using the code for coverting a vcf to an fs spectrum object. For each pair of populations, I projected to the exact number of alleles expected in each set of individuals (2*the number of individuals, because diploid). This is because I used the vcf2sfs.r script (see SMB_DADI_PREP.Rmd) to impute missing genotype values based on the binomical distribution. Thus, for each pair of populations, I retained the maximum number of segregating sites (SNPS) with complete data.
+
+I am modeling the demographic history between four pairs of populations:
+
+  1. Elk River (ELK) and White River (WHITE)
+  2. Bayou River (BAYOU) and White River (WHITE)
+  3. Upper Arkansas Tributaries (UPPARK) and the White River (WHITE)
+  4. Illinois River (ILLI) and Skiatook Lake (SKIA)
+  
+I am running 9 independent demographic models on these four population pairs: 
+
+  1. no_mig: Divergence with no migration
+  2. sym_mig: Divdergence with continuous symmetric migration
+  3. asym_mig: Divergence with continuous asymmetric migration
+  4. sec_contact_sym_mig: Divergence in isolation, continuous symmetric secondary contact (recent symmetric admixture)
+  5. sec_contact_asym_mig: Divergence in isolation, continuous asymmetric secondary contact (recent asymmetric admixture)
+  6. anc_sym_mig: Divergence with ancient continuous symmetric migration, then isolation (ancient symmetric admixture)
+  7. anc_asym_mig: Divergence with ancient continuous asymmetric migration, then isolation (ancient asymmetric admixture)
+  8. sym_mig_twoepoch: Divergence with continuous symmetric migration that varies across two epochs
+  9. asym_mig_twoepoch: Divergence with continuous asymmetric migration that varies across two epochs
+
+Citation information:
+
+Portik, D.M., Leache, A.D., Rivera, D., Blackburn, D.C., Rodel, M.-O.,
+    Barej, M.F., Hirschfeld, M., Burger, M., and M.K. Fujita. 2017.
+    Evaluating mechanisms of diversification in a Guineo-Congolian forest
+    frog using demographic model selection. Molecular Ecology 26: 5245-5263.
+    doi: 10.1111/mec.14266
+    
+Charles, K.C., Bell, R.C., Blackburn, D.C., Burger, M., Fujita, M.K.,
+    Gvozdik, V., Jongsma, G.F.M., Leache, A.D., and D.M. Portik. Sky, sea,
+    and forest islands: diversification in the African leaf-folding frog
+    Afrixalus paradorsalis (Order: Anura, Family: Hyperoliidae).
+    Journal of Biogeography 45: 1781-1794. 
+    doi: 10.1111/jbi.13365
+    
 # Unused Code
 
 All code in this file is miscellaneous, unused code from the SMB Genomics R project.
