@@ -14,7 +14,8 @@ library(readxl)
 library(tidyverse)
 library(cowplot)
 library(pophelper)
-source("../dadi_analysis/vcf2sfs.r") #vcf2sfs source code, see immediately below for citation information
+source("../dadi_analysis/info/vcf2sfs.r") #vcf2sfs source code, see immediately below for citation information
+
 ```
 
 # Citation information
@@ -44,7 +45,13 @@ elk_white_snp <- gt2snp(elk_white_gt, pops = c("ELK","WHITE"))
 bayou_white_snp <- gt2snp(bayou_white_gt, pops = c("BAYOU","WHITE"))
 uppark_white_snp <- gt2snp(uppark_white_gt, pops = c("UPPARK","WHITE"))
 illi_skia_snp <- gt2snp(illi_skia_gt, pops = c("ILLI","SKIA"))
+
+write.table(elk_white_snp, quote = FALSE, "../../raw_data/dadi_data/dadi_input/elk_white_snp.txt")
+write.table(bayou_white_snp, quote = FALSE, "../../raw_data/dadi_data/dadi_input/bayou_white_snp.txt")
+write.table(uppark_white_snp, quote = FALSE, "../../raw_data/dadi_data/dadi_input/uppark_white_snp.txt")
+write.table(illi_skia_snp, quote = FALSE, "../../raw_data/dadi_data/dadi_input/illi_skia_snp.txt")
 ```
+
 # Impute missing genotypes and calculate site frequency spectra. Keep the same sample sizes for each population
 ```{r}
 #Impute genotypes and generate 2D SFS
