@@ -60,7 +60,7 @@ Charles, K.C., Bell, R.C., Blackburn, D.C., Burger, M., Fujita, M.K.,
 # DADI Optimization
 ```{r}
 #MODEL 1: NO_MIG
-elk_white_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/ELK_WHITE_no_mig_optimized_results.xlsx")
+elk_white_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_no_mig_optimized_results.xlsx")
 
 elk_white_no_mig_opt_results_clean <- elk_white_no_mig_opt_results %>%
   mutate(Model = factor(Model),
@@ -76,7 +76,7 @@ ggplot(elk_white_no_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Rou
   scale_fill_manual(values = c("grey","grey","grey","grey"))
 
 #MODEL 2: SYM_MIG
-elk_white_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/ELK_WHITE_sym_mig_optimized_results.xlsx")
+elk_white_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_sym_mig_optimized_results.xlsx")
 
 elk_white_sym_mig_opt_results_clean <- elk_white_sym_mig_opt_results %>%
   mutate(Model = factor(Model),
@@ -91,4 +91,115 @@ ggplot(elk_white_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Ro
   theme(axis.title = element_text(size = 15)) +
   scale_fill_manual(values = c("grey","grey","grey","grey"))
 
+#MODEL 3: ASYM_MIG
+elk_white_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_asym_mig_optimized_results.xlsx")
+
+elk_white_asym_mig_opt_results_clean <- elk_white_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+ggplot(elk_white_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 4: SEC_CONTACT_SYM_MIG
+elk_white_sec_contact_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_sec_contact_sym_mig_optimized_results.xlsx")
+
+elk_white_sec_contact_sym_mig_opt_results_clean <- elk_white_sec_contact_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+ggplot(elk_white_sec_contact_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 5: SEC_CONTACT_ASYM_MIG
+elk_white_sec_contact_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_sec_contact_asym_mig_optimized_results.xlsx")
+
+elk_white_sec_contact_asym_mig_opt_results_clean <- elk_white_sec_contact_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+ggplot(elk_white_sec_contact_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 6: ANC_SYM_MIG
+elk_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_anc_sym_mig_optimized_results.xlsx")
+
+elk_white_anc_sym_mig_opt_results_clean <- elk_white_anc_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+ggplot(elk_white_anc_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 7: ANC_ASYM_MIG
+elk_white_anc_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_anc_asym_mig_optimized_results.xlsx")
+
+elk_white_anc_asym_mig_opt_results_clean <- elk_white_anc_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+ggplot(elk_white_anc_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 8: SYM_MIG_TWOEPOCH
+elk_white_sym_mig_twoepoc_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_sym_mig_twoepoch_optimized_results.xlsx")
+
+elk_white_sym_mig_twoepoch_opt_results_clean <- elk_white_sym_mig_twoepoc_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+ggplot(elk_white_sym_mig_twoepoch_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 9: ASYM_MIG_TWOEPOCH
+elk_white_asym_mig_twoepoc_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_asym_mig_twoepoch_optimized_results.xlsx")
+
+elk_white_asym_mig_twoepoch_opt_results_clean <- elk_white_asym_mig_twoepoc_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+ggplot(elk_white_asym_mig_twoepoch_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
 ```
