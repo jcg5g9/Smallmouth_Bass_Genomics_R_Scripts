@@ -713,9 +713,9 @@ illi_skia_mod5 <- ggplot(illi_skia_sec_contact_asym_mig_opt_results_clean, aes(x
   theme(axis.title.y = element_blank())
 
 #MODEL 6: ANC_SYM_MIG
-eilli_skia_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_anc_sym_mig_optimized_results.xlsx")
+illi_skia_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_anc_sym_mig_optimized_results.xlsx")
 
-illi_skia_anc_sym_mig_opt_results_clean <- illi_skia_anc_sym_mig_opt_results %>%
+illi_skia_anc_sym_mig_opt_results_clean <- eilli_skia_anc_sym_mig_opt_results %>%
   mutate(Model = factor(Model),
          Round = factor(Round))
 
