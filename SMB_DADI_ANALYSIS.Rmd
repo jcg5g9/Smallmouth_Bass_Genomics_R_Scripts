@@ -341,7 +341,7 @@ bayou_white_mod5 <- ggplot(bayou_white_sec_contact_asym_mig_opt_results_clean, a
   theme(axis.title.y = element_blank())
 
 #MODEL 6: ANC_SYM_MIG
-ebayou_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_anc_sym_mig_optimized_results.xlsx")
+bayou_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_anc_sym_mig_optimized_results.xlsx")
 
 bayou_white_anc_sym_mig_opt_results_clean <- bayou_white_anc_sym_mig_opt_results %>%
   mutate(Model = factor(Model),
