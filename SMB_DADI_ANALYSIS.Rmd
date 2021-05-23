@@ -527,7 +527,7 @@ uppark_white_mod5 <- ggplot(uppark_white_sec_contact_asym_mig_opt_results_clean,
   theme(axis.title.y = element_blank())
 
 #MODEL 6: ANC_SYM_MIG
-euppark_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_anc_sym_mig_optimized_results.xlsx")
+uppark_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_anc_sym_mig_optimized_results.xlsx")
 
 uppark_white_anc_sym_mig_opt_results_clean <- uppark_white_anc_sym_mig_opt_results %>%
   mutate(Model = factor(Model),
