@@ -72,10 +72,10 @@ elk_white_mod1 <- ggplot(elk_white_no_mig_opt_results_clean, aes(x = Round, y = 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, no migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "NM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank())
 
@@ -90,10 +90,10 @@ elk_white_mod2 <- ggplot(elk_white_sym_mig_opt_results_clean, aes(x = Round, y =
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -109,10 +109,10 @@ elk_white_mod3 <- ggplot(elk_white_asym_mig_opt_results_clean, aes(x = Round, y 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -128,10 +128,10 @@ elk_white_mod4 <- ggplot(elk_white_sec_contact_sym_mig_opt_results_clean, aes(x 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, symmetric secondary contact") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCSM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank())
 
@@ -146,16 +146,16 @@ elk_white_mod5 <- ggplot(elk_white_sec_contact_asym_mig_opt_results_clean, aes(x
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, asymmetric secondary contact") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCAM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
 
 #MODEL 6: ANC_SYM_MIG
-eelk_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_anc_sym_mig_optimized_results.xlsx")
+elk_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_anc_sym_mig_optimized_results.xlsx")
 
 elk_white_anc_sym_mig_opt_results_clean <- elk_white_anc_sym_mig_opt_results %>%
   mutate(Model = factor(Model),
@@ -165,10 +165,10 @@ elk_white_mod6 <- ggplot(elk_white_anc_sym_mig_opt_results_clean, aes(x = Round,
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, ancient symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "ASM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -184,10 +184,10 @@ elk_white_mod7 <- ggplot(elk_white_anc_asym_mig_opt_results_clean, aes(x = Round
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, ancient asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AAM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey"))
 
 #MODEL 8: SYM_MIG_TWOEPOCH
@@ -201,10 +201,10 @@ elk_white_mod8 <- ggplot(elk_white_sym_mig_twoepoch_opt_results_clean, aes(x = R
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, two epoch symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM2E") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) + 
   theme(axis.title.y = element_blank())
 
@@ -219,10 +219,10 @@ elk_white_mod9 <- ggplot(elk_white_asym_mig_twoepoch_opt_results_clean, aes(x = 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, two epoch asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM2E") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) + 
   theme(axis.title.y = element_blank())
 
@@ -240,7 +240,8 @@ plot_grid(elk_white_mod1,
           nrow = 3,
           ncol = 3, 
           labels = c("a","b","c","d","e","f","g","h","i"),
-          label_size = 25)
+          label_size = 25,
+          label_y = 1.02)
 
 dev.off()
 ```
@@ -258,10 +259,10 @@ bayou_white_mod1 <- ggplot(bayou_white_no_mig_opt_results_clean, aes(x = Round, 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, no migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "NM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank())
 
@@ -276,10 +277,10 @@ bayou_white_mod2 <- ggplot(bayou_white_sym_mig_opt_results_clean, aes(x = Round,
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -295,10 +296,10 @@ bayou_white_mod3 <- ggplot(bayou_white_asym_mig_opt_results_clean, aes(x = Round
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -314,10 +315,10 @@ bayou_white_mod4 <- ggplot(bayou_white_sec_contact_sym_mig_opt_results_clean, ae
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, symmetric secondary contact") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCSM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank())
 
@@ -332,10 +333,10 @@ bayou_white_mod5 <- ggplot(bayou_white_sec_contact_asym_mig_opt_results_clean, a
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, asymmetric secondary contact") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCAM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -351,10 +352,10 @@ bayou_white_mod6 <- ggplot(bayou_white_anc_sym_mig_opt_results_clean, aes(x = Ro
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, ancient symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "ASM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -370,10 +371,10 @@ bayou_white_mod7 <- ggplot(bayou_white_anc_asym_mig_opt_results_clean, aes(x = R
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, ancient asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AAM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey"))
 
 #MODEL 8: SYM_MIG_TWOEPOCH
@@ -387,10 +388,10 @@ bayou_white_mod8 <- ggplot(bayou_white_sym_mig_twoepoch_opt_results_clean, aes(x
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, two epoch symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM2E") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) + 
   theme(axis.title.y = element_blank())
 
@@ -405,10 +406,10 @@ bayou_white_mod9 <- ggplot(bayou_white_asym_mig_twoepoch_opt_results_clean, aes(
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, two epoch asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM2E") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) + 
   theme(axis.title.y = element_blank())
 
@@ -426,7 +427,8 @@ plot_grid(bayou_white_mod1,
           nrow = 3,
           ncol = 3, 
           labels = c("a","b","c","d","e","f","g","h","i"),
-          label_size = 25)
+          label_size = 25,
+          label_y = 1.02)
 
 dev.off()
 ```
@@ -444,10 +446,10 @@ uppark_white_mod1 <- ggplot(uppark_white_no_mig_opt_results_clean, aes(x = Round
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, no migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "NM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank())
 
@@ -462,10 +464,10 @@ uppark_white_mod2 <- ggplot(uppark_white_sym_mig_opt_results_clean, aes(x = Roun
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -481,10 +483,10 @@ uppark_white_mod3 <- ggplot(uppark_white_asym_mig_opt_results_clean, aes(x = Rou
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -500,10 +502,10 @@ uppark_white_mod4 <- ggplot(uppark_white_sec_contact_sym_mig_opt_results_clean, 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, symmetric secondary contact") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCSM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank())
 
@@ -518,10 +520,10 @@ uppark_white_mod5 <- ggplot(uppark_white_sec_contact_asym_mig_opt_results_clean,
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, asymmetric secondary contact") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCAM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -537,10 +539,10 @@ uppark_white_mod6 <- ggplot(uppark_white_anc_sym_mig_opt_results_clean, aes(x = 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, ancient symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "ASM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -556,10 +558,10 @@ uppark_white_mod7 <- ggplot(uppark_white_anc_asym_mig_opt_results_clean, aes(x =
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, ancient asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AAM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey"))
 
 #MODEL 8: SYM_MIG_TWOEPOCH
@@ -573,10 +575,10 @@ uppark_white_mod8 <- ggplot(uppark_white_sym_mig_twoepoch_opt_results_clean, aes
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, two epoch symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM2E") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) + 
   theme(axis.title.y = element_blank())
 
@@ -591,10 +593,10 @@ uppark_white_mod9 <- ggplot(uppark_white_asym_mig_twoepoch_opt_results_clean, ae
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, two epoch asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM2E") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) + 
   theme(axis.title.y = element_blank())
 
@@ -612,7 +614,8 @@ plot_grid(uppark_white_mod1,
           nrow = 3,
           ncol = 3, 
           labels = c("a","b","c","d","e","f","g","h","i"),
-          label_size = 25)
+          label_size = 25,
+          label_y = 1.02)
 
 dev.off()
 ```
@@ -630,10 +633,10 @@ illi_skia_mod1 <- ggplot(illi_skia_no_mig_opt_results_clean, aes(x = Round, y = 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, no migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "NM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank())
 
@@ -648,10 +651,10 @@ illi_skia_mod2 <- ggplot(illi_skia_sym_mig_opt_results_clean, aes(x = Round, y =
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -667,10 +670,10 @@ illi_skia_mod3 <- ggplot(illi_skia_asym_mig_opt_results_clean, aes(x = Round, y 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -686,10 +689,10 @@ illi_skia_mod4 <- ggplot(illi_skia_sec_contact_sym_mig_opt_results_clean, aes(x 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, symmetric secondary contact") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCSM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank())
 
@@ -704,10 +707,10 @@ illi_skia_mod5 <- ggplot(illi_skia_sec_contact_asym_mig_opt_results_clean, aes(x
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, asymmetric secondary contact") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCAM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -715,7 +718,7 @@ illi_skia_mod5 <- ggplot(illi_skia_sec_contact_asym_mig_opt_results_clean, aes(x
 #MODEL 6: ANC_SYM_MIG
 illi_skia_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_anc_sym_mig_optimized_results.xlsx")
 
-illi_skia_anc_sym_mig_opt_results_clean <- eilli_skia_anc_sym_mig_opt_results %>%
+illi_skia_anc_sym_mig_opt_results_clean <- illi_skia_anc_sym_mig_opt_results %>%
   mutate(Model = factor(Model),
          Round = factor(Round))
 
@@ -723,10 +726,10 @@ illi_skia_mod6 <- ggplot(illi_skia_anc_sym_mig_opt_results_clean, aes(x = Round,
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, ancient symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "ASM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) +
   theme(axis.title.x = element_blank()) + 
   theme(axis.title.y = element_blank())
@@ -742,10 +745,10 @@ illi_skia_mod7 <- ggplot(illi_skia_anc_asym_mig_opt_results_clean, aes(x = Round
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, ancient asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AAM") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey"))
 
 #MODEL 8: SYM_MIG_TWOEPOCH
@@ -759,10 +762,10 @@ illi_skia_mod8 <- ggplot(illi_skia_sym_mig_twoepoch_opt_results_clean, aes(x = R
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, two epoch symmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM2E") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) + 
   theme(axis.title.y = element_blank())
 
@@ -777,10 +780,10 @@ illi_skia_mod9 <- ggplot(illi_skia_asym_mig_twoepoch_opt_results_clean, aes(x = 
   geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
   geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
   theme_set(theme_cowplot(12)) +
-  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "Divergence, two epoch asymmetric migration") +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM2E") +
   theme(axis.text = element_text(size = 15)) +
   theme(axis.title = element_text(size = 15)) +
-  theme(title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
   scale_fill_manual(values = c("grey","grey","grey","grey")) + 
   theme(axis.title.y = element_blank())
 
@@ -798,7 +801,8 @@ plot_grid(illi_skia_mod1,
           nrow = 3,
           ncol = 3, 
           labels = c("a","b","c","d","e","f","g","h","i"),
-          label_size = 25)
+          label_size = 25,
+          label_y = 1.02)
 
 dev.off()
 ```
