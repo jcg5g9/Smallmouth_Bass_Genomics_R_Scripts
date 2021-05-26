@@ -59,6 +59,8 @@ Charles, K.C., Bell, R.C., Blackburn, D.C., Burger, M., Fujita, M.K.,
 
 # DADI Optimization
 
+## DIVERSIFICATION MODELS
+
 ## ELK and WHITE 
 ```{r}
 #MODEL 1: NO_MIG
@@ -801,6 +803,1239 @@ plot_grid(illi_skia_mod1,
           nrow = 3,
           ncol = 3, 
           labels = c("a","b","c","d","e","f","g","h","i"),
+          label_size = 25,
+          label_y = 1.02)
+
+dev.off()
+```
+
+## DIVERSIFICATION MODELS
+
+## ELK and WHITE 
+```{r}
+#MODEL 1: NO_MIG
+elk_white_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_no_mig_optimized_results.xlsx")
+
+elk_white_no_mig_opt_results_clean <- elk_white_no_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_mod1 <- ggplot(elk_white_no_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "NM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 2: SYM_MIG
+elk_white_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_sym_mig_optimized_results.xlsx")
+
+elk_white_sym_mig_opt_results_clean <- elk_white_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_mod2 <- ggplot(elk_white_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 3: ASYM_MIG
+elk_white_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_asym_mig_optimized_results.xlsx")
+
+elk_white_asym_mig_opt_results_clean <- elk_white_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_mod3 <- ggplot(elk_white_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 4: SEC_CONTACT_SYM_MIG
+elk_white_sec_contact_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_sec_contact_sym_mig_optimized_results.xlsx")
+
+elk_white_sec_contact_sym_mig_opt_results_clean <- elk_white_sec_contact_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_mod4 <- ggplot(elk_white_sec_contact_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCSM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 5: SEC_CONTACT_ASYM_MIG
+elk_white_sec_contact_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_sec_contact_asym_mig_optimized_results.xlsx")
+
+elk_white_sec_contact_asym_mig_opt_results_clean <- elk_white_sec_contact_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_mod5 <- ggplot(elk_white_sec_contact_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 6: ANC_SYM_MIG
+elk_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_anc_sym_mig_optimized_results.xlsx")
+
+elk_white_anc_sym_mig_opt_results_clean <- elk_white_anc_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_mod6 <- ggplot(elk_white_anc_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "ASM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 7: ANC_ASYM_MIG
+elk_white_anc_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_anc_asym_mig_optimized_results.xlsx")
+
+elk_white_anc_asym_mig_opt_results_clean <- elk_white_anc_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_mod7 <- ggplot(elk_white_anc_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 8: SYM_MIG_TWOEPOCH
+elk_white_sym_mig_twoepoc_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_sym_mig_twoepoch_optimized_results.xlsx")
+
+elk_white_sym_mig_twoepoch_opt_results_clean <- elk_white_sym_mig_twoepoc_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_mod8 <- ggplot(elk_white_sym_mig_twoepoch_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM2E") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 9: ASYM_MIG_TWOEPOCH
+elk_white_asym_mig_twoepoc_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_asym_mig_twoepoch_optimized_results.xlsx")
+
+elk_white_asym_mig_twoepoch_opt_results_clean <- elk_white_asym_mig_twoepoc_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_mod9 <- ggplot(elk_white_asym_mig_twoepoch_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM2E") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+pdf("../../visualization/dadi_figures/elk_white_optimizations.pdf", height = 20, width = 20)
+
+plot_grid(elk_white_mod1, 
+          elk_white_mod2, 
+          elk_white_mod3, 
+          elk_white_mod4, 
+          elk_white_mod5, 
+          elk_white_mod6, 
+          elk_white_mod7, 
+          elk_white_mod8, 
+          elk_white_mod9,
+          nrow = 3,
+          ncol = 3, 
+          labels = c("a","b","c","d","e","f","g","h","i"),
+          label_size = 25,
+          label_y = 1.02)
+
+dev.off()
+```
+
+## BAYOU and WHITE 
+```{r}
+#MODEL 1: NO_MIG
+bayou_white_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_no_mig_optimized_results.xlsx")
+
+bayou_white_no_mig_opt_results_clean <- bayou_white_no_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_mod1 <- ggplot(bayou_white_no_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "NM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 2: SYM_MIG
+bayou_white_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_sym_mig_optimized_results.xlsx")
+
+bayou_white_sym_mig_opt_results_clean <- bayou_white_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_mod2 <- ggplot(bayou_white_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 3: ASYM_MIG
+bayou_white_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_asym_mig_optimized_results.xlsx")
+
+bayou_white_asym_mig_opt_results_clean <- bayou_white_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_mod3 <- ggplot(bayou_white_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 4: SEC_CONTACT_SYM_MIG
+bayou_white_sec_contact_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_sec_contact_sym_mig_optimized_results.xlsx")
+
+bayou_white_sec_contact_sym_mig_opt_results_clean <- bayou_white_sec_contact_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_mod4 <- ggplot(bayou_white_sec_contact_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCSM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 5: SEC_CONTACT_ASYM_MIG
+bayou_white_sec_contact_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_sec_contact_asym_mig_optimized_results.xlsx")
+
+bayou_white_sec_contact_asym_mig_opt_results_clean <- bayou_white_sec_contact_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_mod5 <- ggplot(bayou_white_sec_contact_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 6: ANC_SYM_MIG
+bayou_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_anc_sym_mig_optimized_results.xlsx")
+
+bayou_white_anc_sym_mig_opt_results_clean <- bayou_white_anc_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_mod6 <- ggplot(bayou_white_anc_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "ASM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 7: ANC_ASYM_MIG
+bayou_white_anc_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_anc_asym_mig_optimized_results.xlsx")
+
+bayou_white_anc_asym_mig_opt_results_clean <- bayou_white_anc_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_mod7 <- ggplot(bayou_white_anc_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 8: SYM_MIG_TWOEPOCH
+bayou_white_sym_mig_twoepoc_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_sym_mig_twoepoch_optimized_results.xlsx")
+
+bayou_white_sym_mig_twoepoch_opt_results_clean <- bayou_white_sym_mig_twoepoc_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_mod8 <- ggplot(bayou_white_sym_mig_twoepoch_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM2E") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 9: ASYM_MIG_TWOEPOCH
+bayou_white_asym_mig_twoepoc_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_asym_mig_twoepoch_optimized_results.xlsx")
+
+bayou_white_asym_mig_twoepoch_opt_results_clean <- bayou_white_asym_mig_twoepoc_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_mod9 <- ggplot(bayou_white_asym_mig_twoepoch_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM2E") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+pdf("../../visualization/dadi_figures/bayou_white_optimizations.pdf", height = 20, width = 20)
+
+plot_grid(bayou_white_mod1, 
+          bayou_white_mod2, 
+          bayou_white_mod3, 
+          bayou_white_mod4, 
+          bayou_white_mod5, 
+          bayou_white_mod6, 
+          bayou_white_mod7, 
+          bayou_white_mod8, 
+          bayou_white_mod9,
+          nrow = 3,
+          ncol = 3, 
+          labels = c("a","b","c","d","e","f","g","h","i"),
+          label_size = 25,
+          label_y = 1.02)
+
+dev.off()
+```
+
+## UPPARK and WHITE 
+```{r}
+#MODEL 1: NO_MIG
+uppark_white_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_no_mig_optimized_results.xlsx")
+
+uppark_white_no_mig_opt_results_clean <- uppark_white_no_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_mod1 <- ggplot(uppark_white_no_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "NM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 2: SYM_MIG
+uppark_white_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_sym_mig_optimized_results.xlsx")
+
+uppark_white_sym_mig_opt_results_clean <- uppark_white_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_mod2 <- ggplot(uppark_white_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 3: ASYM_MIG
+uppark_white_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_asym_mig_optimized_results.xlsx")
+
+uppark_white_asym_mig_opt_results_clean <- uppark_white_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_mod3 <- ggplot(uppark_white_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 4: SEC_CONTACT_SYM_MIG
+uppark_white_sec_contact_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_sec_contact_sym_mig_optimized_results.xlsx")
+
+uppark_white_sec_contact_sym_mig_opt_results_clean <- uppark_white_sec_contact_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_mod4 <- ggplot(uppark_white_sec_contact_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCSM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 5: SEC_CONTACT_ASYM_MIG
+uppark_white_sec_contact_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_sec_contact_asym_mig_optimized_results.xlsx")
+
+uppark_white_sec_contact_asym_mig_opt_results_clean <- uppark_white_sec_contact_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_mod5 <- ggplot(uppark_white_sec_contact_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SCAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 6: ANC_SYM_MIG
+uppark_white_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_anc_sym_mig_optimized_results.xlsx")
+
+uppark_white_anc_sym_mig_opt_results_clean <- uppark_white_anc_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_mod6 <- ggplot(uppark_white_anc_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "ASM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 7: ANC_ASYM_MIG
+uppark_white_anc_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_anc_asym_mig_optimized_results.xlsx")
+
+uppark_white_anc_asym_mig_opt_results_clean <- uppark_white_anc_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_mod7 <- ggplot(uppark_white_anc_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 8: SYM_MIG_TWOEPOCH
+uppark_white_sym_mig_twoepoc_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_sym_mig_twoepoch_optimized_results.xlsx")
+
+uppark_white_sym_mig_twoepoch_opt_results_clean <- uppark_white_sym_mig_twoepoc_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_mod8 <- ggplot(uppark_white_sym_mig_twoepoch_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "SM2E") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 9: ASYM_MIG_TWOEPOCH
+uppark_white_asym_mig_twoepoc_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_asym_mig_twoepoch_optimized_results.xlsx")
+
+uppark_white_asym_mig_twoepoch_opt_results_clean <- uppark_white_asym_mig_twoepoc_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_mod9 <- ggplot(uppark_white_asym_mig_twoepoch_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "AM2E") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+pdf("../../visualization/dadi_figures/uppark_white_optimizations.pdf", height = 20, width = 20)
+
+plot_grid(uppark_white_mod1, 
+          uppark_white_mod2, 
+          uppark_white_mod3, 
+          uppark_white_mod4, 
+          uppark_white_mod5, 
+          uppark_white_mod6, 
+          uppark_white_mod7, 
+          uppark_white_mod8, 
+          uppark_white_mod9,
+          nrow = 3,
+          ncol = 3, 
+          labels = c("a","b","c","d","e","f","g","h","i"),
+          label_size = 25,
+          label_y = 1.02)
+
+dev.off()
+```
+
+## ELK and WHTIE 
+```{r}
+#MODEL 1: VIC_NO_MIG
+elk_white_vic_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_vic_no_mig_optimized_results.xlsx")
+
+elk_white_vic_no_mig_opt_results_clean <- elk_white_vic_no_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_island_mod1 <- ggplot(elk_white_vic_no_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 2: VIC_ANC_SYM_MIG
+elk_white_vic_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_vic_anc_sym_mig_optimized_results.xlsx")
+
+elk_white_vic_anc_sym_mig_opt_results_clean <- elk_white_vic_anc_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_island_mod2 <- ggplot(elk_white_vic_anc_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VASM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 3: VIC_ANC_ASYM_MIG
+elk_white_vic_anc_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_vic_anc_asym_mig_optimized_results.xlsx")
+
+elk_white_vic_anc_asym_mig_opt_results_clean <- elk_white_vic_anc_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_island_mod3 <- ggplot(elk_white_vic_anc_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VAAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 4: VIC_SEC_CONTACT_SYM_MIG
+elk_white_vic_sec_contact_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_vic_sec_contact_sym_mig_optimized_results.xlsx")
+
+elk_white_vic_sec_contact_sym_mig_opt_results_clean <- elk_white_vic_sec_contact_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_island_mod4 <- ggplot(elk_white_vic_sec_contact_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VSCSM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 5: VIC_SEC_CONTACT_ASYM_MIG
+elk_white_vic_sec_contact_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_vic_sec_contact_asym_mig_optimized_results.xlsx")
+
+elk_white_vic_sec_contact_asym_mig_opt_results_clean <- elk_white_vic_sec_contact_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_island_mod5 <- ggplot(elk_white_vic_sec_contact_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VSCAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 6: VIC_NO_MIG_ADMIX_EARLY
+elk_white_vic_no_mig_admix_early_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_vic_no_mig_admix_early_optimized_results.xlsx")
+
+elk_white_vic_no_mig_admix_early_opt_results_clean <- elk_white_vic_no_mig_admix_early_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_island_mod6 <- ggplot(elk_white_vic_no_mig_admix_early_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNMAE") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) 
+
+#MODEL 7: VIC_NO_MIG_ADMIX_LATE
+elk_white_vic_no_mig_admix_late_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_vic_no_mig_admix_late_optimized_results.xlsx")
+
+elk_white_vic_no_mig_admix_late_opt_results_clean <- elk_white_vic_no_mig_admix_late_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_island_mod7 <- ggplot(elk_white_vic_no_mig_admix_late_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNMAL") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 8: VIC_TWO_EPOCH_ADMIX
+elk_white_vic_two_epoch_admix_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/elk_white/ELK_WHITE_vic_two_epoch_admix_optimized_results.xlsx")
+
+elk_white_vic_two_epoch_admix_opt_results_clean <- elk_white_vic_two_epoch_admix_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+elk_white_island_mod8 <- ggplot(elk_white_vic_two_epoch_admix_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "V2EA") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+
+pdf("../../visualization/dadi_figures/elk_white_island_optimizations.pdf", height = 20, width = 15)
+
+plot_grid(elk_white_island_mod1, 
+          elk_white_island_mod2, 
+          elk_white_island_mod3, 
+          elk_white_island_mod4, 
+          elk_white_island_mod5, 
+          elk_white_island_mod6, 
+          elk_white_island_mod7, 
+          elk_white_island_mod8,
+          nrow = 4,
+          ncol = 2, 
+          labels = c("a","b","c","d","e","f","g","i"),
+          label_size = 25,
+          label_y = 1.02)
+
+dev.off()
+```
+
+## BAYOU and WHTIE 
+```{r}
+#MODEL 1: VIC_NO_MIG
+bayou_white_vic_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_vic_no_mig_optimized_results.xlsx")
+
+bayou_white_vic_no_mig_opt_results_clean <- bayou_white_vic_no_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_island_mod1 <- ggplot(bayou_white_vic_no_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 2: VIC_ANC_SYM_MIG
+bayou_white_vic_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_vic_anc_sym_mig_optimized_results.xlsx")
+
+bayou_white_vic_anc_sym_mig_opt_results_clean <- bayou_white_vic_anc_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_island_mod2 <- ggplot(bayou_white_vic_anc_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VASM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 3: VIC_ANC_ASYM_MIG
+bayou_white_vic_anc_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_vic_anc_asym_mig_optimized_results.xlsx")
+
+bayou_white_vic_anc_asym_mig_opt_results_clean <- bayou_white_vic_anc_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_island_mod3 <- ggplot(bayou_white_vic_anc_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VAAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 4: VIC_SEC_CONTACT_SYM_MIG
+bayou_white_vic_sec_contact_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_vic_sec_contact_sym_mig_optimized_results.xlsx")
+
+bayou_white_vic_sec_contact_sym_mig_opt_results_clean <- bayou_white_vic_sec_contact_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_island_mod4 <- ggplot(bayou_white_vic_sec_contact_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VSCSM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 5: VIC_SEC_CONTACT_ASYM_MIG
+bayou_white_vic_sec_contact_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_vic_sec_contact_asym_mig_optimized_results.xlsx")
+
+bayou_white_vic_sec_contact_asym_mig_opt_results_clean <- bayou_white_vic_sec_contact_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_island_mod5 <- ggplot(bayou_white_vic_sec_contact_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VSCAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 6: VIC_NO_MIG_ADMIX_EARLY
+bayou_white_vic_no_mig_admix_early_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_vic_no_mig_admix_early_optimized_results.xlsx")
+
+bayou_white_vic_no_mig_admix_early_opt_results_clean <- bayou_white_vic_no_mig_admix_early_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_island_mod6 <- ggplot(bayou_white_vic_no_mig_admix_early_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNMAE") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) 
+
+#MODEL 7: VIC_NO_MIG_ADMIX_LATE
+bayou_white_vic_no_mig_admix_late_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_vic_no_mig_admix_late_optimized_results.xlsx")
+
+bayou_white_vic_no_mig_admix_late_opt_results_clean <- bayou_white_vic_no_mig_admix_late_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_island_mod7 <- ggplot(bayou_white_vic_no_mig_admix_late_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNMAL") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 8: VIC_TWO_EPOCH_ADMIX
+bayou_white_vic_two_epoch_admix_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/bayou_white/BAYOU_WHITE_vic_two_epoch_admix_optimized_results.xlsx")
+
+bayou_white_vic_two_epoch_admix_opt_results_clean <- bayou_white_vic_two_epoch_admix_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+bayou_white_island_mod8 <- ggplot(bayou_white_vic_two_epoch_admix_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "V2EA") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+
+pdf("../../visualization/dadi_figures/bayou_white_island_optimizations.pdf", height = 20, width = 15)
+
+plot_grid(bayou_white_island_mod1, 
+          bayou_white_island_mod2, 
+          bayou_white_island_mod3, 
+          bayou_white_island_mod4, 
+          bayou_white_island_mod5, 
+          bayou_white_island_mod6, 
+          bayou_white_island_mod7, 
+          bayou_white_island_mod8,
+          nrow = 4,
+          ncol = 2, 
+          labels = c("a","b","c","d","e","f","g","i"),
+          label_size = 25,
+          label_y = 1.02)
+
+dev.off()
+```
+
+## UPPARK and WHTIE 
+```{r}
+#MODEL 1: VIC_NO_MIG
+uppark_white_vic_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_vic_no_mig_optimized_results.xlsx")
+
+uppark_white_vic_no_mig_opt_results_clean <- uppark_white_vic_no_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_island_mod1 <- ggplot(uppark_white_vic_no_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 2: VIC_ANC_SYM_MIG
+uppark_white_vic_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_vic_anc_sym_mig_optimized_results.xlsx")
+
+uppark_white_vic_anc_sym_mig_opt_results_clean <- uppark_white_vic_anc_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_island_mod2 <- ggplot(uppark_white_vic_anc_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VASM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 3: VIC_ANC_ASYM_MIG
+uppark_white_vic_anc_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_vic_anc_asym_mig_optimized_results.xlsx")
+
+uppark_white_vic_anc_asym_mig_opt_results_clean <- uppark_white_vic_anc_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_island_mod3 <- ggplot(uppark_white_vic_anc_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VAAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 4: VIC_SEC_CONTACT_SYM_MIG
+uppark_white_vic_sec_contact_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_vic_sec_contact_sym_mig_optimized_results.xlsx")
+
+uppark_white_vic_sec_contact_sym_mig_opt_results_clean <- uppark_white_vic_sec_contact_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_island_mod4 <- ggplot(uppark_white_vic_sec_contact_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VSCSM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 5: VIC_SEC_CONTACT_ASYM_MIG
+uppark_white_vic_sec_contact_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_vic_sec_contact_asym_mig_optimized_results.xlsx")
+
+uppark_white_vic_sec_contact_asym_mig_opt_results_clean <- uppark_white_vic_sec_contact_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_island_mod5 <- ggplot(uppark_white_vic_sec_contact_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VSCAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 6: VIC_NO_MIG_ADMIX_EARLY
+uppark_white_vic_no_mig_admix_early_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_vic_no_mig_admix_early_optimized_results.xlsx")
+
+uppark_white_vic_no_mig_admix_early_opt_results_clean <- uppark_white_vic_no_mig_admix_early_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_island_mod6 <- ggplot(uppark_white_vic_no_mig_admix_early_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNMAE") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) 
+
+#MODEL 7: VIC_NO_MIG_ADMIX_LATE
+uppark_white_vic_no_mig_admix_late_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_vic_no_mig_admix_late_optimized_results.xlsx")
+
+uppark_white_vic_no_mig_admix_late_opt_results_clean <- uppark_white_vic_no_mig_admix_late_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_island_mod7 <- ggplot(uppark_white_vic_no_mig_admix_late_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNMAL") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 8: VIC_TWO_EPOCH_ADMIX
+uppark_white_vic_two_epoch_admix_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/uppark_white/UPPARK_WHITE_vic_two_epoch_admix_optimized_results.xlsx")
+
+uppark_white_vic_two_epoch_admix_opt_results_clean <- uppark_white_vic_two_epoch_admix_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+uppark_white_island_mod8 <- ggplot(uppark_white_vic_two_epoch_admix_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "V2EA") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+
+pdf("../../visualization/dadi_figures/uppark_white_island_optimizations.pdf", height = 20, width = 15)
+
+plot_grid(uppark_white_island_mod1, 
+          uppark_white_island_mod2, 
+          uppark_white_island_mod3, 
+          uppark_white_island_mod4, 
+          uppark_white_island_mod5, 
+          uppark_white_island_mod6, 
+          uppark_white_island_mod7, 
+          uppark_white_island_mod8,
+          nrow = 4,
+          ncol = 2, 
+          labels = c("a","b","c","d","e","f","g","i"),
+          label_size = 25,
+          label_y = 1.02)
+
+dev.off()
+```
+
+
+
+## ILLI and SKIA 
+```{r}
+#MODEL 1: VIC_NO_MIG
+illi_skia_vic_no_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_vic_no_mig_optimized_results.xlsx")
+
+illi_skia_vic_no_mig_opt_results_clean <- illi_skia_vic_no_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+illi_skia_island_mod1 <- ggplot(illi_skia_vic_no_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 2: VIC_ANC_SYM_MIG
+illi_skia_vic_anc_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_vic_anc_sym_mig_optimized_results.xlsx")
+
+illi_skia_vic_anc_sym_mig_opt_results_clean <- illi_skia_vic_anc_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+illi_skia_island_mod2 <- ggplot(illi_skia_vic_anc_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VASM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 3: VIC_ANC_ASYM_MIG
+illi_skia_vic_anc_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_vic_anc_asym_mig_optimized_results.xlsx")
+
+illi_skia_vic_anc_asym_mig_opt_results_clean <- illi_skia_vic_anc_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+illi_skia_island_mod3 <- ggplot(illi_skia_vic_anc_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VAAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 4: VIC_SEC_CONTACT_SYM_MIG
+illi_skia_vic_sec_contact_sym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_vic_sec_contact_sym_mig_optimized_results.xlsx")
+
+illi_skia_vic_sec_contact_sym_mig_opt_results_clean <- illi_skia_vic_sec_contact_sym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+illi_skia_island_mod4 <- ggplot(illi_skia_vic_sec_contact_sym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VSCSM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey"))
+
+#MODEL 5: VIC_SEC_CONTACT_ASYM_MIG
+illi_skia_vic_sec_contact_asym_mig_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_vic_sec_contact_asym_mig_optimized_results.xlsx")
+
+illi_skia_vic_sec_contact_asym_mig_opt_results_clean <- illi_skia_vic_sec_contact_asym_mig_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+illi_skia_island_mod5 <- ggplot(illi_skia_vic_sec_contact_asym_mig_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VSCAM") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) + 
+  theme(axis.title.y = element_blank())
+
+#MODEL 6: VIC_NO_MIG_ADMIX_EARLY
+illi_skia_vic_no_mig_admix_early_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_vic_no_mig_admix_early_optimized_results.xlsx")
+
+illi_skia_vic_no_mig_admix_early_opt_results_clean <- illi_skia_vic_no_mig_admix_early_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+illi_skia_island_mod6 <- ggplot(illi_skia_vic_no_mig_admix_early_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNMAE") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank()) 
+
+#MODEL 7: VIC_NO_MIG_ADMIX_LATE
+illi_skia_vic_no_mig_admix_late_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_vic_no_mig_admix_late_optimized_results.xlsx")
+
+illi_skia_vic_no_mig_admix_late_opt_results_clean <- illi_skia_vic_no_mig_admix_late_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+illi_skia_island_mod7 <- ggplot(illi_skia_vic_no_mig_admix_late_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "VNMAL") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) +
+  theme(axis.title.x = element_blank())
+
+#MODEL 8: VIC_TWO_EPOCH_ADMIX
+illi_skia_vic_two_epoch_admix_opt_results <- read_excel("../dadi_analysis/analysis/excel_file_results/illi_skia/ILLI_SKIA_vic_two_epoch_admix_optimized_results.xlsx")
+
+illi_skia_vic_two_epoch_admix_opt_results_clean <- illi_skia_vic_two_epoch_admix_opt_results %>%
+  mutate(Model = factor(Model),
+         Round = factor(Round))
+
+illi_skia_island_mod8 <- ggplot(illi_skia_vic_two_epoch_admix_opt_results_clean, aes(x = Round, y = loglik, fill = Round)) + 
+  geom_boxplot(show.legend = F, outlier.shape = NA, alpha = 0.6) +
+  geom_point(position = position_jitter(width = 0.2), alpha = 0.6, color = "black", pch = 21, show.legend = F) +
+  theme_set(theme_cowplot(12)) +
+  labs(x = "Optimization Round", y = "Log-likelihood Score", title = "V2EA") +
+  theme(axis.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 15)) +
+  theme(plot.title = element_text(size = 20, hjust = 0.5)) +
+  scale_fill_manual(values = c("grey","grey","grey","grey")) + 
+  theme(axis.title.y = element_blank())
+
+
+pdf("../../visualization/dadi_figures/illi_skia_island_optimizations.pdf", height = 20, width = 15)
+
+plot_grid(illi_skia_island_mod1, 
+          illi_skia_island_mod2, 
+          illi_skia_island_mod3, 
+          illi_skia_island_mod4, 
+          illi_skia_island_mod5, 
+          illi_skia_island_mod6, 
+          illi_skia_island_mod7, 
+          illi_skia_island_mod8,
+          nrow = 4,
+          ncol = 2, 
+          labels = c("a","b","c","d","e","f","g","i"),
           label_size = 25,
           label_y = 1.02)
 
