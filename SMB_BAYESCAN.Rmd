@@ -290,7 +290,7 @@ northern_bayes_plot <- ggplot(bayescan_northern_lineages_fst_not1000, aes(x = lo
 #Put Bayescan plots together
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/outlier_fst_figures/bayescan_plots.pdf", width=13, height=10)
 
-plot_grid(all_bayes_plot, smb_bayes_plot, neosho_bayes_plot, northern_bayes_plot, nrow = 2, align = "hv")
+plot_grid(all_bayes_plot, smb_bayes_plot, neosho_bayes_plot, northern_bayes_plot, nrow = 2, align = "hv", labels = c("a","b","c","d"), label_size = 25)
 
 dev.off()
 ```
