@@ -179,14 +179,14 @@ smb_outlier_dapc_plot <- ggplot(dapc_smb_outlier_LDs, aes(x = LD1, y = LD2, fill
 
 ###Neutral SNPs###
 smb_neutral_dapc_plot <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
-   geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = F) +
+   geom_point(aes(fill = pop), color = "black", pch = 21, size = 6, show.legend = T) +
    labs(x = "LD1", y = "LD2", fill = "Population") +
    scale_fill_manual(values = c("lightgreen", "sienna4","mediumpurple","forestgreen" ,"deepskyblue", "chocolate1", "navyblue","orchid1","deeppink2","deeppink2","orchid1")) +
    theme_set(theme_cowplot(12)) +
    theme(legend.title = element_text(size = 25)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 25)) +
-   theme(legend.position = c(0.2,0.7)) +
+   theme(legend.position = c(0.5,0.4)) +
    theme(legend.background = element_rect(color = "black", size = 0.5)) + 
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
