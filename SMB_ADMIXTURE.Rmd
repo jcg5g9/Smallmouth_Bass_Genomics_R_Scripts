@@ -313,9 +313,9 @@ plotQ(admixed_4,
 #For each admixture analysis that I ran, I conducted a 10-fold cross validation to obtain error values for each value of K. The K value with the lowest cross-validation error is the K that is most likely given the data. Here I am graphing the cross-validation error values across all K for each analysis (hierarchical analysis for all samples, INCLUDING the hybrid, and hierarchial analysis for all samples, EXCLUDING the hybrid)
 
 #Read in data for all samples INCLUDING the Hybrid (BFC10)
-cv_all <- read_excel("../../admixture_data/admixture_cv_data/cv_all.xlsx")
-cv_pure <- read_excel("../../admixture_data/admixture_cv_data/cv_pure.xlsx")
-cv_admixed <- read_excel("../../admixture_data/admixture_cv_data/cv_admixed.xlsx")
+cv_all <- read_excel("../../raw_data/admixture_data/admixture_cv_data/cv_all.xlsx")
+cv_pure <- read_excel("../../raw_data/admixture_data/admixture_cv_data/cv_pure.xlsx")
+cv_admixed <- read_excel("../../raw_data/admixture_data/admixture_cv_data/cv_admixed.xlsx")
 
 #Clean data for all samples, including the hybrid
 cv_all <- as.data.frame(cv_all)
@@ -360,6 +360,19 @@ cv_admixed_plot <- ggplot(cv_admixed, aes(x = k, y = cv)) +
    theme(axis.title.x = element_text(face = "italic")) + 
    theme(axis.title = element_text(size = 20))
 
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/admixture_figures/cv_plots/cv_error_plot_all_samples.pdf", width = 10, height = 5) 
+
+ggplot(cv_all, aes(x = k, y = cv)) + 
+   geom_point(size = 3) + 
+   geom_path(stat = "identity", size = 1) + 
+   scale_x_continuous("K", labels = as.character(cv_all$k), breaks = cv_all$k) + 
+   labs(x = "K", y = "10-Fold CV Error") + 
+   theme_set(theme_cowplot()) + 
+   theme(axis.text = element_text(size = 20)) + 
+   theme(axis.title.x = element_text(face = "italic")) + 
+   theme(axis.title = element_text(size = 20))
+
+dev.off()
 
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/admixture_figures/cv_plots/cv_error_plot_all_pure_samples.pdf", width = 8, height = 4) 
 
