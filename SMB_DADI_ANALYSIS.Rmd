@@ -922,3 +922,54 @@ plot_grid(illi_skia_mod1,
 
 dev.off()
 ```
+
+## Convert parameter estimates to biologically meaningful units
+```{r}
+#The formula for calulating Nref (number of individuals in the reference population, before divergence) is given by:
+      # theta = 4NrefLu, where L is the effective lenght of the genome explored in RADseq (Rougeux et al. 2017)
+
+#ELK and WHITE theta = 6367.420
+#ILLI and SKIA theta = 2854.340
+#UPPARK and WHITE theta = 3135.310
+#BAYOU and WHITE theta = 4965.440
+
+#Time units from dadi are in units of 2*Nref generations
+#Generation time in Smallmouth Bass is assumed to be 2 years, so this number gets multiplied by 2.
+
+#Calculate the size of the reference population
+Nref <- function(theta,num_snps,num_rad,rad_length,dadi_snps) {
+  eff_genome <- (dadi_snps*num_rad*rad_length)/num_snps
+  nref <- theta/(4*(0.000005)*eff_genome)
+  
+  return(nref)
+  
+}
+
+
+#calculate divergence time in years
+t_years <- function(nref,t_est,gen_time) {
+  t <- 2*nref*gen_time
+  t_year <- t_est*t
+  
+  return(t_year)
+}
+
+
+
+
+#ELK and WHITE 
+Nref(theta = 6367.420,num_snps = 127429,num_rad = 65360, rad_length = 96, dadi_snps = 24645)
+#78,232.31
+t_years( 262.3552,0.878,2)
+#274,751.9 years ago
+
+
+#ILLI and SKIA
+Nref(theta = 2854.340, num_snps = 127429, num_rad = 65360, rad_length = 96, dadi_snps = 24645)
+#17987.55
+t_years(117.6067,0.091,2)
+
+
+Nref(theta = 3135.310, num_snps = 127429, num_rad = 65360, rad_length = 96, dadi_snps = 24645)
+t_years(129.1834,16.128,2)
+```
