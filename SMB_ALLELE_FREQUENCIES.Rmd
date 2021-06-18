@@ -17,8 +17,6 @@ library(pophelper)
 library(PopGenome)
 library(pcadapt)
 library(ggforce)
-
-#this is a test for github
 ```
 
 ## Preliminary Data Analyses
@@ -457,6 +455,105 @@ plot_grid(prefilter, postfilter, ncol=2)
 
 dev.off()
 
+```
+
+## Allele frequency spectra for dadi analysis
+```{r}
+bayou_white_snp_data <- read_excel("../../raw_data/allele_frequency_data/dadi_bayou_white_snps.xlsx")
+elk_white_snp_data <- read_excel("../../raw_data/allele_frequency_data/dadi_elk_white_snps.xlsx")
+uppark_white_snp_data <- read_excel("../../raw_data/allele_frequency_data/dadi_uppark_white_snps.xlsx")
+illi_skia_snp_data <- read_excel("../../raw_data/allele_frequency_data/dadi_illi_skia_snps.xlsx")
+
+# Get minor alleles stacked up for bayou white
+bayou_minor_allele_ref <- bayou_white_snp_data %>%
+  filter(freq_ref < 0.5) #5,365
+
+bayou_minor_allele_alt <- bayou_white_snp_data %>%
+  filter(freq_alt < 0.5) #35,705
+
+bayou_minor_allele_ref_clean <- bayou_minor_allele_ref %>%
+  mutate(freq_min = freq_ref*1)
+
+bayou_minor_allele_alt_clean <- bayou_minor_allele_alt %>%
+  mutate(freq_min = freq_alt*1)
+
+bayou_minor_allele_full <- rbind(bayou_minor_allele_ref_clean, bayou_minor_allele_alt_clean)
+bayou_minor_allele_full$population <- c(rep("BAYOU and WHITE", times = 41070))
+
+
+# Get minor alleles stacked up for elk white
+elk_minor_allele_ref <- elk_white_snp_data %>%
+  filter(freq_ref < 0.5) #5,716
+
+elk_minor_allele_alt <- elk_white_snp_data %>%
+  filter(freq_alt < 0.5) #35,340
+
+elk_minor_allele_ref_clean <- elk_minor_allele_ref %>%
+  mutate(freq_min = freq_ref*1)
+
+elk_minor_allele_alt_clean <- elk_minor_allele_alt %>%
+  mutate(freq_min = freq_alt*1)
+
+elk_minor_allele_full <- rbind(elk_minor_allele_ref_clean, elk_minor_allele_alt_clean)
+elk_minor_allele_full$population <- c(rep("ELK and WHITE", times = 41056))
+
+
+# Get minor alleles stacked up for uppark white
+uppark_minor_allele_ref <- uppark_white_snp_data %>%
+  filter(freq_ref < 0.5) #4,226
+
+uppark_minor_allele_alt <- uppark_white_snp_data %>%
+  filter(freq_alt < 0.5) #36,759
+
+uppark_minor_allele_ref_clean <- uppark_minor_allele_ref %>%
+  mutate(freq_min = freq_ref*1)
+
+uppark_minor_allele_alt_clean <- uppark_minor_allele_alt %>%
+  mutate(freq_min = freq_alt*1)
+
+uppark_minor_allele_full <- rbind(uppark_minor_allele_ref_clean, uppark_minor_allele_alt_clean)
+uppark_minor_allele_full$population <- c(rep("UPPARK and WHITE", times = 40985))
+
+
+# Get minor alleles stacked up for illi skia 
+illi_minor_allele_ref <- illi_skia_snp_data %>%
+  filter(freq_ref < 0.5) #4,382
+
+illi_minor_allele_alt <- illi_skia_snp_data %>%
+  filter(freq_alt < 0.5) #36,298
+
+illi_minor_allele_ref_clean <- illi_minor_allele_ref %>%
+  mutate(freq_min = freq_ref*1)
+
+illi_minor_allele_alt_clean <- illi_minor_allele_alt %>%
+  mutate(freq_min = freq_alt*1)
+
+illi_minor_allele_full <- rbind(illi_minor_allele_ref_clean, illi_minor_allele_alt_clean)
+illi_minor_allele_full$population <- c(rep("ILLI and SKIA", times = 40680))
+
+
+minor_allele_all_pops <- rbind(bayou_minor_allele_full, 
+                               elk_minor_allele_full, 
+                               uppark_minor_allele_full, 
+                               illi_minor_allele_full)
+
+
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/dadi_figures/allele_frequency/allele_frequency_spectra.pdf", width = 8, height = 5)
+
+ggplot(minor_allele_all_pops, aes(x=freq_min, fill = population)) + 
+  geom_histogram(color = "black", binwidth = 0.03, position = position_dodge()) +
+  theme_set(theme_cowplot(12)) +
+  scale_fill_manual(values = c("lightgreen","sienna4","mediumpurple","orchid1")) +
+  labs(x = "Folded minor allele frequency", y = "Frequency", fill = "Population Pair") +
+  theme(legend.title = element_text(size = 20, face = "bold")) +
+  theme(legend.text = element_text(size = 15)) +
+  theme(axis.title = element_text(size = 20)) +
+  theme(axis.text = element_text(size = 15)) +
+  theme(legend.position = c(0.6,0.7)) +
+  theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+
+dev.off()
+```
 ```
 
 
