@@ -175,7 +175,9 @@ smb_outlier_dapc_plot <- ggplot(dapc_smb_outlier_LDs, aes(x = LD1, y = LD2, fill
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 20)) +
-   theme(axis.title.x = element_blank())
+   theme(axis.title.x = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+
 
 ###Neutral SNPs###
 smb_neutral_dapc_plot <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
@@ -191,7 +193,8 @@ smb_neutral_dapc_plot <- ggplot(dapc_smb_neutral_LDs, aes(x = LD1, y = LD2, fill
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 20)) + 
-   theme(axis.title = element_blank())
+   theme(axis.title = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ###Neosho Samples Only###
 ###Outlier SNPs###
@@ -207,7 +210,8 @@ neosho_outlier_dapc_plot <- ggplot(dapc_neosho_outlier_LDs, aes(x = LD1, y = LD2
    theme(legend.background = element_rect(color = "black", size = 0.5)) + 
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 20))
+   theme(axis.text = element_text(size = 20)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ###Neutral SNPs###
 neosho_neutral_dapc_plot <- ggplot(dapc_neosho_neutral_LDs, aes(x = LD1, y = LD2, fill = pop)) +
@@ -223,7 +227,8 @@ neosho_neutral_dapc_plot <- ggplot(dapc_neosho_neutral_LDs, aes(x = LD1, y = LD2
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 20)) +
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank())  +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 #Combine both DAPC Plots
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/outlier_fst_figures/dapc_plots_lineages.pdf", width=16, height=12)

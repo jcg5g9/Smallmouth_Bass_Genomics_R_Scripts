@@ -237,7 +237,10 @@ all_bayes_plot <- ggplot(bayescan_black_bass_fst_not1000, aes(x = logPO, y = fst
       theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
       theme(axis.line = element_line(color = "black")) +
       theme(axis.ticks = element_line(color = "black")) +
-      theme(axis.title.x = element_blank())
+      theme(axis.title.x = element_blank()) +
+      theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+      ylab(expression(F[ST])) +
+      xlab(expression(log[10]~{("posterior odds")}))
 
 #Plot smallmouth bass outliers
 smb_bayes_plot <- ggplot(bayescan_smb_lineages_fst_not1000, aes(x = logPO, y = fst, fill = sig_level)) + #make plot from non-1000 logPO for all SMB 
@@ -254,7 +257,10 @@ smb_bayes_plot <- ggplot(bayescan_smb_lineages_fst_not1000, aes(x = logPO, y = f
       theme(axis.line = element_line(color = "black")) +
       theme(axis.ticks = element_line(color = "black")) +
       theme(axis.title.x = element_blank()) +
-      theme(axis.title.y = element_blank())
+      theme(axis.title.y = element_blank())  +
+      theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+      ylab(expression(F[ST])) +
+      xlab(expression(log[10]~{("posterior odds")}))
 
 #Plot neosho outliers
 neosho_bayes_plot <- ggplot(bayescan_neosho_lineages_fst_not1000, aes(x = logPO, y = fst, fill = sig_level)) + #make plot from non-1000 logPO for neosho only
@@ -269,7 +275,10 @@ neosho_bayes_plot <- ggplot(bayescan_neosho_lineages_fst_not1000, aes(x = logPO,
       theme(axis.title = element_text(size = 20, color = "black")) + #make the axis titles size 15
       theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
       theme(axis.line = element_line(color = "black")) +
-      theme(axis.ticks = element_line(color = "black")) 
+      theme(axis.ticks = element_line(color = "black")) +
+      theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+      ylab(expression(F[ST])) +
+      xlab(expression(log[10]~{("posterior odds")}))
 
 #Plot northern outliers
 northern_bayes_plot <- ggplot(bayescan_northern_lineages_fst_not1000, aes(x = logPO, y = fst, fill = sig_level)) + 
@@ -285,7 +294,10 @@ northern_bayes_plot <- ggplot(bayescan_northern_lineages_fst_not1000, aes(x = lo
       theme(axis.text = element_text(size = 15, color = "black")) + #make the axis text size 15
       theme(axis.title.y = element_blank()) + #get rid of the y axis label
       theme(axis.line = element_line(color = "black")) +
-      theme(axis.ticks = element_line(color = "black"))
+      theme(axis.ticks = element_line(color = "black"))  +
+      theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+      ylab(expression(F[ST])) +
+      xlab(expression(log[10]~{("posterior odds")}))
    
 #Put Bayescan plots together
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/outlier_fst_figures/bayescan_plots.pdf", width=13, height=10)
@@ -475,9 +487,7 @@ all_pca_scree_plot <- ggplot(all_pca_var, aes(x = K, y = variance)) +
    theme_set(theme_cowplot(12)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 15)) +
-   theme(axis.title.x = element_text(face = "italic")) +
-   theme(axis.title.x = element_blank()) +
-   theme(axis.text.x = element_blank())
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ###SMB Samples Only###
 smb_pca_scree_plot <- ggplot(smb_pca_var, aes(x = K, y = variance)) + 
@@ -490,8 +500,7 @@ smb_pca_scree_plot <- ggplot(smb_pca_var, aes(x = K, y = variance)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 15)) +
    theme(axis.title.x = element_text(face = "italic")) +
-   theme(axis.title.x = element_blank()) +
-   theme(axis.text.x = element_blank())
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ###Neosho Samples Only###
 neosho_pca_scree_plot <- ggplot(neosho_pca_var, aes(x = K, y = variance)) + 
@@ -504,8 +513,7 @@ neosho_pca_scree_plot <- ggplot(neosho_pca_var, aes(x = K, y = variance)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 15)) +
    theme(axis.title.x = element_text(face = "italic")) +
-   theme(axis.title.x = element_blank()) +
-   theme(axis.text.x = element_blank())
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ###Northern Samples Only###
 northern_pca_scree_plot <- ggplot(northern_pca_var, aes(x = K, y = variance)) + 
@@ -516,7 +524,8 @@ northern_pca_scree_plot <- ggplot(northern_pca_var, aes(x = K, y = variance)) +
    labs(x = "Number of PCs Retained", y = "% Variance Explained") +
    theme_set(theme_cowplot(12)) +
    theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 15))
+   theme(axis.text = element_text(size = 15)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ###Combine all Scree Plots###
 all_scree_plots <- plot_grid(all_pca_scree_plot, smb_pca_scree_plot, neosho_pca_scree_plot, northern_pca_scree_plot, nrow = 4, labels = c("a","c","e","g"), label_y = 1.03, label_size = 30)
@@ -557,7 +566,8 @@ all_pca_ms_plot <- ggplot(all_pca_scores, aes(x = PC1, y = PC2)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 15)) +
    theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 15))
+   theme(axis.text = element_text(size = 15)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ###SMB Samples Only###
 smb_pca_ms_plot <- ggplot(smb_pca_scores, aes(x = PC1, y = PC2)) + 
@@ -569,7 +579,8 @@ smb_pca_ms_plot <- ggplot(smb_pca_scores, aes(x = PC1, y = PC2)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 15)) +
    theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 15))
+   theme(axis.text = element_text(size = 15)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ###Neosho Samples Only###
 neosho_pca_ms_plot <- ggplot(neosho_pca_scores, aes(x = PC1, y = PC2)) + 
@@ -581,7 +592,8 @@ neosho_pca_ms_plot <- ggplot(neosho_pca_scores, aes(x = PC1, y = PC2)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 15)) +
    theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 15))
+   theme(axis.text = element_text(size = 15)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 ###Northern Samples Only###
 northern_pca_ms_plot <- ggplot(northern_pca_scores, aes(x = PC1, y = PC2)) + 
@@ -593,15 +605,19 @@ northern_pca_ms_plot <- ggplot(northern_pca_scores, aes(x = PC1, y = PC2)) +
    theme(legend.title = element_text(face = "bold")) +
    theme(legend.text = element_text(size = 15)) +
    theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 15))
+   theme(axis.text = element_text(size = 15)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 #combine all PCA score plots 
 all_pca_ms_plots <- plot_grid(all_pca_ms_plot, smb_pca_ms_plot, neosho_pca_ms_plot, northern_pca_ms_plot, nrow = 4, labels = c("b","d","f","h"), label_y = 1.03, label_size = 30)
 
 #Combine all PCAdapt Preliminary Analysis Plots
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/outlier_fst_figures/pcadapt_plots.pdf", width=16, height=17) 
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/outlier_fst_figures/pcadapt_plots.pdf", width=14, height=17) 
 
-plot_grid(all_scree_plots, all_pca_ms_plots, ncol = 2)
+plot_grid(all_scree_plots, 
+          all_pca_ms_plots, 
+          ncol = 2,
+          align = "v")
 
 dev.off()
 

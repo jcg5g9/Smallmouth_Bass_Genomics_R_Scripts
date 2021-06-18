@@ -110,9 +110,11 @@ midark_white_s1r1_data_gather <- midark_white_s1r1_data %>%
 midark_white_s1r1_plot <- ggplot(midark_white_s1r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
-   theme(axis.title.x = element_blank())
+   theme(axis.title.x = element_blank())  +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_white_s1r2_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_white/NH.Results/PoZ_results/MIDARK_WHITE_S1R2_PofZ.xlsx")
 
@@ -123,10 +125,12 @@ midark_white_s1r2_data_gather <- midark_white_s1r2_data %>%
 midark_white_s1r2_plot <- ggplot(midark_white_s1r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
    theme(axis.title.x = element_blank()) +
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_white_s1r3_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_white/NH.Results/PoZ_results/MIDARK_WHITE_S1R3_PofZ.xlsx")
 
@@ -137,10 +141,12 @@ midark_white_s1r3_data_gather <- midark_white_s1r3_data %>%
 midark_white_s1r3_plot <- ggplot(midark_white_s1r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
    theme(axis.title.y = element_blank()) + 
-   theme(axis.title.x = element_blank())
+   theme(axis.title.x = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 
 ##SIMULATION 2 (S2): Replicates 1,2,3
@@ -153,9 +159,11 @@ midark_white_s2r1_data_gather <- midark_white_s2r1_data %>%
 midark_white_s2r1_plot <- ggplot(midark_white_s2r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
-   theme(axis.title.x = element_blank())
+   theme(axis.title.x = element_blank())  +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_white_s2r2_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_white/NH.Results/PoZ_results/MIDARK_WHITE_S2R2_PofZ.xlsx")
 
@@ -166,11 +174,13 @@ midark_white_s2r2_data_gather <- midark_white_s2r2_data %>%
 midark_white_s2r2_plot <- ggplot(midark_white_s2r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
    theme(axis.title.x = element_blank()) +
-   theme(axis.title.y = element_blank())
-
+   theme(axis.title.y = element_blank())  +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
+ 
 midark_white_s2r3_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_white/NH.Results/PoZ_results/MIDARK_WHITE_S2R3_PofZ.xlsx")
 
 midark_white_s2r3_data_gather <- midark_white_s2r3_data %>%
@@ -180,10 +190,12 @@ midark_white_s2r3_data_gather <- midark_white_s2r3_data %>%
 midark_white_s2r3_plot <- ggplot(midark_white_s2r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
    theme(axis.title.y = element_blank()) + 
-   theme(axis.title.x = element_blank())
+   theme(axis.title.x = element_blank())  +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 
 ##SIMULATION 3 (S3): Replicates 1,2,3
@@ -196,8 +208,10 @@ midark_white_s3r1_data_gather <- midark_white_s3r1_data %>%
 midark_white_s3r1_plot <- ggplot(midark_white_s3r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
-   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) 
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100"))  +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_white_s3r2_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_white/NH.Results/PoZ_results/MIDARK_WHITE_S3R2_PofZ.xlsx")
 
@@ -208,9 +222,11 @@ midark_white_s3r2_data_gather <- midark_white_s3r2_data %>%
 midark_white_s3r2_plot <- ggplot(midark_white_s3r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank())  +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_white_s3r3_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_white/NH.Results/PoZ_results/MIDARK_WHITE_S3R3_PofZ.xlsx")
 
@@ -221,9 +237,11 @@ midark_white_s3r3_data_gather <- midark_white_s3r3_data %>%
 midark_white_s3r3_plot <- ggplot(midark_white_s3r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank())  +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 #Plot MIDARK and SKIA Validation Results
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybriddetective_figures/midark_white_nh_validation_plots.pdf", width=12, height=12)
@@ -238,9 +256,7 @@ plot_grid(midark_white_s1r1_plot,
           midark_white_s3r2_plot, 
           midark_white_s3r3_plot,
           nrow = 3,
-          ncol = 3,
-          labels = c("a","b","c","d","e","f","g","h","i"),
-          label_y = 1.02)
+          ncol = 3)
 
 dev.off()
 #####################################################################
@@ -259,23 +275,27 @@ midark_skia_s1r1_data_gather <- midark_skia_s1r1_data %>%
 midark_skia_s1r1_plot <- ggplot(midark_skia_s1r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
-   theme(axis.title.x = element_blank())
+   theme(axis.title.x = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_skia_s1r2_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_skia/NH.Results/PoZ_results/MIDARK_SKIA_S1R2_PofZ.xlsx")
 
 midark_skia_s1r2_data_gather <- midark_skia_s1r2_data %>%
    gather(PARENT1:BC_PARENT2, key = "hybrid_cat", value = "probability") %>%
-   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat))
+   mutate(hybrid_id = factor(hybrid_id), hybrid_cat = factor(hybrid_cat)) 
 
 midark_skia_s1r2_plot <- ggplot(midark_skia_s1r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
    theme(axis.title.x = element_blank()) + 
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_skia_s1r3_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_skia/NH.Results/PoZ_results/MIDARK_SKIA_S1R3_PofZ.xlsx")
 
@@ -286,10 +306,12 @@ midark_skia_s1r3_data_gather <- midark_skia_s1r3_data %>%
 midark_skia_s1r3_plot <- ggplot(midark_skia_s1r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
    theme(axis.title.x = element_blank()) + 
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 
 ##SIMULATION 2 (S2): Replicates 1,2,3
@@ -302,9 +324,11 @@ midark_skia_s2r1_data_gather <- midark_skia_s2r1_data %>%
 midark_skia_s2r1_plot <- ggplot(midark_skia_s2r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
-   theme(axis.title.x = element_blank())
+   theme(axis.title.x = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_skia_s2r2_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_skia/NH.Results/PoZ_results/MIDARK_SKIA_S2R2_PofZ.xlsx")
 
@@ -315,10 +339,12 @@ midark_skia_s2r2_data_gather <- midark_skia_s2r2_data %>%
 midark_skia_s2r2_plot <- ggplot(midark_skia_s2r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
    theme(axis.title.x = element_blank()) + 
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_skia_s2r3_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_skia/NH.Results/PoZ_results/MIDARK_SKIA_S2R3_PofZ.xlsx")
 
@@ -329,10 +355,12 @@ midark_skia_s2r3_data_gather <- midark_skia_s2r3_data %>%
 midark_skia_s2r3_plot <- ggplot(midark_skia_s2r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
    theme(axis.title.x = element_blank()) + 
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 
 ##SIMULATION 3 (S3): Replicates 1,2,3
@@ -345,8 +373,10 @@ midark_skia_s3r1_data_gather <- midark_skia_s3r1_data %>%
 midark_skia_s3r1_plot <- ggplot(midark_skia_s3r1_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
-   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100"))
+   labs(x = "Simulated Individual", y = "Cumulative robability of hybrid ID") +
+   scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_skia_s3r2_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_skia/NH.Results/PoZ_results/MIDARK_SKIA_S3R2_PofZ.xlsx")
 
@@ -357,9 +387,11 @@ midark_skia_s3r2_data_gather <- midark_skia_s3r2_data %>%
 midark_skia_s3r2_plot <- ggplot(midark_skia_s3r2_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability of hybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) + 
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_skia_s3r3_data <- read_excel("../../analysis/hybriddetective_analysis/newhybrid_validation_simulations_midark_skia/NH.Results/PoZ_results/MIDARK_SKIA_S3R3_PofZ.xlsx")
 
@@ -370,9 +402,11 @@ midark_skia_s3r3_data_gather <- midark_skia_s3r3_data %>%
 midark_skia_s3r3_plot <- ggplot(midark_skia_s3r3_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_id)) + 
    geom_bar(stat = "identity", color = "black", show.legend = F) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Simulated Individual", y = "Cumulative Probability of Hybrid ID") +
+   labs(x = "Simulated Individual", y = "Cumulative probability ofhHybrid ID") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","grey5","grey100")) + 
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 #Plot MIDARK and SKIA Validation Results
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybriddetective_figures/midark_skia_nh_validation_plots.pdf", width=12, height=12)
@@ -387,9 +421,7 @@ plot_grid(midark_skia_s1r1_plot,
           midark_skia_s3r2_plot, 
           midark_skia_s3r3_plot,
           nrow = 3,
-          ncol = 3,
-          labels = c("a","b","c","d","e","f","g","h","i"),
-          label_y = 1.02)
+          ncol = 3)
 
 dev.off()
 ```
@@ -547,7 +579,8 @@ dapc_midark_white_admix_plot <- ggplot(dapc_midark_white_admix_LDs, aes(x = LD1,
    theme(legend.background = element_rect(color = "black", size = 0.5)) + 
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
-   theme(axis.text = element_text(size = 15))
+   theme(axis.text = element_text(size = 15)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 options(scipen = 999)
 ## Plot MIDARK and SKIA admixed
@@ -570,7 +603,8 @@ dapc_midark_skia_admix_plot <- ggplot(dapc_midark_skia_admix_LDs, aes(x = LD1, y
    theme(legend.margin = margin(5, 5, 5, 5)) +
    theme(axis.title = element_text(size = 20)) +
    theme(axis.text = element_text(size = 15)) +
-   theme(axis.title.y = element_blank())
+   theme(axis.title.y = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybriddetective_figures/hybrid_simulation_plots.pdf", width=16, height=7)
 
@@ -608,23 +642,27 @@ midark_skia_nh_data_gather$indiv_id <- factor(midark_skia_nh_data_gather$indiv_i
 midark_white_nh_plot <- ggplot(midark_white_nh_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_cat)) + 
    geom_bar(stat = "identity", color = "black", show.legend = T) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Individual", y = "Cumulative Probability of Hybrid ID", fill = "Hybrid Category") +
+   labs(x = "Individual", y = "Cumulative probability of hybrid ID", fill = "Hybrid Category") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","deepskyblue","deeppink2")) + 
    theme(axis.text.x = element_blank()) +
    theme(legend.title = element_text(face = "bold", size = 15)) +
    theme(axis.title = element_text(size = 15)) +
    theme(axis.text = element_text(size = 15)) +
-   theme(axis.title.x = element_blank())
+   theme(axis.title.x = element_blank()) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 midark_skia_nh_plot <- ggplot(midark_skia_nh_data_gather, aes(x = indiv_id, y = probability, fill = hybrid_cat)) + 
    geom_bar(stat = "identity", color = "black", show.legend = T) +
    theme_set(theme_cowplot(12)) +
-   labs(x = "Individual", y = "Cumulative Probability of Hybrid ID", fill = "Hybrid Category") +
+   labs(x = "Individual", y = "Cumulative probability of hybrid ID", fill = "Hybrid Category") +
    scale_fill_manual(values = c("grey18","grey90","grey35","grey60","deepskyblue","navyblue")) + 
    theme(axis.text.x = element_blank()) +
    theme(legend.title = element_text(face = "bold", size = 15)) +
    theme(axis.title = element_text(size = 15)) +
-   theme(axis.text = element_text(size = 15))
+   theme(axis.text = element_text(size = 15)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1)) +
+   scale_y_continuous(expand=c(0,0))
 
 pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/hybriddetective_figures/nh_empirical_plot.pdf", width=7, height=10)
 
