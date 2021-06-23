@@ -7,7 +7,6 @@ output: html_document
 
 ## Libraries needed for analysis
 ```{r setup, echo = FALSE, include = FALSE}
-library(riverdist)
 library(sp)
 library(readxl)
 library(popgraph)
@@ -18,11 +17,9 @@ library(adegenet)
 library(cowplot)
 library(nlme)
 library(poppr)
-library(PopGenReport)
 library(maps)
 library(mapdata)
 library(stringr)
-library(rgdal)
 library(sf)
 library(ggsn)
 library(raster)
@@ -35,6 +32,7 @@ library(ggpubr)
 library(DescTools)
 library(vegan)
 library(maptools)
+library(rgdal)
 ```
 
 ## Read-in shape files
@@ -54,11 +52,11 @@ shape_neosho <- readOGR(dsn = "/Users/joegunn/Desktop/Grad_School_Stuff/Research
 
 ## Build full USA Map
 ```{r}
-pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/map_building_figures/genomics_USA_map.pdf", width=7, height = 5)
+pdf("/Users/joegunn/Desktop/Grad_School_Stuff/Research/Projects/Smallmouth_Bass_Genomics/visualization/map_building_figures/genomics_USA_only.pdf", width=7, height = 5)
 
 plot(shape_state, col= alpha("white", 0.8), border = "black", axes = T, ylim = c(25,51), xlim = c(-126,-60)) #United States
-plot(shape_northern, add = TRUE, col = alpha("grey84", 0.8), border = T, axes = TRUE, ylim = c(20,48), xlim = c(-110,-60)) #Northern SMB Range
-plot(shape_neosho, add = TRUE, col = alpha("grey54", 0.9), border = T, axes = TRUE, ylim = c(30,48), xlim = c(-130,-60)) #Neosho SMB Range
+#plot(shape_northern, add = TRUE, col = alpha("grey84", 0.8), border = T, axes = TRUE, ylim = c(20,48), xlim = c(-110,-60)) #Northern SMB Range
+#plot(shape_neosho, add = TRUE, col = alpha("grey54", 0.9), border = T, axes = TRUE, ylim = c(30,48), xlim = c(-130,-60)) #Neosho SMB Range
 legend(x = -129, y = 30, legend = c("Northern Range", "Neosho Range"), bty = "n", fill = c("grey84","grey54"), cex = 1.2) # Legend 
 
 dev.off()
