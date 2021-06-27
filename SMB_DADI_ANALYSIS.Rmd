@@ -5,6 +5,8 @@ date: "5/18/2021"
 output: html_document
 ---
 
+# SMB Dadi Analysis
+
 # Libraries needed for analysis
 ```{r setup, include=FALSE}
 library(genepopedit)
@@ -17,7 +19,7 @@ library(pophelper)
 library(tools)
 ```
 
-#Explanation of dadi analysis
+## Explanation of dadi analysis
 
 I am running the program DADI using python3 within the Anaconda3 python environment. All of the models I am running are based on 2D folded joint frequency spectra, and the python scripts for each model have all been previously published in the Two_Population_Pipeline within the dadi_pipeline written by Daniel Portik and KC Charles (see below for citations). The two epoch diversification models I have selected were developed by KC Charles, while all of the rest of the models were developed by D. Portik.
 

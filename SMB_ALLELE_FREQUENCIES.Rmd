@@ -5,6 +5,8 @@ date: "12/11/2019"
 output: html_document
 ---
 
+# SMB Allele frequency and site frequency spectrum calculation
+
 ## Libraries needed for Analysis
 ```{r libraries, echo = FALSE, include=FALSE}
 library(readxl)

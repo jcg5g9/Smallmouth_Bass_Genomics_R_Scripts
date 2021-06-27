@@ -5,7 +5,7 @@ date: "10/30/2019"
 output: html_document
 ---
 
-# ADMIXTURE Analysis 
+# SMB ADMIXTURE Analysis 
 
 ## Libraries needed for analysis
 ```{r setup, echo = FALSE, include=FALSE}

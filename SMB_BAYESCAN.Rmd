@@ -5,6 +5,8 @@ date: "11/8/2019"
 output: html_document
 ---
 
+# SMB Bayescan and PCAdapt Outlier FST analysis
+
 ## Libraries needed for analysis
 ```{r setup, echo = FALSE, include=FALSE}
 library(readxl)

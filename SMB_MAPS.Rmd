@@ -5,32 +5,20 @@ date: "9/11/2019"
 output: html_document
 ---
 
+# SMB Map generation
+
 ## Libraries needed for analysis
 ```{r setup, echo = FALSE, include = FALSE}
 library(sp)
 library(readxl)
-library(popgraph)
 library(tidyverse)
-library(gstudio)
-library(ade4)
-library(adegenet)
 library(cowplot)
-library(nlme)
-library(poppr)
 library(maps)
 library(mapdata)
 library(stringr)
 library(sf)
 library(ggsn)
 library(raster)
-library(lme4)
-library(factoextra)
-library(MASS)
-library(logihist)
-library(pophelper)
-library(ggpubr)
-library(DescTools)
-library(vegan)
 library(maptools)
 library(rgdal)
 ```

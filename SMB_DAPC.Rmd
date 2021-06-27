@@ -5,6 +5,8 @@ date: "11/5/2019"
 output: html_document
 ---
 
+# SMB DAPC plotting for outlier SNPs
+
 ## Libraries needed for analysis
 ```{r libraries, echo = FALSE, include = FALSE}
 library(readxl)
