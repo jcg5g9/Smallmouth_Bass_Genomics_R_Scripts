@@ -1,0 +1,27 @@
+---
+title: "SMB_GENOME_STATS"
+author: "Joe Gunn"
+date: "6/27/2021"
+output: html_document
+---
+
+# SMB Genome Statistics
+
+## Libraries needed for analysis
+```{r libraries, include=FALSE}
+library(readxl)
+library(tidyverse)
+library(cowplot)
+library(devtools)
+library(SNPRelate)
+library(vcfR)
+library(pophelper)
+library(PopGenome)
+library(pcadapt)
+library(ggforce)
+```
+
+
+```{r}
+
+```
