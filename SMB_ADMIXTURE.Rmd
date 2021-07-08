@@ -370,7 +370,8 @@ ggplot(cv_all, aes(x = k, y = cv)) +
    theme_set(theme_cowplot()) + 
    theme(axis.text = element_text(size = 20)) + 
    theme(axis.title.x = element_text(face = "italic")) + 
-   theme(axis.title = element_text(size = 20))
+   theme(axis.title = element_text(size = 20)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
 
 dev.off()
 
@@ -384,7 +385,9 @@ ggplot(cv_pure, aes(x = k, y = cv_error)) +
    theme_set(theme_cowplot()) + 
    theme(axis.text = element_text(size = 20)) + 
    theme(axis.title.x = element_text(face = "italic")) + 
-   theme(axis.title = element_text(size = 20))
+   theme(axis.title = element_text(size = 20)) +
+   theme(panel.border = element_rect(colour = "black", fill=NA, size=1))
+
 
 dev.off()
 
